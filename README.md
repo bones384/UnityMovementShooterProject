@@ -1,0 +1,1 @@
+Z jakiegoś powodu jak uzyje w Assets/Game/CharacterController/Scripts/PlayerController FixedUpdate zamiast Update to nie wykrywa skoku? Jakby widzi, że spacja została wciśnięta ale nie przekierowywuje tego parametru do funkcji skoczenia idk może coś z timingiem jest nie tak
