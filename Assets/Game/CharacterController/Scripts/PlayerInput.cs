@@ -3,13 +3,16 @@ using UnityEngine.InputSystem;
 namespace Game.CharacterController
 {
     [DefaultExecutionOrder(-2)]
-    public class PlayerLocomotionInput : MonoBehaviour, PlayerControls.IPlayerLocomotionMapActions
+    public class PlayerInput : MonoBehaviour, PlayerControls.IPlayerLocomotionMapActions
     {
         #region Variables
         public PlayerControls PlayerControls { get; private set; }
         public Vector2 MovementInput { get; private set; }
         public Vector2 LookInput { get; private set; }
         public bool JumpPressed { get; private set; }
+        public bool ShootPressed { get; private set; }
+        public bool ReloadPressed { get; private set; }
+        public bool ADSPressed { get; private set; }
         #endregion
 
         #region Startup
@@ -32,6 +35,7 @@ namespace Game.CharacterController
         private void LateUpdate()
         {
             JumpPressed = false;
+            ReloadPressed = false;
         }
         #endregion
 
@@ -53,6 +57,25 @@ namespace Game.CharacterController
                 return;
             }
             JumpPressed = true;
+        }
+
+        public void OnShoot(InputAction.CallbackContext context)
+        {
+            ShootPressed = context.ReadValueAsButton();
+        }
+
+        public void OnReload(InputAction.CallbackContext context)
+        {
+            if (!context.performed)
+            {
+                return;
+            }
+            ReloadPressed = true;
+        }
+
+        public void OnADS(InputAction.CallbackContext context)
+        {
+            ADSPressed = context.ReadValueAsButton();
         }
         #endregion
     }

@@ -120,6 +120,33 @@ namespace Game.CharacterController
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Shoot"",
+                    ""type"": ""Button"",
+                    ""id"": ""80081477-6103-4f8f-bd3d-5a6912726788"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Reload"",
+                    ""type"": ""Button"",
+                    ""id"": ""2b28e17a-7ef8-41b9-9839-68eb22dd273f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ADS"",
+                    ""type"": ""Button"",
+                    ""id"": ""4eb2f1e4-769b-41dc-906f-f43c9a95f1b9"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -199,6 +226,39 @@ namespace Game.CharacterController
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""30b4bd7c-5f8f-411f-813d-324ceda1a106"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""30ae425a-536e-437b-8696-6d69d061a2f6"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Reload"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b901c393-594c-4bff-a3a9-708bc90a2204"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ADS"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -210,6 +270,9 @@ namespace Game.CharacterController
             m_PlayerLocomotionMap_Movement = m_PlayerLocomotionMap.FindAction("Movement", throwIfNotFound: true);
             m_PlayerLocomotionMap_Look = m_PlayerLocomotionMap.FindAction("Look", throwIfNotFound: true);
             m_PlayerLocomotionMap_Jump = m_PlayerLocomotionMap.FindAction("Jump", throwIfNotFound: true);
+            m_PlayerLocomotionMap_Shoot = m_PlayerLocomotionMap.FindAction("Shoot", throwIfNotFound: true);
+            m_PlayerLocomotionMap_Reload = m_PlayerLocomotionMap.FindAction("Reload", throwIfNotFound: true);
+            m_PlayerLocomotionMap_ADS = m_PlayerLocomotionMap.FindAction("ADS", throwIfNotFound: true);
         }
 
         ~@PlayerControls()
@@ -293,6 +356,9 @@ namespace Game.CharacterController
         private readonly InputAction m_PlayerLocomotionMap_Movement;
         private readonly InputAction m_PlayerLocomotionMap_Look;
         private readonly InputAction m_PlayerLocomotionMap_Jump;
+        private readonly InputAction m_PlayerLocomotionMap_Shoot;
+        private readonly InputAction m_PlayerLocomotionMap_Reload;
+        private readonly InputAction m_PlayerLocomotionMap_ADS;
         /// <summary>
         /// Provides access to input actions defined in input action map "PlayerLocomotionMap".
         /// </summary>
@@ -316,6 +382,18 @@ namespace Game.CharacterController
             /// Provides access to the underlying input action "PlayerLocomotionMap/Jump".
             /// </summary>
             public InputAction @Jump => m_Wrapper.m_PlayerLocomotionMap_Jump;
+            /// <summary>
+            /// Provides access to the underlying input action "PlayerLocomotionMap/Shoot".
+            /// </summary>
+            public InputAction @Shoot => m_Wrapper.m_PlayerLocomotionMap_Shoot;
+            /// <summary>
+            /// Provides access to the underlying input action "PlayerLocomotionMap/Reload".
+            /// </summary>
+            public InputAction @Reload => m_Wrapper.m_PlayerLocomotionMap_Reload;
+            /// <summary>
+            /// Provides access to the underlying input action "PlayerLocomotionMap/ADS".
+            /// </summary>
+            public InputAction @ADS => m_Wrapper.m_PlayerLocomotionMap_ADS;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -351,6 +429,15 @@ namespace Game.CharacterController
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
+                @Shoot.started += instance.OnShoot;
+                @Shoot.performed += instance.OnShoot;
+                @Shoot.canceled += instance.OnShoot;
+                @Reload.started += instance.OnReload;
+                @Reload.performed += instance.OnReload;
+                @Reload.canceled += instance.OnReload;
+                @ADS.started += instance.OnADS;
+                @ADS.performed += instance.OnADS;
+                @ADS.canceled += instance.OnADS;
             }
 
             /// <summary>
@@ -371,6 +458,15 @@ namespace Game.CharacterController
                 @Jump.started -= instance.OnJump;
                 @Jump.performed -= instance.OnJump;
                 @Jump.canceled -= instance.OnJump;
+                @Shoot.started -= instance.OnShoot;
+                @Shoot.performed -= instance.OnShoot;
+                @Shoot.canceled -= instance.OnShoot;
+                @Reload.started -= instance.OnReload;
+                @Reload.performed -= instance.OnReload;
+                @Reload.canceled -= instance.OnReload;
+                @ADS.started -= instance.OnADS;
+                @ADS.performed -= instance.OnADS;
+                @ADS.canceled -= instance.OnADS;
             }
 
             /// <summary>
@@ -432,6 +528,27 @@ namespace Game.CharacterController
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnJump(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "Shoot" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnShoot(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "Reload" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnReload(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "ADS" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnADS(InputAction.CallbackContext context);
         }
     }
 }

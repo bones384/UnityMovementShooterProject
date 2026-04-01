@@ -29,7 +29,7 @@ namespace Game.CharacterController
         [Header("Environment Details")]
         [SerializeField] private LayerMask _groundLayers;
 
-        private PlayerLocomotionInput _playerLocomotionInput;
+        private PlayerInput _playerInput;
         private PlayerState _playerState;
         private Vector2 _cameraRotation = Vector2.zero;
         private Vector2 _playerTargetRotation = Vector2.zero;
@@ -45,10 +45,11 @@ namespace Game.CharacterController
         #region Startup
         private void Awake()
         {
-            _playerLocomotionInput = GetComponent<PlayerLocomotionInput>();
+            _playerInput = GetComponent<PlayerInput>();
             _playerState = GetComponent<PlayerState>();
             _antiBump = runSpeed;
             _stepOffset = _characterController.stepOffset;
+            Cursor.lockState = CursorLockMode.Locked;
         }
         #endregion
 
@@ -64,7 +65,7 @@ namespace Game.CharacterController
         {
             _lastMovementState = _playerState.CurrentPlayerMovementState;
 
-            bool isMoving = _playerLocomotionInput.MovementInput != Vector2.zero;
+            bool isMoving = _playerInput.MovementInput != Vector2.zero;
             bool isMovingLaterally = IsMovingLaterally();
             bool isGrounded = IsGrounded();
 
@@ -100,7 +101,7 @@ namespace Game.CharacterController
                 _verticalVelocity = -_antiBump;
             }
 
-            if (_playerLocomotionInput.JumpPressed && isGrounded)
+            if (_playerInput.JumpPressed && isGrounded)
             {
                 _verticalVelocity += Mathf.Sqrt(jumpSpeed*3*gravity);
                 _jumpedLastFrame = true;
@@ -117,7 +118,7 @@ namespace Game.CharacterController
 
             Vector3 cameraForwardXYZ = new Vector3(_playerCamera.transform.forward.x, 0f, _playerCamera.transform.forward.z).normalized;
             Vector3 cameraRightXYZ = new Vector3(_playerCamera.transform.right.x, 0f, _playerCamera.transform.right.z).normalized;
-            Vector3 moveDirection = cameraForwardXYZ * _playerLocomotionInput.MovementInput.y + cameraRightXYZ * _playerLocomotionInput.MovementInput.x;
+            Vector3 moveDirection = cameraForwardXYZ * _playerInput.MovementInput.y + cameraRightXYZ * _playerInput.MovementInput.x;
 
             Vector3 movementDelta = moveDirection * runAcceleration * Time.deltaTime;
             Vector3 newVelocity = _characterController.velocity + movementDelta;
@@ -148,11 +149,12 @@ namespace Game.CharacterController
         #region Late Update Logic
         private void LateUpdate()
         {
-            _cameraRotation.x += _playerLocomotionInput.LookInput.x * lookSensH;
-            _cameraRotation.y = Mathf.Clamp(_cameraRotation.y - lookSensV * _playerLocomotionInput.LookInput.y, -lookLimitV, lookLimitV);
+            _cameraRotation.x += _playerInput.LookInput.x * lookSensH;
+            _cameraRotation.y = Mathf.Clamp(_cameraRotation.y - lookSensV * _playerInput.LookInput.y, -lookLimitV, lookLimitV);
 
-            _playerTargetRotation.x += transform.eulerAngles.x + lookSensH * _playerLocomotionInput.LookInput.x;
-            transform.rotation = Quaternion.Euler(0f, _cameraRotation.x, 0f);
+            _playerTargetRotation.x += transform.eulerAngles.x + lookSensH * _playerInput.LookInput.x;
+            _playerTargetRotation.y += transform.eulerAngles.y + lookSensV * _playerInput.LookInput.y;
+            transform.rotation = Quaternion.Euler(_cameraRotation.y, _cameraRotation.x, 0f);
 
             _playerCamera.transform.rotation = Quaternion.Euler(_cameraRotation.y, _cameraRotation.x, 0f);
         }
