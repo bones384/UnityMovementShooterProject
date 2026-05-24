@@ -12,7 +12,7 @@ namespace Entities.Netcode
     {
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<NetworkId>();
+            state.RequireForUpdate<NetworkId>(); 
         }
 
         //[BurstCompile]

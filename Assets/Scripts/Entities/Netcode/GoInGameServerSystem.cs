@@ -32,7 +32,7 @@ namespace Entities.Netcode
                 );
                 Debug.Log("Client connected to server!");
 
-                var playerEntity = buffer.Instantiate(entitiesReferences.playerPrefabEntity);
+                var playerEntity = buffer.Instantiate(entitiesReferences.PlayerPrefabEntity);
                 buffer.SetComponent(playerEntity,LocalTransform.FromPosition(new float3
                 (
                     UnityEngine.Random.Range(-10,+10),
