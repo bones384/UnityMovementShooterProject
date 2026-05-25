@@ -27,7 +27,7 @@ public class ClientSideInstantiator : MonoBehaviour
         }
         Debug.Log("Not server");
         mainCamera = Camera.main;
-        this.gameObject.AddComponent<PlayerBridge>();
+       // this.gameObject.AddComponent<PlayerBridge>();
 
     }
 

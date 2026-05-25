@@ -39,6 +39,7 @@ namespace Entities.Netcode
                     0,
                     0
                 )));
+                
                 NetworkId networkId =
                     SystemAPI.GetComponent<NetworkId>(receiveRpcCommandRequest.ValueRO.SourceConnection);
                 buffer.AddComponent(playerEntity,new GhostOwner{

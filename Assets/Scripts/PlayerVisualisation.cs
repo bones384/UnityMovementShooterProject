@@ -1,0 +1,44 @@
+using Entities.Netcode;
+using Unity.Entities;
+using UnityEngine;
+using UnityEngine.Rendering;
+
+
+public class PlayerVisualisation : MonoBehaviour
+{
+    public PlayerStateComponent PlayerState;
+    public bool isLocalPlayer = false;
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        if (!isLocalPlayer) return;
+
+        foreach(Transform childTransform in transform)
+        {
+            childTransform.gameObject.GetComponent<Renderer>().shadowCastingMode = ShadowCastingMode.ShadowsOnly;
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+       
+    }
+    
+    private void OnGUI()
+    {
+        if (!isLocalPlayer) return;
+    
+        GUI.Label(new Rect(10, 10, 200, 20), $"Position: {PlayerState.Position}");
+        GUI.Label(new Rect(10, 30, 200, 20), $"Rotation: {PlayerState.Rotation}");
+        GUI.Label(new Rect(10, 50, 200, 20), $"Velocity: {PlayerState.Velocity}");
+        GUI.Label(new Rect(10, 70, 200, 20), $"IsSliding: {PlayerState.IsSliding}");
+        GUI.Label(new Rect(10, 90, 200, 20), $"IsWallRunning: {PlayerState.IsWallRunning}");
+        GUI.Label(new Rect(10, 110, 200, 20), $"IsCrouching: {PlayerState.IsCrouching}");
+        GUI.Label(new Rect(10, 130, 200, 20), $"IsJumping: {PlayerState.IsJumping}");
+        GUI.Label(new Rect(10, 150, 200, 20), $"IsParrying: {PlayerState.IsParrying}");
+    }
+}
+

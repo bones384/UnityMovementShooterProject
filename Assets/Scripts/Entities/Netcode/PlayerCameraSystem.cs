@@ -20,17 +20,17 @@ partial struct PlayerBridgingSystem : ISystem
                  in SystemAPI.Query<RefRO<LocalTransform>>()
                      .WithAll<LocalPlayerTag>())
         {
-            PlayerBridge.Instance.PlayerState = new PlayerState()
-            {
-                Position = transform.ValueRO.Position,
-                Rotation = transform.ValueRO.Rotation,
-                IsCrouching = false,
-                IsJumping = false,
-                IsParrying = false,
-                IsSliding = false,
-                IsWallRunning = false,
-                Velocity = Vector3.zero
-            };
+            //PlayerBridge.Instance.PlayerState = new PlayerState()
+            //{
+            //    Position = transform.ValueRO.Position,
+            //    Rotation = transform.ValueRO.Rotation,
+            //    IsCrouching = false,
+            //    IsJumping = false,
+            //    IsParrying = false,
+            //    IsSliding = false,
+            //    IsWallRunning = false,
+             //   Velocity = Vector3.zero
+            //};
 
         }
     }
