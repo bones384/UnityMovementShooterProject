@@ -4,6 +4,7 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
+using Unity.Physics;
 using Unity.Transforms;
 using Unity.VersionControl.Git;
 
@@ -20,6 +21,7 @@ namespace Entities.Netcode{
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
+            state.RequireForUpdate<PhysicsWorldSingleton>();
             state.RequireForUpdate<EntitiesReferences>();
             state.RequireForUpdate<Entities.Netcode.PlayerInput>();
         }
@@ -32,8 +34,8 @@ namespace Entities.Netcode{
             acceleration = entitiesReferences.Acceleration;
             jumpSpeed = entitiesReferences.JumpSpeed;
             
-            foreach ((var playerInput, var localTransform, var playerLook) in SystemAPI
-                         .Query<RefRO<Entities.Netcode.PlayerInput>, RefRW<LocalTransform>, RefRW<PlayerLook>>().WithAll<Simulate>())
+            foreach ((var playerInput, var localTransform, var playerLook, var collider) in SystemAPI
+                         .Query<RefRO<Entities.Netcode.PlayerInput>, RefRW<LocalTransform>, RefRW<PlayerLook>, RefRO<PhysicsCollider>>().WithAll<Simulate>())
             {
                 var lookVector = playerInput.ValueRO.InputLookVector;
                 
@@ -56,9 +58,15 @@ namespace Entities.Netcode{
                 
                 move =  math.normalizesafe(move);
            
-                localTransform.ValueRW.Position += move * moveSpeed * SystemAPI.Time.DeltaTime;;
+                var displacement = move * moveSpeed * SystemAPI.Time.DeltaTime;
                 
-             
+                var collisionWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().CollisionWorld;
+                
+                localTransform.ValueRW.Position += displacement;
+                
+            
+                
+                var Collider = collider.ValueRO.Value;
                 
             }
             foreach ((var playerInput, var localTransform, var playerLook, var playerState) in SystemAPI
@@ -68,6 +76,37 @@ namespace Entities.Netcode{
                 playerState.ValueRW.Rotation = localTransform.ValueRO.Rotation;
                 playerState.ValueRW.IsJumping = playerInput.ValueRO.JumpInput;
             }
+        }
+        
+        public unsafe Entity SCast(float3 RayFrom, float3 RayTo, PhysicsCollider radius)
+        {            var collisionWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().CollisionWorld;
+            
+            var filter = new CollisionFilter()
+            {
+                BelongsTo = 1u << 7, // Raycast against everything
+                CollidesWith = 1u << 6, // Raycast against everything
+                GroupIndex = 0,
+            };
+            
+            radius.ColliderPtr->SetCollisionFilter(filter);
+            
+            var input = new ColliderCastInput()
+            {
+                Start = RayFrom,
+                End = RayTo,
+                Collider = radius.ColliderPtr,
+                Orientation = quaternion.identity,
+            };
+            
+            ColliderCastHit hit = new ColliderCastHit();
+            
+            bool haveHit = collisionWorld.CastCollider(input, out hit);
+            if (haveHit)
+            {
+                return hit.Entity;
+            }
+
+            return Entity.Null;
         }
 
 
