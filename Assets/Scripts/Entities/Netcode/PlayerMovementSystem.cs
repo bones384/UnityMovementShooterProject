@@ -7,9 +7,11 @@ using Unity.NetCode;
 using Unity.Physics;
 using Unity.Transforms;
 using Unity.VersionControl.Git;
+using UnityEngine;
 
 namespace Entities.Netcode{
     [UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
+ 
     partial struct PlayerMovementSystem :
     ISystem
     {
@@ -33,7 +35,9 @@ namespace Entities.Netcode{
             maxSpeed = entitiesReferences.MaxSpeed;
             acceleration = entitiesReferences.Acceleration;
             jumpSpeed = entitiesReferences.JumpSpeed;
-            
+
+            var time = SystemAPI.GetSingleton<NetworkTime>();
+
             foreach ((var playerInput, var localTransform, var playerLook, var collider) in SystemAPI
                          .Query<RefRO<Entities.Netcode.PlayerInput>, RefRW<LocalTransform>, RefRW<PlayerLook>, RefRO<PhysicsCollider>>().WithAll<Simulate>())
             {
@@ -62,12 +66,16 @@ namespace Entities.Netcode{
                 
                 var collisionWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().CollisionWorld;
                 
-                localTransform.ValueRW.Position += displacement;
                 
             
                 
                 var Collider = collider.ValueRO.Value;
-                
+               var collision = SCast(localTransform.ValueRO.Position, localTransform.ValueRO.Position + displacement, Collider);
+
+               if(collision==Entity.Null) localTransform.ValueRW.Position += displacement;
+
+
+
             }
             foreach ((var playerInput, var localTransform, var playerLook, var playerState) in SystemAPI
                          .Query<RefRO<Entities.Netcode.PlayerInput>, RefRO<LocalTransform>, RefRO<PlayerLook>, RefRW<PlayerStateComponent>>())
@@ -78,7 +86,7 @@ namespace Entities.Netcode{
             }
         }
         
-        public unsafe Entity SCast(float3 RayFrom, float3 RayTo, PhysicsCollider radius)
+        public unsafe Entity SCast(float3 RayFrom, float3 RayTo, BlobAssetReference<Unity.Physics.Collider> radius)
         {            var collisionWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().CollisionWorld;
             
             var filter = new CollisionFilter()
@@ -87,24 +95,28 @@ namespace Entities.Netcode{
                 CollidesWith = 1u << 6, // Raycast against everything
                 GroupIndex = 0,
             };
-            
-            radius.ColliderPtr->SetCollisionFilter(filter);
-            
-            var input = new ColliderCastInput()
+            fixed (Unity.Physics.Collider* rad = &radius.Value)
             {
-                Start = RayFrom,
-                End = RayTo,
-                Collider = radius.ColliderPtr,
-                Orientation = quaternion.identity,
-            };
-            
-            ColliderCastHit hit = new ColliderCastHit();
-            
-            bool haveHit = collisionWorld.CastCollider(input, out hit);
-            if (haveHit)
-            {
-                return hit.Entity;
+                rad->SetCollisionFilter(filter);
+
+
+
+                var input = new ColliderCastInput()
+                {
+                    Start = RayFrom,
+                    End = RayTo,
+                    Collider = rad,
+                    Orientation = quaternion.identity
+                };
+                ColliderCastHit hit = new ColliderCastHit();
+
+                bool haveHit = collisionWorld.CastCollider(input, out hit);
+                if (haveHit)
+                {
+                    return hit.Entity;
+                }
             }
+ 
 
             return Entity.Null;
         }

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4904253831177307529}
   - component: {fileID: 2773903356792280688}
   - component: {fileID: 4731358116085431506}
-  m_Layer: 2
+  m_Layer: 7
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 5897868994293042719}
   - component: {fileID: 7307880816247991467}
   - component: {fileID: 3106806143342163120}
-  m_Layer: 2
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -190,7 +190,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3421716122530663757}
   - component: {fileID: -3539084668880833297}
-  m_Layer: 2
+  m_Layer: 7
   m_Name: PlayerVisuals
   m_TagString: Untagged
   m_Icon: {fileID: 0}
