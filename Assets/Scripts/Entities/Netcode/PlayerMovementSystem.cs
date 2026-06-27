@@ -1,3 +1,4 @@
+using System;
 using Entities.Movement;
 using Unity.Burst;
 using Unity.Entities;
@@ -13,14 +14,15 @@ using SphereCollider = Unity.Physics.SphereCollider;
 namespace Entities.Netcode
 {
     [UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
-    internal partial struct PlayerMovementSystem :
-        ISystem
+    internal partial struct PlayerMovementSystem : ISystem
     {
         public float maxSpeed;
         public float acceleration;
         public float jumpSpeed;
         public float initialSpeed;
         public float gravity;
+        public float dampenSpeed;
+        public float maxFallSpeed;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
@@ -30,9 +32,12 @@ namespace Entities.Netcode
             state.RequireForUpdate<PlayerInput>();
         }
 
-        //[BurstCompile]
+        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
+            Action stopSliding = () => { }; //WIP
+
+
             var entitiesReferences = SystemAPI.GetSingleton<EntitiesReferences>();
 
             maxSpeed = entitiesReferences.MaxSpeed;
@@ -40,8 +45,8 @@ namespace Entities.Netcode
             jumpSpeed = entitiesReferences.JumpSpeed;
             initialSpeed = entitiesReferences.InitialSpeed;
             gravity = entitiesReferences.Gravity;
-
-            var time = SystemAPI.GetSingleton<NetworkTime>();
+            dampenSpeed = entitiesReferences.DampenSpeed;
+            maxFallSpeed = entitiesReferences.MaxFallSpeed;
 
             foreach (var (playerInput, localTransform, playerLook, collider, pstate, contacts) in SystemAPI
                          .Query<RefRO<PlayerInput>, RefRW<LocalTransform>, RefRW<PlayerLook>,
@@ -56,33 +61,90 @@ namespace Entities.Netcode
 
                 var cameraRotation = math.mul(quaternion.RotateY(playerLook.ValueRW.Yaw), quaternion.RotateX(0));
                 localTransform.ValueRW.Rotation = cameraRotation;
-                var forward = math.mul(cameraRotation, math.forward());
+                // var forward = math.mul(cameraRotation, math.forward());
 
                 playerLook.ValueRW.Pitch =
                     math.clamp(playerLook.ValueRW.Pitch + lookVector.y, -math.PI / 2, math.PI / 2);
                 playerLook.ValueRW.Yaw = math.fmod(playerLook.ValueRW.Yaw + lookVector.x, 2 * math.PI);
 
-                var moveSpeed = 4f;
+
+                //var moveSpeed = pstate.ValueRO.Velocity;
+                //var moveSpeed = 4f;
+
                 var move =
                     localTransform.ValueRO.Right() * playerInput.ValueRO.InputMovementVector.x +
                     localTransform.ValueRO.Forward() * playerInput.ValueRO.InputMovementVector.y;
 
+
                 move = math.normalizesafe(move);
-//Debug.Log($"move: {move} forward: {forward} moveSpeed: {moveSpeed}");
-                var displacement = move * moveSpeed * SystemAPI.Time.DeltaTime;
-                //if(displacement.Equals(float3.zero)) continue;
+                var displacement = float3.zero;
 
-                if (!contacts.ValueRO.IsGrounded)
-                    displacement += new float3(0, 1, 0) * gravity * SystemAPI.Time.DeltaTime;
+                var isGrounded = contacts.ValueRO.IsGrounded;
+                pstate.ValueRW.IsGrounded = isGrounded;
+
+                if (!isGrounded)
+                {
+                    //apply gravity (but do not fall faster than maxSpeed)
+
+                    pstate.ValueRW.Velocity.y = -pstate.ValueRO.Velocity.y < maxFallSpeed
+                        ? pstate.ValueRW.Velocity.y + gravity * SystemAPI.Time.DeltaTime
+                        : pstate.ValueRW.Velocity.y = -maxFallSpeed;
+                }
                 else
+                {
                     localTransform.ValueRW.Position = contacts.ValueRO.GroundHit;
-                var res = collideAndSlide(displacement, localTransform.ValueRO.Position + new float3(0, 1, 0), 5);
-//2 var res = cas(displacement, localTransform.ValueRO.Position + new float3(0,1,0), 0);
+                    pstate.ValueRW.Velocity.y = 0;
+                } //snap to floor
 
-                DebugVector.DrawArrow(localTransform.ValueRO.Position + new float3(0, 1, 0), res, Color.purple);
-                localTransform.ValueRW.Position += res;
-//3
-//localTransform.ValueRW.Position = collideWithWorld(localTransform.ValueRO.Position + new float3(0, 1, 0), displacement) - new float3(0, 1, 0);
+
+                if (move.Equals(float3.zero))
+                    if (isGrounded)
+                        pstate.ValueRW.Velocity *= dampenSpeed;
+
+
+                //apply movement
+                var horizontalSpeed = math.length(new float3(pstate.ValueRO.Velocity.x, 0, pstate.ValueRO.Velocity.z));
+                var verticalVelocity = new float3(0, pstate.ValueRO.Velocity.y, 0);
+                var speedToApply = math.max(maxSpeed, horizontalSpeed);
+
+                if (speedToApply > maxSpeed) speedToApply *= 0.985f;
+
+                var newVelocity = move * speedToApply;
+                pstate.ValueRW.Velocity = new float3(newVelocity.x, pstate.ValueRO.Velocity.y, newVelocity.z);
+
+                displacement += newVelocity * SystemAPI.Time.DeltaTime;
+                displacement += verticalVelocity * SystemAPI.Time.DeltaTime;
+
+
+                BlobAssetReference<Collider> capsuleCollider;
+                var filter = new CollisionFilter
+                {
+                    BelongsTo = 1u << 7, // Is on player layer
+                    CollidesWith = 1u << 6, // Raycast against level layer
+                    GroupIndex = 0
+                };
+
+
+                var halfSegment = math.max(0f, 1.8f - 2f * 0.45f) * 0.5f;
+
+                var capsuleGeometry = new CapsuleGeometry
+                {
+                    Radius = 0.45f,
+                    Vertex0 = new float3(0, 1, 0) + new float3(0, -halfSegment, 0),
+                    Vertex1 = new float3(0, 1, 0) + new float3(0, halfSegment, 0)
+                };
+
+                capsuleCollider = CapsuleCollider.Create(capsuleGeometry, filter);
+                var collisionWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().CollisionWorld;
+
+                localTransform.ValueRW.Position = CollideAndSlide_Linahan(collisionWorld, capsuleCollider,
+                    localTransform.ValueRO.Position, localTransform.ValueRO.Rotation,
+                    newVelocity * SystemAPI.Time.DeltaTime, filter);
+
+                localTransform.ValueRW.Position = CollideAndSlide_Linahan(collisionWorld, capsuleCollider,
+                    localTransform.ValueRO.Position, localTransform.ValueRO.Rotation,
+                    verticalVelocity * SystemAPI.Time.DeltaTime, filter);
+                capsuleCollider.Dispose();
             }
 
             foreach (var (playerInput, localTransform, playerLook, playerState) in SystemAPI
@@ -94,361 +156,119 @@ namespace Entities.Netcode
                 playerState.ValueRW.IsJumping = playerInput.ValueRO.JumpInput;
             }
         }
-
-
-        public unsafe Entity SCast(float3 RayFrom, float3 RayTo, BlobAssetReference<Collider> radius, out bool haveHit,
-            out ColliderCastHit hit)
+        
+        [BurstCompile]
+        public static unsafe float3 CollideAndSlide_Linahan(
+            CollisionWorld world,
+            BlobAssetReference<Collider> capsuleCollider,
+            float3 position,
+            quaternion orientation,
+            float3 velocity,
+            CollisionFilter filter,
+            int maxIterations = 3,
+            float skinWidth = 0.015f)
         {
-            var collisionWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().CollisionWorld;
+            var pos = position;
+            var vel = velocity;
+            var dest = pos + vel;
 
-            var filter = new CollisionFilter
+            // Stored constraint normals (sliding planes)
+            var n1 = float3.zero;
+            var n2 = float3.zero;
+            var planeCount = 0;
+
+            var colliderPtr = (Collider*)capsuleCollider.GetUnsafePtr();
+
+            for (var i = 0; i < maxIterations; i++)
             {
-                BelongsTo = 1u << 7, // Is on player layer
-                CollidesWith = 1u << 6, // Raycast against level layer
-                GroupIndex = 0
-            };
+                var remainingDist = math.length(vel);
+                if (remainingDist <= skinWidth)
+                    break;
 
-
-            var sphereGeometry = new SphereGeometry { Center = float3.zero, Radius = 0.2f };
-            var halfSegment = math.max(0f, 1.8f - 2f * 0.45f) * 0.5f;
-
-            var capsuleGeometry = new CapsuleGeometry
-            {
-                Radius = 0.45f,
-                Vertex0 = new float3(0, 1, 0) + new float3(0, -halfSegment, 0),
-                Vertex1 = new float3(0, 1, 0) + new float3(0, halfSegment, 0)
-            };
-            var sphereCollider = SphereCollider.Create(sphereGeometry, filter);
-            var capsuleCollider = CapsuleCollider.Create(capsuleGeometry, filter);
-            var input = new ColliderCastInput
-            {
-                Start = RayFrom,
-                End = RayTo,
-                Collider = (Collider*)capsuleCollider.GetUnsafePtr(),
-                Orientation = quaternion.identity
-            };
-            haveHit = collisionWorld.CastCollider(input, out hit);
-
-            Debug.Log($"Hit: {haveHit} Entity: {hit.Entity}");
-            Debug.DrawLine(RayFrom, RayTo, Color.blueViolet);
-            DebugVector.DrawArrow(RayFrom, RayTo - RayFrom, Color.green);
-            sphereCollider.Dispose();
-
-            if (haveHit)
-            {
-                //  Debug.DrawLine(RayFrom, hit.Position, Color.red);
-                DebugVector.DrawArrow(RayFrom, hit.Position - RayFrom, Color.red);
-                return hit.Entity;
-            }
-
-
-            return Entity.Null;
-
-            /*
-
-
-            fixed (Unity.Physics.Collider* rad = &radius.Value)
-            {
-                rad->SetCollisionFilter(filter);
-
-
-
-                var input = new ColliderCastInput()
+                var castInput = new ColliderCastInput
                 {
-                    Start = RayFrom,
-                    End = RayTo,
-                    Collider = rad,
-                    Orientation = quaternion.identity
+                    Collider = colliderPtr,
+                    Orientation = orientation,
+                    Start = pos,
+                    End = pos + vel
                 };
-                ColliderCastHit hit = new ColliderCastHit();
-                haveHit = collisionWorld.CastCollider(input, out hit);
 
-                Debug.Log($"Hit: {haveHit} From: {RayFrom} To: {RayTo} Entity: {hit.Entity}");
-                Debug.DrawLine(RayFrom, RayTo, Color.green);
-                Debug.DrawLine(RayFrom, hit.Position, Color.red);
-                return hit;
-
-            }
-            */
-        }
-
-        public static float3 ProjectOnPlane(float3 vector, float3 planeNormal)
-        {
-            var sqrMag = math.dot(planeNormal, planeNormal);
-            if (sqrMag < Mathf.Epsilon)
-                return vector;
-            var dot = math.dot(vector, planeNormal);
-            return new float3(vector.x - planeNormal.x * dot / sqrMag,
-                vector.y - planeNormal.y * dot / sqrMag,
-                vector.z - planeNormal.z * dot / sqrMag);
-        }
-
-        private const float skinWidth = 0.1f;
-        private const float clearance = 0.1f;
-
-        private float3 collideAndSlide(float3 inputDisplacement, float3 pos, int maxDepth)
-        {
-            // cast a bit from inside the collider to avoid going through walls
-            //  pos -= math.normalizesafe(inputDisplacement) * skinWidth;
-            // increase displacement to compensate
-            // inputDisplacement += math.normalizesafe(inputDisplacement) * skinWidth;
-
-            var finalDisplacement = float3.zero;
-            for (var i = 0; i < maxDepth; i++)
-            {
-                var collision = SCast(pos, pos + inputDisplacement + clearance, default, out var haveHit, out var hit);
-                if (!haveHit)
+                if (!world.CastCollider(castInput, out var hit))
                 {
-                    // If nothing is hit, we can move the full distance and stop there
-                    finalDisplacement += inputDisplacement;
+                    pos = dest;
                     break;
                 }
 
-                // Move until you're almost hitting the wall
-                var forward = math.normalizesafe(inputDisplacement);
-                var vel = inputDisplacement * hit.Fraction +
-                          clearance * hit.SurfaceNormal; // how much we can move in this direction
-                pos += vel; //advance position
+                var t = math.clamp(hit.Fraction, 0f, 1f);
 
-                // Calculate the remaining displacement to move along the wall
-                var remainingMove = inputDisplacement * (1 - hit.Fraction);
+                // --- Near point step (stop slightly before impact) ---
+                var travelDist = remainingDist * t;
+                //var shortDist = math.max(travelDist - skinWidth, 0f);
+                var moveDir = math.normalizesafe(vel);
 
-                if (math.length(vel) <= skinWidth)
+                pos += moveDir * travelDist + hit.SurfaceNormal * skinWidth;
+
+                // --- Touch point normal (collision constraint) ---
+                var planeN = hit.SurfaceNormal;
+
+                // Register constraint plane (max 2 needed for 3 DOF in 3D)
+                if (planeCount == 0)
                 {
-                    //     vel = 0;
+                    n1 = planeN;
+                    planeCount = 1;
+                }
+                else if (planeCount == 1 && math.dot(planeN, n1) < 0.999f)
+                {
+                    n2 = planeN;
+                    planeCount = 2;
+                }
+                else
+                {
+                    // Third constraint => no DOF left
+                    planeCount = 3;
                 }
 
-                remainingMove = ProjectOnPlane(remainingMove, hit.SurfaceNormal);
+                // --- Recompute velocity under constraints ---
+                if (planeCount == 1)
+                {
+                    // Project onto first plane
+                    vel = ProjectOnPlaneL(vel, n1);
+                }
+                else if (planeCount == 2)
+                {
+                    // Crease direction = intersection of two planes
+                    var crease = math.cross(n1, n2);
+                    var lenSq = math.lengthsq(crease);
 
-                //remainingMove = math.normalizesafe(remainingMove);
-                // remainingMove *=  math.length(remainingMove);
+                    if (lenSq < 1e-8f)
+                    {
+                        vel = float3.zero;
+                        break;
+                    }
 
-                inputDisplacement = remainingMove;
+                    crease = crease * math.rsqrt(lenSq);
 
-                finalDisplacement += vel;
+                    vel = math.dot(vel, crease) * crease;
+                }
+                else
+                {
+                    vel = float3.zero;
+                    break;
+                }
+
+                // Recompute destination from corrected state (prevents drift)
+                dest = pos + vel;
+
+                if (math.lengthsq(vel) < skinWidth * skinWidth)
+                    break;
             }
 
-            return finalDisplacement;
+            return pos;
         }
 
-        private static readonly int maxbounces = 5;
-
-        private float3 cas(float3 vel, float3 pos, int depth)
+        private static float3 ProjectOnPlaneL(float3 v, float3 n)
         {
-            var skin = 0.015f;
-            if (depth >= maxbounces) return float3.zero;
-
-            var dist = math.length(vel);
-            var collision = SCast(pos, pos + vel, default, out var haveHit, out var hit);
-            if (haveHit)
-            {
-                //float hitDistance = math.length(hit.Position - pos);
-                var hitDistance = math.length(hit.Fraction * vel);
-                // or hit.Fraction * vel.mag?
-                //float3 snapToSurface = (math.normalize(vel) * (hitDistance)) + (hit.SurfaceNormal * skin);
-                var snapToSurface = hitDistance + hit.SurfaceNormal * skin;
-                var leftover = vel - snapToSurface;
-
-                if (math.length(snapToSurface) < skin) snapToSurface = float3.zero;
-
-                var mag = math.length(leftover);
-                leftover = ProjectOnPlane(leftover, hit.SurfaceNormal);
-                //leftover = math.normalize(leftover) * mag;
-
-                return snapToSurface + cas(leftover, pos + snapToSurface, depth + 1);
-            }
-
-            return vel;
-        }
-
-
-        //class PLANE {
-//public:
-//float equation[4];
-//VECTOR origin;
-//VECTOR normal;
-
-        private class PLANE
-        {
-            public readonly float4 equation;
-            public readonly float3 normal;
-            public float3 origin;
-
-//PLANE::PLANE(const VECTOR& origin, const VECTOR& normal) {
-//this->normal = normal;
-//this->origin = origin;
-//equation[0] = normal.x;
-//equation[1] = normal.y;
-//equation[2] = normal.z;
-//equation[3] = -(normal.x*origin.x+normal.y*origin.y
-//+normal.z*origin.z);
-//}
-
-            public PLANE(float3 origin, float3 normal)
-            {
-                this.normal = normal;
-                this.origin = origin;
-                equation = new float4(normal.x, normal.y, normal.z,
-                    -(normal.x * origin.x + normal.y * origin.y + normal.z * origin.z));
-            }
-
-//bool PLANE::isFrontFacingTo(const VECTOR& direction) const {
-//double dot = normal.dot(direction);
-//return (dot <= 0);
-
-            public bool isFrontFacingTo(float3 direction)
-            {
-                var dot = math.dot(normal, direction);
-                return dot <= 0;
-            }
-
-
-//double PLANE::signedDistanceTo(const VECTOR& point) const {
-//return (point.dot(normal)) + equation[3];
-//}
-//};
-
-            public float signedDistanceTo(float3 point)
-            {
-                return math.dot(point, normal) + equation.w;
-            }
-        }
-
-
-//// Set this to match application scale..
-//const float unitsPerMeter = 100.0f;
-        private const float unitsPerMeter = 1;
-
-//VECTOR CharacterEntity::collideWithWorld(const VECTOR& pos,
-//const VECTOR& vel)
-//{
-
-        private float3 collideWithWorld(float3 pos, float3 vel, int collisionRecursionDepth = 0)
-        {
-//// All hard-coded distances in this function is
-//// scaled to fit the setting above..
-//float unitScale = unitsPerMeter / 100.0f;
-//float veryCloseDistance = 0.005f * unitScale;
-            var unitScale = unitsPerMeter / 100.0f;
-            var veryCloseDistance = 0.015f * unitScale;
-
-
-//// do we need to worry?
-//if (collisionRecursionDepth>5)
-//return pos;
-
-            if (collisionRecursionDepth > 5) return pos;
-
-//// Ok, we need to worry:
-//collisionPackage->velocity = vel;
-//45
-//collisionPackage->normalizedVelocity = vel;
-//collisionPackage->normalizedVelocity.normalize();
-//collisionPackage->basePoint = pos;
-//collisionPackage->foundCollision = false;
-//// Check for collision (calls the collision routines)
-//// Application specific!!
-//world->checkCollision(collisionPackage);
-
-            var collision = SCast(pos, pos + vel, default, out var haveHit, out var hit);
-
-
-//// If no collision we just move along the velocity
-//if (collisionPackage->foundCollision == false) {
-//return pos + vel;
-//}
-
-            if (!haveHit) return pos + vel;
-            var intersectionPoint = hit.Position;
-
-//// *** Collision occured ***
-//// The original destination point
-//VECTOR destinationPoint = pos + vel;
-//VECTOR newBasePoint = pos;
-
-            var destinationPoint = pos + vel;
-            var newBasePoint = pos;
-
-//// only update if we are not already very close
-//// and if so we only move very close to intersection..not
-//// to the exact spot.
-//if (collisionPackage->nearestDistance>=veryCloseDistance)
-//{
-            var nearestDistance = math.length(hit.Fraction * vel);
-            if (nearestDistance >= veryCloseDistance)
-            {
-//VECTOR V = vel;
-                var V = vel;
-//V.SetLength(collisionPackage->nearestDistance-
-//veryCloseDistance);
-
-                V = math.normalize(V) * nearestDistance;
-
-//newBasePoint = collisionPackage->basePoint + V;
-
-                newBasePoint = pos + V;
-
-//// Adjust polygon intersection point (so sliding
-//// plane will be unaffected by the fact that we
-//// move slightly less than collision tells us)
-
-//V.normalize();
-                V = math.normalize(V);
-
-//collisionPackage->intersectionPoint -=
-//veryCloseDistance * V;
-//}
-
-                intersectionPoint -= veryCloseDistance * V;
-            }
-
-//// Determine the sliding plane
-//VECTOR slidePlaneOrigin =
-//collisionPackage->intersectionPoint;
-
-            var slidePlaneOrigin = intersectionPoint;
-
-//VECTOR slidePlaneNormal =
-//newBasePoint-collisionPackage->intersectionPoint;
-
-            var slidePlaneNormal = newBasePoint - intersectionPoint;
-
-//slidePlaneNormal.normalize();
-
-            slidePlaneNormal = math.normalize(slidePlaneNormal);
-
-//PLANE slidingPlane(slidePlaneOrigin,slidePlaneNormal);
-
-            var slidingPlane = new PLANE(slidePlaneOrigin, slidePlaneNormal);
-
-//// Again, sorry about formatting.. but look carefully ;)
-//VECTOR newDestinationPoint = destinationPoint -
-//slidingPlane.signedDistanceTo(destinationPoint)*
-//slidePlaneNormal;
-
-            var newDestinationPoint =
-                destinationPoint - slidingPlane.signedDistanceTo(destinationPoint) * slidePlaneNormal;
-
-//// Generate the slide vector, which will become our new
-//// velocity vector for the next iteration
-//VECTOR newVelocityVector = newDestinationPoint -
-//collisionPackage->intersectionPoint;
-
-            var newVelocityVector = newDestinationPoint - intersectionPoint;
-
-//// Recurse:
-//// dont recurse if the new velocity is very small
-//if (newVelocityVector.length() < veryCloseDistance) {
-//return newBasePoint;
-//}
-
-            if (math.length(newVelocityVector) < veryCloseDistance) return newBasePoint;
-
-//collisionRecursionDepth++;
-//return collideWithWorld(newBasePoint,newVelocityVector);
-//}
-
-            return collideWithWorld(newBasePoint, newVelocityVector, collisionRecursionDepth + 1);
+            return v - math.dot(v, n) * n;
         }
     }
 }

@@ -10,6 +10,7 @@ namespace Entities.Netcode
     }
 
     [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
+    [UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
     public partial class PlayerVisualisationSystem : SystemBase
     {
         // public GameObject PlayerViewPrefab;

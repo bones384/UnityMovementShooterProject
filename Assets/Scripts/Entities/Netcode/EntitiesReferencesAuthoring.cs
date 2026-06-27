@@ -12,6 +12,8 @@ namespace Entities.Netcode
         public float gravity = -9.81f;
         public float acceleration = 1.0f;
         public float jumpSpeed = 8.0f;
+        public float dampenSpeed = 0.6f;
+        public float maxFallSpeed = 10;
     }
 
     internal class RotationSpeedBaker : Baker<EntitiesReferenceAuthoring>
@@ -24,7 +26,11 @@ namespace Entities.Netcode
                 PlayerPrefabEntity = GetEntity(authoring.playerPrefab, TransformUsageFlags.Dynamic),
                 MaxSpeed = authoring.maxSpeed,
                 Acceleration = authoring.acceleration,
-                JumpSpeed = authoring.jumpSpeed
+                JumpSpeed = authoring.jumpSpeed,
+                InitialSpeed = authoring.initialSpeed,
+                Gravity = authoring.gravity,
+                DampenSpeed = authoring.dampenSpeed,
+                MaxFallSpeed = authoring.maxFallSpeed
             });
         }
     }
@@ -37,5 +43,7 @@ namespace Entities.Netcode
         public float JumpSpeed;
         public float InitialSpeed;
         public float Gravity;
+        public float DampenSpeed;
+        public float MaxFallSpeed;
     }
 }

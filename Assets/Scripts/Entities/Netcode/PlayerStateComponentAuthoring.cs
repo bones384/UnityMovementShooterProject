@@ -21,7 +21,7 @@ namespace Entities.Netcode
     {
         public float3 Position;
         public quaternion Rotation;
-        public float Velocity;
+        public float3 Velocity;
         public bool IsSliding;
         public bool IsWallRunning;
         public bool IsCrouching;
