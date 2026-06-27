@@ -13,6 +13,10 @@ namespace Entities.Movement
         public float3 GroundNormal;
         public float3 WallLeftNormal;
         public float3 WallRightNormal;
+
+        public float3 GroundHit;
+        public float3 WallLeftHit;
+        public float3 WallRightHit;
     }
 
     public class MovementRaycasterComponentAuthoring : MonoBehaviour

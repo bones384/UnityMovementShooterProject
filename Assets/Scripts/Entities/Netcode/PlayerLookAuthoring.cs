@@ -3,12 +3,12 @@ using Unity.Mathematics;
 using Unity.NetCode;
 using UnityEngine;
 
-class PlayerLookAuthoring : MonoBehaviour
+internal class PlayerLookAuthoring : MonoBehaviour
 {
-    public float3 CameraOffset = new(0,1.8f,0);
+    public float3 CameraOffset = new(0, 1.8f, 0);
 }
 
-class PlayerLookAuthoringBaker : Baker<PlayerLookAuthoring>
+internal class PlayerLookAuthoringBaker : Baker<PlayerLookAuthoring>
 {
     public override void Bake(PlayerLookAuthoring authoring)
     {

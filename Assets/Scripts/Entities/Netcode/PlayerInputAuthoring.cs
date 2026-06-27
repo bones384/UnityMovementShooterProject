@@ -2,16 +2,14 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Entities.Netcode
 {
-    class PlayerInputAuthoring : MonoBehaviour
+    internal class PlayerInputAuthoring : MonoBehaviour
     {
-
     }
 
-    class PlayerInputAuthoringBaker : Baker<PlayerInputAuthoring>
+    internal class PlayerInputAuthoringBaker : Baker<PlayerInputAuthoring>
     {
         public override void Bake(PlayerInputAuthoring authoring)
         {
@@ -24,16 +22,16 @@ namespace Entities.Netcode
     {
         public float2 InputMovementVector;
         public float2 InputLookVector;
-        
+
         public bool SprintInput;
-        
+
         public bool JumpInput;
         public bool CrouchInput;
         public bool ParryInput;
-        
+
         public bool PrimaryAbilityInput;
         public bool SecondaryAbilityInput;
-        
+
         public bool ThirdAbilityInput;
         public bool FourthAbilityInput;
     }

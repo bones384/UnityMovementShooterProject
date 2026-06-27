@@ -1,36 +1,30 @@
 using Entities.Netcode;
-using Unity.Entities;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-
 public class PlayerVisualisation : MonoBehaviour
 {
+    public bool isLocalPlayer;
     public PlayerStateComponent PlayerState;
-    public bool isLocalPlayer = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
         if (!isLocalPlayer) return;
 
-        foreach(Transform childTransform in transform)
-        {
+        foreach (Transform childTransform in transform)
             childTransform.gameObject.GetComponent<Renderer>().shadowCastingMode = ShadowCastingMode.ShadowsOnly;
-        }
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
-       
     }
-    
+
     private void OnGUI()
     {
         if (!isLocalPlayer) return;
-    
+
         GUI.Label(new Rect(10, 10, 200, 20), $"Position: {PlayerState.Position}");
         GUI.Label(new Rect(10, 30, 200, 20), $"Rotation: {PlayerState.Rotation}");
         GUI.Label(new Rect(10, 50, 200, 20), $"Velocity: {PlayerState.Velocity}");
@@ -41,4 +35,3 @@ public class PlayerVisualisation : MonoBehaviour
         GUI.Label(new Rect(10, 150, 200, 20), $"IsParrying: {PlayerState.IsParrying}");
     }
 }
-

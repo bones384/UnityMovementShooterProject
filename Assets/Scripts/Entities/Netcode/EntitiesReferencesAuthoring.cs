@@ -5,15 +5,16 @@ namespace Entities.Netcode
 {
     public class EntitiesReferenceAuthoring : MonoBehaviour
     {
-        
         public GameObject playerPrefab;
 
-        public float maxSpeed = 20;
-        public float acceleration = 5.0f;
+        public float maxSpeed = 8;
+        public float initialSpeed = 4;
+        public float gravity = -9.81f;
+        public float acceleration = 1.0f;
         public float jumpSpeed = 8.0f;
     }
 
-    class RotationSpeedBaker : Baker<EntitiesReferenceAuthoring>
+    internal class RotationSpeedBaker : Baker<EntitiesReferenceAuthoring>
     {
         public override void Bake(EntitiesReferenceAuthoring authoring)
         {
@@ -34,5 +35,7 @@ namespace Entities.Netcode
         public float MaxSpeed;
         public float Acceleration;
         public float JumpSpeed;
+        public float InitialSpeed;
+        public float Gravity;
     }
 }

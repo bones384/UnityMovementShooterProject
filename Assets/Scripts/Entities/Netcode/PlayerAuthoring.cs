@@ -1,12 +1,11 @@
 using Unity.Entities;
 using UnityEngine;
 
-class PlayerAuthoring : MonoBehaviour
+internal class PlayerAuthoring : MonoBehaviour
 {
-    
 }
 
-class PlayerAuthoringBaker : Baker<PlayerAuthoring>
+internal class PlayerAuthoringBaker : Baker<PlayerAuthoring>
 {
     public override void Bake(PlayerAuthoring authoring)
     {
@@ -17,5 +16,4 @@ class PlayerAuthoringBaker : Baker<PlayerAuthoring>
 
 public struct Player : IComponentData
 {
-    
 }

@@ -1,20 +1,18 @@
-using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Entities.Netcode
 {
     [UpdateInGroup(typeof(GhostInputSystemGroup))]
-    partial class PlayerInputSystem : SystemBase
+    internal partial class PlayerInputSystem : SystemBase
     {
-        private InputSystem_Actions _controls;   
+        private InputSystem_Actions _controls;
 
         protected override void OnCreate()
         {
-            _controls = new();
+            _controls = new InputSystem_Actions();
             _controls.Enable();
             RequireForUpdate<NetworkStreamInGame>();
             RequireForUpdate<PlayerInput>();
@@ -38,6 +36,5 @@ namespace Entities.Netcode
                 playerInput.ValueRW.ThirdAbilityInput = _controls.Player.Ability3.triggered;
             }
         }
-        
     }
 }

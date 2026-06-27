@@ -1,12 +1,9 @@
-using Entities.Netcode;
 using Unity.Burst;
 using Unity.Entities;
-using Unity.Physics;
 using Unity.Transforms;
-using UnityEngine;
 
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
-partial struct PlayerBridgingSystem : ISystem
+internal partial struct PlayerBridgingSystem : ISystem
 {
     [BurstCompile]
     public void OnCreate(ref SystemState state)
@@ -29,15 +26,13 @@ partial struct PlayerBridgingSystem : ISystem
             //    IsParrying = false,
             //    IsSliding = false,
             //    IsWallRunning = false,
-             //   Velocity = Vector3.zero
+            //   Velocity = Vector3.zero
             //};
-
         }
     }
 
     [BurstCompile]
     public void OnDestroy(ref SystemState state)
     {
-        
     }
 }
