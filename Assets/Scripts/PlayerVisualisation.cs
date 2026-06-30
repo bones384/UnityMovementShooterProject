@@ -25,9 +25,9 @@ public class PlayerVisualisation : MonoBehaviour
     {
         if (!isLocalPlayer) return;
 
-        GUI.Label(new Rect(10, 10, 200, 20), $"Position: {PlayerState.Position}");
-        GUI.Label(new Rect(10, 30, 200, 20), $"Rotation: {PlayerState.Rotation}");
-        GUI.Label(new Rect(10, 50, 200, 20), $"Velocity: {PlayerState.Velocity}");
+        GUI.Label(new Rect(10, 10, 400, 20), $"Position: {PlayerState.Position}");
+        GUI.Label(new Rect(10, 30, 400, 20), $"Rotation: {PlayerState.Rotation}");
+        GUI.Label(new Rect(10, 50, 400, 20), $"Velocity: {PlayerState.Velocity}");
         GUI.Label(new Rect(10, 70, 200, 20), $"IsSliding: {PlayerState.IsSliding}");
         GUI.Label(new Rect(10, 90, 200, 20), $"IsWallRunning: {PlayerState.IsWallRunning}");
         GUI.Label(new Rect(10, 110, 200, 20), $"IsCrouching: {PlayerState.IsCrouching}");

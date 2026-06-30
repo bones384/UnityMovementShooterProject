@@ -1,4 +1,3 @@
-using System;
 using Entities.Movement;
 using Unity.Burst;
 using Unity.Entities;
@@ -6,10 +5,8 @@ using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Physics;
 using Unity.Transforms;
-using UnityEngine;
 using CapsuleCollider = Unity.Physics.CapsuleCollider;
 using Collider = Unity.Physics.Collider;
-using SphereCollider = Unity.Physics.SphereCollider;
 
 namespace Entities.Netcode
 {
@@ -35,9 +32,6 @@ namespace Entities.Netcode
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            Action stopSliding = () => { }; //WIP
-
-
             var entitiesReferences = SystemAPI.GetSingleton<EntitiesReferences>();
 
             maxSpeed = entitiesReferences.MaxSpeed;
@@ -68,9 +62,6 @@ namespace Entities.Netcode
                 playerLook.ValueRW.Yaw = math.fmod(playerLook.ValueRW.Yaw + lookVector.x, 2 * math.PI);
 
 
-                //var moveSpeed = pstate.ValueRO.Velocity;
-                //var moveSpeed = 4f;
-
                 var move =
                     localTransform.ValueRO.Right() * playerInput.ValueRO.InputMovementVector.x +
                     localTransform.ValueRO.Forward() * playerInput.ValueRO.InputMovementVector.y;
@@ -83,20 +74,15 @@ namespace Entities.Netcode
                 pstate.ValueRW.IsGrounded = isGrounded;
 
                 if (!isGrounded)
-                {
                     //apply gravity (but do not fall faster than maxSpeed)
-
                     pstate.ValueRW.Velocity.y = -pstate.ValueRO.Velocity.y < maxFallSpeed
                         ? pstate.ValueRW.Velocity.y + gravity * SystemAPI.Time.DeltaTime
                         : pstate.ValueRW.Velocity.y = -maxFallSpeed;
-                }
-                else
-                {
-                    localTransform.ValueRW.Position = contacts.ValueRO.GroundHit;
-                    pstate.ValueRW.Velocity.y = 0;
-                } //snap to floor
 
 
+                // localTransform.ValueRW.Position = contacts.ValueRO.GroundHit;
+                //pstate.ValueRW.Velocity.y = 0;
+                //snap to floor
                 if (move.Equals(float3.zero))
                     if (isGrounded)
                         pstate.ValueRW.Velocity *= dampenSpeed;
@@ -137,13 +123,15 @@ namespace Entities.Netcode
                 capsuleCollider = CapsuleCollider.Create(capsuleGeometry, filter);
                 var collisionWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().CollisionWorld;
 
-                localTransform.ValueRW.Position = CollideAndSlide_Linahan(collisionWorld, capsuleCollider,
+                CollideAndSlide_Linahan(collisionWorld, capsuleCollider,
                     localTransform.ValueRO.Position, localTransform.ValueRO.Rotation,
-                    newVelocity * SystemAPI.Time.DeltaTime, filter);
+                    newVelocity * SystemAPI.Time.DeltaTime, filter, isGrounded, false,
+                    out localTransform.ValueRW.Position);
 
-                localTransform.ValueRW.Position = CollideAndSlide_Linahan(collisionWorld, capsuleCollider,
+                CollideAndSlide_Linahan(collisionWorld, capsuleCollider,
                     localTransform.ValueRO.Position, localTransform.ValueRO.Rotation,
-                    verticalVelocity * SystemAPI.Time.DeltaTime, filter);
+                    verticalVelocity * SystemAPI.Time.DeltaTime, filter, isGrounded, true,
+                    out localTransform.ValueRW.Position);
                 capsuleCollider.Dispose();
             }
 
@@ -156,15 +144,18 @@ namespace Entities.Netcode
                 playerState.ValueRW.IsJumping = playerInput.ValueRO.JumpInput;
             }
         }
-        
+
         [BurstCompile]
-        public static unsafe float3 CollideAndSlide_Linahan(
-            CollisionWorld world,
-            BlobAssetReference<Collider> capsuleCollider,
-            float3 position,
-            quaternion orientation,
-            float3 velocity,
-            CollisionFilter filter,
+        public static unsafe void CollideAndSlide_Linahan(
+            in CollisionWorld world,
+            in BlobAssetReference<Collider> capsuleCollider,
+            in float3 position,
+            in quaternion orientation,
+            in float3 velocity,
+            in CollisionFilter filter,
+            bool isGrounded,
+            bool gravityPass,
+            out float3 newPosition,
             int maxIterations = 3,
             float skinWidth = 0.015f)
         {
@@ -232,7 +223,11 @@ namespace Entities.Netcode
                 if (planeCount == 1)
                 {
                     // Project onto first plane
-                    vel = ProjectOnPlaneL(vel, n1);
+                    // if (isGrounded && !gravityPass)
+                    //   vel = ProjectOnPlaneL(new float3(vel.x, 0, vel.z), new float3(n1.x, 0, n1.z));
+
+                    // else
+                    ProjectOnPlaneL(vel, n1, out vel);
                 }
                 else if (planeCount == 2)
                 {
@@ -263,12 +258,13 @@ namespace Entities.Netcode
                     break;
             }
 
-            return pos;
+            newPosition = pos;
         }
 
-        private static float3 ProjectOnPlaneL(float3 v, float3 n)
+        [BurstCompile]
+        private static void ProjectOnPlaneL(in float3 v, in float3 n, out float3 res)
         {
-            return v - math.dot(v, n) * n;
+            res = v - math.dot(v, n) * n;
         }
     }
 }

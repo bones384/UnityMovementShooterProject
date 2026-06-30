@@ -39,9 +39,14 @@ namespace Entities.Movement
                     Raycast(collisionWorld, pos, math.down(), groundDistance, out var hit);
                 if (contacts.ValueRW.IsGrounded)
                 {
+                    if (math.degrees(math.acos(math.dot(math.normalize(new float3(0, 1, 0)),
+                            math.normalize(hit.SurfaceNormal)))) >= 45)
+                        contacts.ValueRW.IsGrounded = false;
+
                     contacts.ValueRW.GroundNormal = hit.SurfaceNormal;
                     contacts.ValueRW.GroundHit = hit.Position;
                 }
+
 
                 Debug.DrawLine(pos, pos - transform.ValueRO.Right() * wallDistance, Color.blue);
                 Debug.DrawLine(pos, pos + transform.ValueRO.Right() * wallDistance, Color.green);
