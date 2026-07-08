@@ -29,7 +29,7 @@ namespace Entities.Netcode
             state.RequireForUpdate<PlayerInput>();
         }
 
-        [BurstCompile]
+        //[BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             var entitiesReferences = SystemAPI.GetSingleton<EntitiesReferences>();
@@ -74,7 +74,6 @@ namespace Entities.Netcode
                 pstate.ValueRW.IsGrounded = isGrounded;
 
                 if (!isGrounded)
-                    //apply gravity (but do not fall faster than maxSpeed)
                     pstate.ValueRW.Velocity.y = -pstate.ValueRO.Velocity.y < maxFallSpeed
                         ? pstate.ValueRW.Velocity.y + gravity * SystemAPI.Time.DeltaTime
                         : pstate.ValueRW.Velocity.y = -maxFallSpeed;
@@ -84,23 +83,32 @@ namespace Entities.Netcode
                 //pstate.ValueRW.Velocity.y = 0;
                 //snap to floor
                 if (move.Equals(float3.zero))
+                {
                     if (isGrounded)
-                        pstate.ValueRW.Velocity *= dampenSpeed;
-
+                        pstate.ValueRW.Velocity *= 0.2f;
+                }
+                else
+                {       
+                        pstate.ValueRW.Velocity += move * acceleration * SystemAPI.Time.DeltaTime;
+                }
 
                 //apply movement
                 var horizontalSpeed = math.length(new float3(pstate.ValueRO.Velocity.x, 0, pstate.ValueRO.Velocity.z));
                 var verticalVelocity = new float3(0, pstate.ValueRO.Velocity.y, 0);
-                var speedToApply = math.max(maxSpeed, horizontalSpeed);
+               var speedToApply = horizontalSpeed;//math.max(maxSpeed, horizontalSpeed);
+               if(horizontalSpeed<initialSpeed) speedToApply = math.max(initialSpeed,math.length(pstate.ValueRO.Velocity));
 
-                if (speedToApply > maxSpeed) speedToApply *= 0.985f;
-
+                if (speedToApply > maxSpeed)
+                {
+                    //pstate.ValueRW.Velocity += move*speedToApply;
+                    speedToApply = maxSpeed + (speedToApply - maxSpeed)*0.985f;
+                }
                 var newVelocity = move * speedToApply;
-                pstate.ValueRW.Velocity = new float3(newVelocity.x, pstate.ValueRO.Velocity.y, newVelocity.z);
+                //pstate.ValueRW.Velocity = new float3(newVelocity.x, pstate.ValueRO.Velocity.y, newVelocity.z);
 
                 displacement += newVelocity * SystemAPI.Time.DeltaTime;
                 displacement += verticalVelocity * SystemAPI.Time.DeltaTime;
-
+                //displacement = move * math.length(pstate.ValueRO.Velocity) * SystemAPI.Time.DeltaTime;
 
                 BlobAssetReference<Collider> capsuleCollider;
                 var filter = new CollisionFilter
@@ -125,7 +133,7 @@ namespace Entities.Netcode
 
                 CollideAndSlide_Linahan(collisionWorld, capsuleCollider,
                     localTransform.ValueRO.Position, localTransform.ValueRO.Rotation,
-                    newVelocity * SystemAPI.Time.DeltaTime, filter, isGrounded, false,
+                    displacement, filter, isGrounded, false,
                     out localTransform.ValueRW.Position);
 
                 CollideAndSlide_Linahan(collisionWorld, capsuleCollider,
@@ -145,7 +153,7 @@ namespace Entities.Netcode
             }
         }
 
-        [BurstCompile]
+       // [BurstCompile]
         public static unsafe void CollideAndSlide_Linahan(
             in CollisionWorld world,
             in BlobAssetReference<Collider> capsuleCollider,
@@ -261,7 +269,7 @@ namespace Entities.Netcode
             newPosition = pos;
         }
 
-        [BurstCompile]
+       // [BurstCompile]
         private static void ProjectOnPlaneL(in float3 v, in float3 n, out float3 res)
         {
             res = v - math.dot(v, n) * n;

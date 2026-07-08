@@ -1,7 +1,7 @@
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
-
+using Unity.NetCode;
 namespace Entities.Netcode
 {
     public class PlayerStateComponentAuthoring : MonoBehaviour
@@ -21,6 +21,8 @@ namespace Entities.Netcode
     {
         public float3 Position;
         public quaternion Rotation;
+        
+        [GhostField]
         public float3 Velocity;
         public bool IsSliding;
         public bool IsWallRunning;

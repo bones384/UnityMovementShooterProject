@@ -7,10 +7,10 @@ namespace Entities.Netcode
     {
         public GameObject playerPrefab;
 
-        public float maxSpeed = 8;
-        public float initialSpeed = 4;
+        public float maxSpeed = 20;
+        public float initialSpeed = 16;
         public float gravity = -9.81f;
-        public float acceleration = 1.0f;
+        public float acceleration = 4f;
         public float jumpSpeed = 8.0f;
         public float dampenSpeed = 0.6f;
         public float maxFallSpeed = 10;

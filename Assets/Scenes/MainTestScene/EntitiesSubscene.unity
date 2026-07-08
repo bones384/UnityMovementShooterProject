@@ -3957,7 +3957,7 @@ MonoBehaviour:
   maxSpeed: 12
   initialSpeed: 2
   gravity: -9.81
-  acceleration: 5
+  acceleration: 1
   jumpSpeed: 8
   dampenSpeed: 0.6
   maxFallSpeed: 54
