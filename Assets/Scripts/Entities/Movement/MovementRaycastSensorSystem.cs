@@ -87,8 +87,8 @@ namespace Entities.Movement
                 End = origin + direction * distance,
                 Filter =
                 {
-                    BelongsTo = 1u << 7, // Raycast against everything
-                    CollidesWith = 1u << 6, // Raycast against everything
+                    BelongsTo = 1u << 7, // Raycast as player
+                    CollidesWith = 1u << 6, // Raycast against level
                     GroupIndex = 0
                 }
             };

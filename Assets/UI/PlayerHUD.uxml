@@ -1,0 +1,50 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/PlayerHUD.uss?fileID=7433441132597879392&amp;guid=a72b43c3fa8ff43bc9f57a3a0486f250&amp;type=3#PlayerHUD"/>
+    <ui:VisualElement class="hud-root">
+        <ui:VisualElement name="crosshair">
+            <ui:VisualElement name="hitmarker" class="hitmarker">
+                <ui:VisualElement class="hitmarker-line hitmarker-tl" />
+                <ui:VisualElement class="hitmarker-line hitmarker-tr" />
+                <ui:VisualElement class="hitmarker-line hitmarker-bl" />
+                <ui:VisualElement class="hitmarker-line hitmarker-br" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="abilities-container">
+            <ui:VisualElement class="primary-ability-wrapper">
+                <ui:Label name="ammo-text" class="ammo-label" text="30/30" />
+                
+                <ui:VisualElement class="ability-slot" name="ability-primary">
+                    <ui:VisualElement class="ability-overlay" name="overlay-primary">
+                        <ui:Label class="ability-timer" name="timer-primary" text="0.0" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="ability-secondary" class="ability-slot">
+                <ui:VisualElement name="overlay-secondary" class="ability-overlay">
+                    <ui:Label name="timer-secondary" text="0.0" class="ability-timer"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="ability-third" class="ability-slot">
+                <ui:VisualElement name="overlay-third" class="ability-overlay">
+                    <ui:Label name="timer-third" text="0.0" class="ability-timer"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="ability-fourth" class="ability-slot">
+                <ui:VisualElement name="overlay-fourth" class="ability-overlay">
+                    <ui:Label name="timer-fourth" text="0.0" class="ability-timer"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="health-container">
+            <ui:Label name="health-text" text="100 / 100"/>
+            <ui:VisualElement name="health-bar-bg">
+                <ui:VisualElement name="health-bar-fill"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="death-overlay" class="death-screen">
+        <ui:Label text="YOU DIED!" class="death-title" />
+        <ui:Label name="death-timer-text" text="Respawning in 5..." class="death-subtitle" />
+    </ui:VisualElement>
+    <ui:VisualElement name="killfeed-container" class="killfeed-container" />
+</ui:UXML>

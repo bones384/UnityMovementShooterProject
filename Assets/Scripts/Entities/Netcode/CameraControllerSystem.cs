@@ -15,7 +15,6 @@ namespace Entities.Netcode
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            // state.RequireForUpdate<EnableCharacterController>();
             state.RequireForUpdate<NetworkStreamInGame>();
             state.RequireForUpdate<LocalPlayerTag>();
         }
@@ -24,16 +23,23 @@ namespace Entities.Netcode
         {
             var camera = Camera.main;
             if (camera == null) return;
-            //We need to access the LocalToWorld matrix to match the position of the player in term of presentation.
-            //Because Physics can be either Interpolated or Predicted, we the LocalToWorld can be different than the real world position
-            //of the entity.
-            foreach (var (localToWorld, input) in SystemAPI.Query<RefRO<LocalToWorld>, RefRO<PlayerLook>>()
+
+            foreach (var (localToWorld, input, pState) in SystemAPI.Query<RefRO<LocalToWorld>, RefRO<PlayerLook>, RefRO<PlayerStateComponent>>()
                          .WithAll<GhostOwnerIsLocal>())
             {
                 camera.transform.rotation = math.mul(quaternion.RotateY(input.ValueRO.Yaw),
                     quaternion.RotateX(-input.ValueRO.Pitch));
-                //var offset = math.rotate(camera.transform.rotation, input.ValueRO.CameraOffset);
-                camera.transform.position = localToWorld.ValueRO.Position + input.ValueRO.CameraOffset;
+                
+                if (!pState.ValueRO.IsDead) 
+                {
+                    // Alive: Follow the actively moving body
+                    camera.transform.position = localToWorld.ValueRO.Position + input.ValueRO.CameraOffset;
+                }
+                else
+                {
+                    // Dead: Lock the camera rigidly to the death coordinates
+                    camera.transform.position = pState.ValueRO.DeathPosition + input.ValueRO.CameraOffset;
+                }
             }
         }
     }

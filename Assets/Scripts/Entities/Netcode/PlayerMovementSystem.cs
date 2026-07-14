@@ -20,6 +20,7 @@ namespace Entities.Netcode
         public float gravity;
         public float dampenSpeed;
         public float maxFallSpeed;
+        public float airControlFactor;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
@@ -27,133 +28,332 @@ namespace Entities.Netcode
             state.RequireForUpdate<PhysicsWorldSingleton>();
             state.RequireForUpdate<EntitiesReferences>();
             state.RequireForUpdate<PlayerInput>();
+            state.RequireForUpdate<NetworkTime>();
         }
 
-        //[BurstCompile]
-        public void OnUpdate(ref SystemState state)
+        [BurstCompile]
+public void OnUpdate(ref SystemState state)
+{
+    var entitiesReferences = SystemAPI.GetSingleton<EntitiesReferences>();
+    var networkTime = SystemAPI.GetSingleton<NetworkTime>();
+    maxSpeed = entitiesReferences.MaxSpeed;
+    acceleration = entitiesReferences.Acceleration;
+    jumpSpeed = entitiesReferences.JumpSpeed;
+    initialSpeed = entitiesReferences.InitialSpeed;
+    gravity = math.abs(entitiesReferences.Gravity);
+    dampenSpeed = entitiesReferences.DampenSpeed;
+    maxFallSpeed = entitiesReferences.MaxFallSpeed;
+    airControlFactor = entitiesReferences.AirControlFactor;
+
+    float wallRunMaxTime = entitiesReferences.WallRunMaxTime;
+    float wallRunDrag = entitiesReferences.WallRunDrag;
+    float wallRunMinSpeed = entitiesReferences.WallRunMinSpeed;
+    float wallJumpBoost = entitiesReferences.WallJumpBoost;
+    bool applyWallGravity = entitiesReferences.ApplyWallGravity;
+    float wallGravityMultiplier = entitiesReferences.WallGravityMultiplier;
+
+    var dt = SystemAPI.Time.DeltaTime;
+    var collisionWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().CollisionWorld;
+
+    foreach (var (playerInput, localTransform, playerLook, pstate, contacts) in SystemAPI
+                 .Query<RefRO<PlayerInput>, RefRW<LocalTransform>, RefRW<PlayerLook>,
+                     RefRW<PlayerStateComponent>, RefRO<MovementRaycasterComponent>>()
+                 .WithAll<Simulate>())
+    {
+        var lookVector = playerInput.ValueRO.InputLookVector;
+        const float mouseSensitivity = 1f;
+        lookVector *= mouseSensitivity * dt;
+
+        playerLook.ValueRW.Pitch = math.clamp(playerLook.ValueRW.Pitch + lookVector.y, -math.PI / 2, math.PI / 2);
+        playerLook.ValueRW.Yaw = math.fmod(playerLook.ValueRW.Yaw + lookVector.x, 2 * math.PI);
+
+        var cameraRotation = math.mul(quaternion.RotateY(playerLook.ValueRW.Yaw), quaternion.RotateX(0));
+        localTransform.ValueRW.Rotation = cameraRotation;
+
+        var inputMovement = playerInput.ValueRO.InputMovementVector;
+        var move = localTransform.ValueRO.Right() * inputMovement.x +
+                   localTransform.ValueRO.Forward() * inputMovement.y;
+        move = math.normalizesafe(move);
+        bool isJumpButtonHeld = playerInput.ValueRO.JumpInput;
+
+        if (pstate.ValueRO.IsDead)
         {
-            var entitiesReferences = SystemAPI.GetSingleton<EntitiesReferences>();
+            move = float3.zero;
+            isJumpButtonHeld = false;
+        }
+        
+        var isGrounded = contacts.ValueRO.IsGrounded;
+        var currentVelocity = pstate.ValueRO.Velocity;
 
-            maxSpeed = entitiesReferences.MaxSpeed;
-            acceleration = entitiesReferences.Acceleration;
-            jumpSpeed = entitiesReferences.JumpSpeed;
-            initialSpeed = entitiesReferences.InitialSpeed;
-            gravity = entitiesReferences.Gravity;
-            dampenSpeed = entitiesReferences.DampenSpeed;
-            maxFallSpeed = entitiesReferences.MaxFallSpeed;
+        if (currentVelocity.y > 0.1f)
+        {
+            isGrounded = false;
+        }
 
-            foreach (var (playerInput, localTransform, playerLook, collider, pstate, contacts) in SystemAPI
-                         .Query<RefRO<PlayerInput>, RefRW<LocalTransform>, RefRW<PlayerLook>,
-                             RefRO<PhysicsCollider>, RefRW<PlayerStateComponent>, RefRW<MovementRaycasterComponent>>()
-                         .WithAll<Simulate>())
+        var horizontalVelocity = new float3(currentVelocity.x, 0, currentVelocity.z);
+        var verticalVelocity = new float3(0, currentVelocity.y, 0);
+
+        bool inputTowardsLeftWall = inputMovement.x < -0.1f;
+        bool inputTowardsRightWall = inputMovement.x > 0.1f;
+
+        bool isAlreadyRunning = pstate.ValueRO.IsWallRunning;
+
+        bool pullingAwayFromLeft = inputMovement.x > 0.1f;
+        bool pullingAwayFromRight = inputMovement.x < -0.1f;
+
+
+        bool keepRunningLeft = isAlreadyRunning && contacts.ValueRO.HasWallLeft 
+                                                && math.dot(contacts.ValueRO.WallLeftNormal, pstate.ValueRO.LastWallNormal) > 0.1f 
+                                                && !pullingAwayFromLeft;
+    
+        bool keepRunningRight = isAlreadyRunning && contacts.ValueRO.HasWallRight 
+                                                 && math.dot(contacts.ValueRO.WallRightNormal, pstate.ValueRO.LastWallNormal) > 0.1f 
+                                                 && !pullingAwayFromRight;
+
+        bool canWallRunLeft = (contacts.ValueRO.HasWallLeft && inputTowardsLeftWall) || keepRunningLeft;
+        bool canWallRunRight = (contacts.ValueRO.HasWallRight && inputTowardsRightWall) || keepRunningRight;
+
+        float3 currentWallNormal = float3.zero;
+        if (canWallRunLeft) currentWallNormal = contacts.ValueRO.WallLeftNormal;
+        else if (canWallRunRight) currentWallNormal = contacts.ValueRO.WallRightNormal;
+
+        bool isNearWall = canWallRunLeft || canWallRunRight;
+
+        bool isSameWall = math.dot(currentWallNormal, pstate.ValueRO.LastWallNormal) > 0.9f;
+
+        bool isValidWall = !isSameWall || isAlreadyRunning;
+        bool shouldWallRun = !isGrounded && isNearWall && isValidWall;
+
+        if (isGrounded)
+        {
+            pstate.ValueRW.LastWallNormal = float3.zero;
+        }
+
+        if (isGrounded)
+        {
+            pstate.ValueRW.CoyoteTimer = 0.15f;
+        }
+        else if (pstate.ValueRO.CoyoteTimer > 0)
+        {
+            pstate.ValueRW.CoyoteTimer -= dt;
+        }
+
+        bool wasJumpButtonHeldLastTick = pstate.ValueRO.IsJumping;
+
+        if (isJumpButtonHeld && !wasJumpButtonHeldLastTick)
+        {
+            pstate.ValueRW.JumpBufferTimer = 0.15f;
+        }
+        if (pstate.ValueRO.JumpBufferTimer > 0)
+        {
+            pstate.ValueRW.JumpBufferTimer -= dt;
+        }
+
+        if (pstate.ValueRO.JumpBufferTimer > 0)
+        {
+            if (pstate.ValueRO.CoyoteTimer > 0) // Ground Jump
             {
-                var lookVector = playerInput.ValueRO.InputLookVector;
-
-                const float userSpecifiedMouseSensitivity = 1f;
-                lookVector *= userSpecifiedMouseSensitivity * SystemAPI.Time.DeltaTime;
-
-
-                var cameraRotation = math.mul(quaternion.RotateY(playerLook.ValueRW.Yaw), quaternion.RotateX(0));
-                localTransform.ValueRW.Rotation = cameraRotation;
-                // var forward = math.mul(cameraRotation, math.forward());
-
-                playerLook.ValueRW.Pitch =
-                    math.clamp(playerLook.ValueRW.Pitch + lookVector.y, -math.PI / 2, math.PI / 2);
-                playerLook.ValueRW.Yaw = math.fmod(playerLook.ValueRW.Yaw + lookVector.x, 2 * math.PI);
-
-
-                var move =
-                    localTransform.ValueRO.Right() * playerInput.ValueRO.InputMovementVector.x +
-                    localTransform.ValueRO.Forward() * playerInput.ValueRO.InputMovementVector.y;
-
-
-                move = math.normalizesafe(move);
-                var displacement = float3.zero;
-
-                var isGrounded = contacts.ValueRO.IsGrounded;
-                pstate.ValueRW.IsGrounded = isGrounded;
-
-                if (!isGrounded)
-                    pstate.ValueRW.Velocity.y = -pstate.ValueRO.Velocity.y < maxFallSpeed
-                        ? pstate.ValueRW.Velocity.y + gravity * SystemAPI.Time.DeltaTime
-                        : pstate.ValueRW.Velocity.y = -maxFallSpeed;
-
-
-                // localTransform.ValueRW.Position = contacts.ValueRO.GroundHit;
-                //pstate.ValueRW.Velocity.y = 0;
-                //snap to floor
-                if (move.Equals(float3.zero))
+                verticalVelocity.y = jumpSpeed;
+                isGrounded = false;
+                pstate.ValueRW.JumpBufferTimer = 0;
+                pstate.ValueRW.CoyoteTimer = 0;
+            }
+            else if (shouldWallRun || pstate.ValueRO.IsWallRunning) // Wall Jump
+            {
+                verticalVelocity.y = jumpSpeed;
+    
+                float3 currentForward = math.normalizesafe(horizontalVelocity);
+    
+                if (math.lengthsq(horizontalVelocity) < 0.1f) 
                 {
-                    if (isGrounded)
-                        pstate.ValueRW.Velocity *= 0.2f;
+                    currentForward = localTransform.ValueRO.Forward();
+                }
+
+                // This creates a vector pointing forward AND away from the wall
+                float3 jumpOffDir = math.normalizesafe(currentForward + currentWallNormal);
+    
+                float currentSpeed = math.max(math.length(horizontalVelocity), initialSpeed);
+                horizontalVelocity = jumpOffDir * (currentSpeed * wallJumpBoost);
+
+                isGrounded = false;
+                shouldWallRun = false; 
+                pstate.ValueRW.IsWallRunning = false;
+    
+                pstate.ValueRW.LastWallNormal = currentWallNormal;
+                pstate.ValueRW.JumpBufferTimer = 0;
+            }        }
+
+        pstate.ValueRW.IsGrounded = isGrounded;
+
+        if (isGrounded)
+        {
+            pstate.ValueRW.IsWallRunning = false;
+            verticalVelocity.y = 0;
+            
+            if (math.lengthsq(move) > 0)
+            {
+                var currentSpeed = math.length(horizontalVelocity);
+
+                if (currentSpeed < initialSpeed)
+                    currentSpeed = initialSpeed;
+                else if (currentSpeed < maxSpeed)
+                    currentSpeed = math.min(maxSpeed, currentSpeed + acceleration * dt);
+                else if (currentSpeed > maxSpeed)
+                    currentSpeed = math.max(maxSpeed, currentSpeed - dampenSpeed * dt);
+
+                horizontalVelocity = move * currentSpeed;
+            }
+            else
+            {
+                var currentSpeed = math.length(horizontalVelocity);
+                currentSpeed = math.max(0, currentSpeed - 1000 * dampenSpeed * dt);
+
+                if (currentSpeed > 0)
+                    horizontalVelocity = math.normalizesafe(horizontalVelocity) * currentSpeed;
+                else
+                    horizontalVelocity = float3.zero;
+            }
+        }
+        else if (shouldWallRun)
+        {
+            if (!pstate.ValueRO.IsWallRunning)
+            {
+                pstate.ValueRW.IsWallRunning = true;
+                pstate.ValueRW.WallRunTimer = wallRunMaxTime;
+                
+                verticalVelocity.y = 0f;
+                
+                if (math.length(horizontalVelocity) < initialSpeed)
+                {
+                    horizontalVelocity = math.normalizesafe(horizontalVelocity) * initialSpeed;
+                }
+            }
+
+            pstate.ValueRW.LastWallNormal = currentWallNormal;
+
+            float3 upVector = new float3(0, 1, 0);
+            float3 wallForward = math.cross(currentWallNormal, upVector);
+
+            if (math.dot(wallForward, localTransform.ValueRO.Forward()) < 0)
+            {
+                wallForward = -wallForward;
+            }
+
+            float3 velocityAlongWall = horizontalVelocity - math.dot(horizontalVelocity, currentWallNormal) * currentWallNormal;
+            float currentSpeed = math.length(velocityAlongWall);
+
+            pstate.ValueRW.WallRunTimer -= dt;
+
+            if (pstate.ValueRO.WallRunTimer <= 0)
+            {
+                currentSpeed -= wallRunDrag * dt;
+            }
+
+            if (currentSpeed < wallRunMinSpeed)
+            {
+                shouldWallRun = false;
+                pstate.ValueRW.IsWallRunning = false;
+            }
+            else
+            {
+                float3 stickForce = -currentWallNormal * 3f;
+                float3 targetVelocity = (wallForward * currentSpeed) + stickForce;
+
+                horizontalVelocity = math.lerp(horizontalVelocity, targetVelocity, math.saturate(15f * dt));
+
+                if (applyWallGravity)
+                {
+                    verticalVelocity.y -= gravity * wallGravityMultiplier * dt;
                 }
                 else
-                {       
-                        pstate.ValueRW.Velocity += move * acceleration * SystemAPI.Time.DeltaTime;
+                {
+                    verticalVelocity.y = 0;
                 }
-
-                //apply movement
-                var horizontalSpeed = math.length(new float3(pstate.ValueRO.Velocity.x, 0, pstate.ValueRO.Velocity.z));
-                var verticalVelocity = new float3(0, pstate.ValueRO.Velocity.y, 0);
-               var speedToApply = horizontalSpeed;//math.max(maxSpeed, horizontalSpeed);
-               if(horizontalSpeed<initialSpeed) speedToApply = math.max(initialSpeed,math.length(pstate.ValueRO.Velocity));
-
-                if (speedToApply > maxSpeed)
-                {
-                    //pstate.ValueRW.Velocity += move*speedToApply;
-                    speedToApply = maxSpeed + (speedToApply - maxSpeed)*0.985f;
-                }
-                var newVelocity = move * speedToApply;
-                //pstate.ValueRW.Velocity = new float3(newVelocity.x, pstate.ValueRO.Velocity.y, newVelocity.z);
-
-                displacement += newVelocity * SystemAPI.Time.DeltaTime;
-                displacement += verticalVelocity * SystemAPI.Time.DeltaTime;
-                //displacement = move * math.length(pstate.ValueRO.Velocity) * SystemAPI.Time.DeltaTime;
-
-                BlobAssetReference<Collider> capsuleCollider;
-                var filter = new CollisionFilter
-                {
-                    BelongsTo = 1u << 7, // Is on player layer
-                    CollidesWith = 1u << 6, // Raycast against level layer
-                    GroupIndex = 0
-                };
-
-
-                var halfSegment = math.max(0f, 1.8f - 2f * 0.45f) * 0.5f;
-
-                var capsuleGeometry = new CapsuleGeometry
-                {
-                    Radius = 0.45f,
-                    Vertex0 = new float3(0, 1, 0) + new float3(0, -halfSegment, 0),
-                    Vertex1 = new float3(0, 1, 0) + new float3(0, halfSegment, 0)
-                };
-
-                capsuleCollider = CapsuleCollider.Create(capsuleGeometry, filter);
-                var collisionWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().CollisionWorld;
-
-                CollideAndSlide_Linahan(collisionWorld, capsuleCollider,
-                    localTransform.ValueRO.Position, localTransform.ValueRO.Rotation,
-                    displacement, filter, isGrounded, false,
-                    out localTransform.ValueRW.Position);
-
-                CollideAndSlide_Linahan(collisionWorld, capsuleCollider,
-                    localTransform.ValueRO.Position, localTransform.ValueRO.Rotation,
-                    verticalVelocity * SystemAPI.Time.DeltaTime, filter, isGrounded, true,
-                    out localTransform.ValueRW.Position);
-                capsuleCollider.Dispose();
-            }
-
-            foreach (var (playerInput, localTransform, playerLook, playerState) in SystemAPI
-                         .Query<RefRO<PlayerInput>, RefRO<LocalTransform>, RefRO<PlayerLook>,
-                             RefRW<PlayerStateComponent>>())
-            {
-                playerState.ValueRW.Position = localTransform.ValueRO.Position;
-                playerState.ValueRW.Rotation = localTransform.ValueRO.Rotation;
-                playerState.ValueRW.IsJumping = playerInput.ValueRO.JumpInput;
             }
         }
 
-       // [BurstCompile]
+        if (!isGrounded && !shouldWallRun) 
+        {
+            pstate.ValueRW.IsWallRunning = false;
+            
+            verticalVelocity.y -= gravity * dt;
+            verticalVelocity.y = math.max(-maxFallSpeed, verticalVelocity.y);
+
+            if (math.lengthsq(move) > 0)
+            {
+                var currentSpeed = math.length(horizontalVelocity);
+
+                if (currentSpeed < initialSpeed)
+                    currentSpeed = initialSpeed;
+                else if (currentSpeed < maxSpeed)
+                    currentSpeed = math.min(maxSpeed, currentSpeed + acceleration * dt);
+
+                var targetVelocity = move * currentSpeed;
+
+                horizontalVelocity = math.lerp(
+                    horizontalVelocity,
+                    targetVelocity,
+                    math.saturate(15f * airControlFactor * dt)
+                );
+            }
+        }
+
+// --- 1. Freeze physical body in the abyss ---
+        if (pstate.ValueRO.IsDead)
+        {
+            horizontalVelocity = float3.zero;
+            verticalVelocity = float3.zero;
+        }
+
+        pstate.ValueRW.Velocity = horizontalVelocity + verticalVelocity;
+        
+        pstate.ValueRW.IsJumping = isJumpButtonHeld;
+
+        var horizontalDisplacement = horizontalVelocity * dt;
+        var verticalDisplacement = verticalVelocity * dt;
+
+        var filter = new CollisionFilter
+        {
+            BelongsTo = 1u << 7,
+            CollidesWith = 1u << 6,
+            GroupIndex = 0
+        };
+
+        var halfSegment = math.max(0f, 1.8f - 2f * 0.45f) * 0.5f;
+        var capsuleGeometry = new CapsuleGeometry
+        {
+            Radius = 0.45f,
+            Vertex0 = new float3(0, 1, 0) + new float3(0, -halfSegment, 0),
+            Vertex1 = new float3(0, 1, 0) + new float3(0, halfSegment, 0)
+        };
+        var capsuleCollider = CapsuleCollider.Create(capsuleGeometry, filter);
+
+        var pos = localTransform.ValueRO.Position;
+
+        CollideAndSlide_Linahan(collisionWorld, capsuleCollider,
+            pos, localTransform.ValueRO.Rotation,
+            horizontalDisplacement, filter, isGrounded, false,
+            out pos, maxIterations: 3, skinWidth: 0.001f);
+
+        CollideAndSlide_Linahan(collisionWorld, capsuleCollider,
+            pos, localTransform.ValueRO.Rotation,
+            verticalDisplacement, filter, isGrounded, true,
+            out pos, maxIterations: 3, skinWidth: 0.001f);
+
+        localTransform.ValueRW.Position = pos;
+        pstate.ValueRW.Rotation = cameraRotation;
+        capsuleCollider.Dispose();
+    }
+
+    foreach (var (playerInput, localTransform, playerLook, playerState) in SystemAPI
+                 .Query<RefRO<PlayerInput>, RefRO<LocalTransform>, RefRO<PlayerLook>,
+                     RefRW<PlayerStateComponent>>())
+    {
+        playerState.ValueRW.Position = localTransform.ValueRO.Position;
+        playerState.ValueRW.Rotation = localTransform.ValueRO.Rotation;
+    }
+}
+        [BurstCompile]
         public static unsafe void CollideAndSlide_Linahan(
             in CollisionWorld world,
             in BlobAssetReference<Collider> capsuleCollider,

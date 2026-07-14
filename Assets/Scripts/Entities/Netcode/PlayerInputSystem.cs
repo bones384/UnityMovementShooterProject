@@ -26,14 +26,14 @@ namespace Entities.Netcode
                 float2 lookvec = _controls.Player.Look.ReadValue<Vector2>();
                 playerInput.ValueRW.InputMovementVector = inputVector;
                 playerInput.ValueRW.InputLookVector = lookvec;
-                playerInput.ValueRW.JumpInput = _controls.Player.Jump.triggered;
-                playerInput.ValueRW.CrouchInput = _controls.Player.Crouch.triggered;
-                playerInput.ValueRW.ParryInput = _controls.Player.Parry.triggered;
-                playerInput.ValueRW.SprintInput = _controls.Player.Sprint.triggered;
-                playerInput.ValueRW.PrimaryAbilityInput = _controls.Player.Primary.triggered;
-                playerInput.ValueRW.SecondaryAbilityInput = _controls.Player.Secondary.triggered;
-                playerInput.ValueRW.FourthAbilityInput = _controls.Player.Ability4.triggered;
-                playerInput.ValueRW.ThirdAbilityInput = _controls.Player.Ability3.triggered;
+                playerInput.ValueRW.JumpInput = _controls.Player.Jump.IsPressed();
+                playerInput.ValueRW.CrouchInput = _controls.Player.Crouch.IsPressed();
+                playerInput.ValueRW.ParryInput = _controls.Player.Parry.IsPressed();
+                playerInput.ValueRW.SprintInput = _controls.Player.Sprint.IsPressed();
+                playerInput.ValueRW.PrimaryAbilityInput = _controls.Player.Primary.IsPressed();
+                playerInput.ValueRW.SecondaryAbilityInput = _controls.Player.Secondary.IsPressed();
+                playerInput.ValueRW.FourthAbilityInput = _controls.Player.Ability4.IsPressed();
+                playerInput.ValueRW.ThirdAbilityInput = _controls.Player.Ability3.IsPressed();
             }
         }
     }

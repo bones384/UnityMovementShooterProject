@@ -10,8 +10,14 @@ public class ClientSideInstantiator : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance is null) Instance = this;
-        else Destroy(gameObject);
+        Debug.Log("ClientSideInstantiator.Awake");
+        if( Instance != null && Instance != this)
+        {
+            Debug.LogError("ClientSideInstantiator Instance already exists: " + Instance);
+            Destroy(gameObject);
+        }
+        else Instance = this;
+
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

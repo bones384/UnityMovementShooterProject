@@ -1,27 +1,37 @@
+using System;
 using System.Collections.Generic;
+using Entities.Netcode;
+using Unity.Cinemachine;
+using Unity.Cinemachine.Editor;
 using Unity.Entities;
 using UnityEngine;
 
 public class PlayerVisualisationManager : MonoBehaviour
 {
     public static GameObject PlayerViewPrefab;
-    public static Entity? LocalPlayer = null;
+    public static PlayerStateComponent? LocalPlayer = null;
 
     public GameObject playerPrefab;
-    private PlayerVisualisationManager _instance;
-
+    public static PlayerVisualisationManager Instance;
+    public Material friendMaterial;
+    public Material enemyMaterial;
 
     public void Awake()
     {
-        if (_instance is null)
-        {
-            _instance = this;
-            PlayerViewPrefab = playerPrefab;
-        }
-        else
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
         }
+        else
+        {
+            Instance = this;
+            PlayerViewPrefab = playerPrefab;
+
+        }
+    }
+
+    public void Start()
+    {
     }
 
     public static PlayerVisualisation CreatePlayerView()

@@ -16,15 +16,5 @@ public class CameraBridge : MonoBehaviour
 
     private void LateUpdate()
     {
-        /*transform.position =
-            Vector3.Lerp(
-                transform.position,
-                (Vector3)TargetPosition + new Vector3(0, 5, -10),
-                Time.deltaTime * 10f);*/
-        if (PlayerVisualisationManager.LocalPlayer == null) return;
-        var localPlayer = PlayerVisualisationManager.LocalPlayer.Value;
-
-        transform.position = PlayerVisualisationManager.PlayerViewRegistry.Views[localPlayer].transform.position +
-                             TargetPosition;
     }
 }
