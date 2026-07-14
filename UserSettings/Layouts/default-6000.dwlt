@@ -8,18 +8,18 @@ MonoBehaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
-  m_EditorHideFlags: 1
+  m_EditorHideFlags: 0
   m_Script: {fileID: 12004, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.ContainerWindow
   m_PixelRect:
     serializedVersion: 2
-    x: 8
-    y: 51
-    width: 1350
-    height: 679
+    x: 0
+    y: 151
+    width: 1512
+    height: 831
   m_ShowMode: 4
-  m_Title: Hierarchy
+  m_Title: Game
   m_RootView: {fileID: 2}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -44,8 +44,8 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1350
-    height: 679
+    width: 1512
+    height: 831
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
   m_UseTopView: 1
@@ -69,11 +69,11 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1350
+    width: 1512
     height: 36
   m_MinSize: {x: 50, y: 50}
   m_MaxSize: {x: 4000, y: 4000}
-  m_ActualView: {fileID: 12}
+  m_ActualView: {fileID: 13}
 --- !u!114 &4
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -90,8 +90,8 @@ MonoBehaviour:
   m_Position:
     serializedVersion: 2
     x: 0
-    y: 659
-    width: 1350
+    y: 811
+    width: 1512
     height: 20
   m_MinSize: {x: 0, y: 0}
   m_MaxSize: {x: 0, y: 0}
@@ -109,17 +109,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Children:
   - {fileID: 6}
-  - {fileID: 11}
+  - {fileID: 12}
   m_Position:
     serializedVersion: 2
     x: 0
     y: 36
-    width: 1350
-    height: 623
-  m_MinSize: {x: 300, y: 112}
-  m_MaxSize: {x: 24288, y: 16192}
+    width: 1512
+    height: 775
+  m_MinSize: {x: 400, y: 112}
+  m_MaxSize: {x: 32384, y: 16192}
   vertical: 0
-  controlID: 17
+  controlID: 89
   draggingID: 0
 --- !u!114 &6
 MonoBehaviour:
@@ -135,17 +135,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Children:
   - {fileID: 7}
-  - {fileID: 10}
+  - {fileID: 11}
   m_Position:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1032
-    height: 623
-  m_MinSize: {x: 200, y: 112}
-  m_MaxSize: {x: 16192, y: 16192}
+    width: 1098
+    height: 775
+  m_MinSize: {x: 300, y: 112}
+  m_MaxSize: {x: 24288, y: 16192}
   vertical: 1
-  controlID: 18
+  controlID: 90
   draggingID: 0
 --- !u!114 &7
 MonoBehaviour:
@@ -162,16 +162,17 @@ MonoBehaviour:
   m_Children:
   - {fileID: 8}
   - {fileID: 9}
+  - {fileID: 10}
   m_Position:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1032
-    height: 442
-  m_MinSize: {x: 200, y: 56}
-  m_MaxSize: {x: 16192, y: 8096}
+    width: 1098
+    height: 443.5
+  m_MinSize: {x: 300, y: 56}
+  m_MaxSize: {x: 24288, y: 8096}
   vertical: 0
-  controlID: 19
+  controlID: 91
   draggingID: 0
 --- !u!114 &8
 MonoBehaviour:
@@ -183,22 +184,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 1
   m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
+  m_Name: SceneHierarchyWindow
   m_EditorClassIdentifier: 
   m_Children: []
   m_Position:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 255
-    height: 442
+    width: 204
+    height: 443.5
   m_MinSize: {x: 201, y: 226}
   m_MaxSize: {x: 4001, y: 4026}
-  m_ActualView: {fileID: 14}
+  m_ActualView: {fileID: 15}
   m_Panes:
-  - {fileID: 14}
+  - {fileID: 15}
+  - {fileID: 16}
+  - {fileID: 17}
   m_Selected: 0
-  m_LastSelected: 0
+  m_LastSelected: 1
 --- !u!114 &9
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -214,18 +217,17 @@ MonoBehaviour:
   m_Children: []
   m_Position:
     serializedVersion: 2
-    x: 255
+    x: 204
     y: 0
-    width: 777
-    height: 442
+    width: 450.5
+    height: 443.5
   m_MinSize: {x: 202, y: 226}
   m_MaxSize: {x: 4002, y: 4026}
-  m_ActualView: {fileID: 13}
+  m_ActualView: {fileID: 18}
   m_Panes:
-  - {fileID: 13}
-  - {fileID: 15}
+  - {fileID: 18}
   m_Selected: 0
-  m_LastSelected: 1
+  m_LastSelected: 0
 --- !u!114 &10
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -234,24 +236,23 @@ MonoBehaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
-  m_EditorHideFlags: 1
+  m_EditorHideFlags: 0
   m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: ConsoleWindow
-  m_EditorClassIdentifier: 
+  m_Name: GameView
+  m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.DockArea
   m_Children: []
   m_Position:
     serializedVersion: 2
-    x: 0
-    y: 442
-    width: 1032
-    height: 181
-  m_MinSize: {x: 101, y: 126}
-  m_MaxSize: {x: 4001, y: 4026}
-  m_ActualView: {fileID: 17}
+    x: 654.5
+    y: 0
+    width: 443.5
+    height: 443.5
+  m_MinSize: {x: 202, y: 226}
+  m_MaxSize: {x: 4002, y: 4026}
+  m_ActualView: {fileID: 19}
   m_Panes:
-  - {fileID: 16}
-  - {fileID: 17}
-  m_Selected: 1
+  - {fileID: 19}
+  m_Selected: 0
   m_LastSelected: 0
 --- !u!114 &11
 MonoBehaviour:
@@ -263,23 +264,55 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 1
   m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
+  m_Name: ProjectBrowser
   m_EditorClassIdentifier: 
   m_Children: []
   m_Position:
     serializedVersion: 2
-    x: 1032
+    x: 0
+    y: 443.5
+    width: 1098
+    height: 331.5
+  m_MinSize: {x: 231, y: 276}
+  m_MaxSize: {x: 10001, y: 10026}
+  m_ActualView: {fileID: 20}
+  m_Panes:
+  - {fileID: 20}
+  - {fileID: 14}
+  - {fileID: 21}
+  - {fileID: 22}
+  m_Selected: 0
+  m_LastSelected: 2
+--- !u!114 &12
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: InspectorWindow
+  m_EditorClassIdentifier: 
+  m_Children: []
+  m_Position:
+    serializedVersion: 2
+    x: 1098
     y: 0
-    width: 318
-    height: 623
+    width: 414
+    height: 775
   m_MinSize: {x: 276, y: 76}
   m_MaxSize: {x: 4001, y: 4026}
-  m_ActualView: {fileID: 18}
+  m_ActualView: {fileID: 23}
   m_Panes:
-  - {fileID: 18}
+  - {fileID: 23}
+  - {fileID: 24}
+  - {fileID: 25}
+  - {fileID: 26}
   m_Selected: 0
-  m_LastSelected: 0
---- !u!114 &12
+  m_LastSelected: 3
+--- !u!114 &13
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -302,7 +335,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1350
+    width: 1512
     height: 36
   m_SerializedDataModeController:
     m_DataMode: 0
@@ -537,6 +570,20 @@ MonoBehaviour:
       layout: 4
       size: {x: 0, y: 0}
       sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-toolbar__top
+      displayed: 0
+      id: Services/Environment
+      index: 8
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
     m_ContainerData:
     - containerId: overlay-toolbar__top
       scrollOffset: 0
@@ -545,7 +592,197 @@ MonoBehaviour:
     m_DynamicPanelContainerData: []
     m_OverlaysVisible: 1
     m_DynamicPanelBehavior: 0
---- !u!114 &13
+--- !u!114 &14
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12003, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MinSize: {x: 100, y: 100}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Console
+    m_Image: {fileID: -4950941429401207979, guid: 0000000000000000d000000000000000, type: 0}
+    m_Tooltip: 
+    m_TextWithWhitespace: "Console\u200B"
+  m_Pos:
+    serializedVersion: 2
+    x: 0
+    y: 630.5
+    width: 1097
+    height: 305.5
+  m_SerializedDataModeController:
+    m_DataMode: 0
+    m_PreferredDataMode: 0
+    m_SupportedDataModes: 
+    isAutomatic: 1
+  m_ViewDataDictionary: {fileID: 0}
+  m_OverlayCanvas:
+    m_LastAppliedPresetName: Default
+    m_SaveData: []
+    m_ContainerData: []
+    m_DynamicPanelContainerData: []
+    m_OverlaysVisible: 1
+    m_DynamicPanelBehavior: 0
+--- !u!114 &15
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12061, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Hierarchy
+    m_Image: {fileID: -3734745235275155857, guid: 0000000000000000d000000000000000, type: 0}
+    m_Tooltip: 
+    m_TextWithWhitespace: "Hierarchy\u200B"
+  m_Pos:
+    serializedVersion: 2
+    x: 0
+    y: 24
+    width: 203
+    height: 417.5
+  m_SerializedDataModeController:
+    m_DataMode: 0
+    m_PreferredDataMode: 0
+    m_SupportedDataModes: 
+    isAutomatic: 1
+  m_ViewDataDictionary: {fileID: 0}
+  m_OverlayCanvas:
+    m_LastAppliedPresetName: Default
+    m_SaveData: []
+    m_ContainerData: []
+    m_DynamicPanelContainerData: []
+    m_OverlaysVisible: 1
+    m_DynamicPanelBehavior: 0
+  m_SceneHierarchy:
+    m_TreeViewState:
+      scrollPos: {x: 0, y: 0}
+      m_SelectedIDs: []
+      m_LastClickedID:
+        m_Data: 0
+      m_ExpandedIDs:
+      - m_Data: -1334
+      - m_Data: -1332
+      - m_Data: 69280
+      m_RenameOverlay:
+        m_UserAcceptedRename: 0
+        m_Name: 
+        m_OriginalName: 
+        m_EditFieldRect:
+          serializedVersion: 2
+          x: 0
+          y: 0
+          width: 0
+          height: 0
+        m_UserData:
+          m_Data: 0
+        m_IsWaitingForDelay: 0
+        m_IsRenaming: 0
+        m_OriginalEventType: 11
+        m_IsRenamingFilename: 0
+        m_TrimLeadingAndTrailingWhitespace: 0
+        m_ClientGUIView: {fileID: 0}
+      m_SearchString: 
+    m_ExpandedScenes: []
+    m_CurrenRootEntityId:
+      m_Data: 0
+    m_LockTracker:
+      m_IsLocked: 0
+    m_CurrentSortingName: TransformSorting
+  m_WindowGUID: 4c969a2b90040154d917609493e03593
+--- !u!114 &16
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70ebb861d56146959cda8fcaf772f612, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Entities.Editor::Unity.Entities.Editor.HierarchyWindow
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Entities Hierarchy
+    m_Image: {fileID: 2800000, guid: 6bb0993b66f1e4f4d907a96c0ff2dee0, type: 3}
+    m_Tooltip: 
+    m_TextWithWhitespace: "Entities Hierarchy\u200B"
+  m_Pos:
+    serializedVersion: 2
+    x: 0
+    y: 187
+    width: 226.5
+    height: 417.5
+  m_SerializedDataModeController:
+    m_DataMode: 1
+    m_PreferredDataMode: 1
+    m_SupportedDataModes: 010000000200000003000000
+    isAutomatic: 1
+  m_ViewDataDictionary: {fileID: 0}
+  m_OverlayCanvas:
+    m_LastAppliedPresetName: Default
+    m_SaveData: []
+    m_ContainerData: []
+    m_DynamicPanelContainerData: []
+    m_OverlaysVisible: 1
+    m_DynamicPanelBehavior: 0
+  m_EditorWindowInstanceKey: 1c003a59a8a54e89a97f98d4da6b9730
+--- !u!114 &17
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb0eaf7081c7fbb44a83e4908fb5bcc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Entities.Editor::Unity.Entities.Editor.SystemScheduleWindow
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Systems
+    m_Image: {fileID: 2800000, guid: 290ec3726cd9fb947b6106c3232f5b5c, type: 3}
+    m_Tooltip: 
+    m_TextWithWhitespace: "Systems\u200B"
+  m_Pos:
+    serializedVersion: 2
+    x: 47
+    y: 122
+    width: 342
+    height: 331
+  m_SerializedDataModeController:
+    m_DataMode: 0
+    m_PreferredDataMode: 0
+    m_SupportedDataModes: 
+    isAutomatic: 1
+  m_ViewDataDictionary: {fileID: 0}
+  m_OverlayCanvas:
+    m_LastAppliedPresetName: Default
+    m_SaveData: []
+    m_ContainerData: []
+    m_DynamicPanelContainerData: []
+    m_OverlaysVisible: 1
+    m_DynamicPanelBehavior: 0
+  m_EditorWindowInstanceKey: 156bb82d85ed4dfab314a72d3d626a29
+--- !u!114 &18
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -561,15 +798,15 @@ MonoBehaviour:
   m_MaxSize: {x: 4000, y: 4000}
   m_TitleContent:
     m_Text: Scene
-    m_Image: {fileID: 2593428753322112591, guid: 0000000000000000d000000000000000, type: 0}
+    m_Image: {fileID: 8634526014445323508, guid: 0000000000000000d000000000000000, type: 0}
     m_Tooltip: 
     m_TextWithWhitespace: "Scene\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 256
+    x: 205
     y: 24
-    width: 775
-    height: 416
+    width: 448.5
+    height: 417.5
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -595,15 +832,15 @@ MonoBehaviour:
       sizeOverridden: 0
     - dockPosition: 0
       containerId: overlay-toolbar__top
-      displayed: 1
+      displayed: 0
       id: unity-grid-and-snap-toolbar
       index: 3
-      contents: '{"m_Layout":1,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":-141.0,"y":-194.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":3,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      contents: '{"m_Layout":1,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":168.0,"y":-30.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":2,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
       floating: 0
       collapsed: 0
-      snapOffset: {x: -141, y: -194}
+      snapOffset: {x: 168, y: -30}
       snapOffsetDelta: {x: 0, y: 0}
-      snapCorner: 3
+      snapCorner: 2
       layout: 1
       size: {x: 0, y: 0}
       sizeOverridden: 0
@@ -640,12 +877,12 @@ MonoBehaviour:
       displayed: 1
       id: unity-transform-toolbar
       index: 0
-      contents: '{"m_Layout":2,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":25.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      contents: '{"m_Layout":2,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":2,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
       floating: 0
       collapsed: 0
-      snapOffset: {x: 0, y: 25}
+      snapOffset: {x: 0, y: 0}
       snapOffsetDelta: {x: 0, y: 0}
-      snapCorner: 0
+      snapCorner: 2
       layout: 2
       size: {x: 0, y: 0}
       sizeOverridden: 0
@@ -668,12 +905,12 @@ MonoBehaviour:
       displayed: 1
       id: Orientation
       index: 0
-      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":67.5,"y":86.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":67.5,"y":-30.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":2,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
       floating: 0
       collapsed: 0
-      snapOffset: {x: 67.5, y: 86}
+      snapOffset: {x: 67.5, y: -30}
       snapOffsetDelta: {x: 0, y: 0}
-      snapCorner: 0
+      snapCorner: 2
       layout: 4
       size: {x: 0, y: 0}
       sizeOverridden: 0
@@ -861,15 +1098,15 @@ MonoBehaviour:
       sizeOverridden: 0
     - dockPosition: 1
       containerId: overlay-container--right
-      displayed: 1
+      displayed: 0
       id: AINavigationOverlay
       index: 8
-      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":48.0,"y":48.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":true,"m_Floating":false,"m_FloatingSnapOffset":{"x":-159.0,"y":-25.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":3,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
       floating: 0
       collapsed: 0
-      snapOffset: {x: 48, y: 48}
+      snapOffset: {x: -159, y: -25}
       snapOffsetDelta: {x: 0, y: 0}
-      snapCorner: 0
+      snapCorner: 3
       layout: 4
       size: {x: 0, y: 0}
       sizeOverridden: 0
@@ -1015,15 +1252,15 @@ MonoBehaviour:
       sizeOverridden: 0
     - dockPosition: 1
       containerId: overlay-toolbar__top
-      displayed: 1
+      displayed: 0
       id: unity-scene-view-camera-mode-toolbar
       index: 1
-      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":-148.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":1,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
       floating: 0
       collapsed: 0
-      snapOffset: {x: 0, y: 0}
+      snapOffset: {x: -148, y: 0}
       snapOffsetDelta: {x: 0, y: 0}
-      snapCorner: 0
+      snapCorner: 1
       layout: 4
       size: {x: 0, y: 0}
       sizeOverridden: 0
@@ -1074,12 +1311,12 @@ MonoBehaviour:
       displayed: 1
       id: Overlays/OverlayMenu
       index: 1
-      contents: '{"m_Layout":1,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      contents: '{"m_Layout":1,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":-347.0,"y":-37.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":3,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
       floating: 0
       collapsed: 0
-      snapOffset: {x: 0, y: 0}
+      snapOffset: {x: -347, y: -37}
       snapOffsetDelta: {x: 0, y: 0}
-      snapCorner: 0
+      snapCorner: 3
       layout: 1
       size: {x: 0, y: 0}
       sizeOverridden: 0
@@ -1102,6 +1339,20 @@ MonoBehaviour:
       displayed: 0
       id: SceneView/CamerasOverlay
       index: 11
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: unity-spline-inspector
+      index: 12
       contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
       floating: 0
       collapsed: 0
@@ -1144,7 +1395,7 @@ MonoBehaviour:
     m_OverlaysVisible: 1
     m_DynamicPanelBehavior: 0
   m_WindowGUID: cc27987af1a868c49b0894db9c0f5429
-  m_Gizmos: 1
+  m_Gizmos: 0
   m_OverrideSceneCullingMask: 6917529027641081856
   m_SceneIsLit: 1
   m_SceneLighting: 1
@@ -1154,9 +1405,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: 0, y: 0, z: 0}
+    m_Target: {x: -6.7834196, y: 4.677554, z: -10.40742}
     speed: 2
-    m_Value: {x: 0, y: 0, z: 0}
+    m_Value: {x: -6.7834196, y: 4.677554, z: -10.40742}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1203,13 +1454,13 @@ MonoBehaviour:
     m_gridOpacity: 0.5
     m_NearestPlaneToHandleMode: 0
   m_Rotation:
-    m_Target: {x: -0.08717229, y: 0.89959055, z: -0.21045254, w: -0.3726226}
+    m_Target: {x: -0.27598938, y: -0.04235738, z: 0.012180508, w: -0.9601644}
     speed: 2
-    m_Value: {x: -0.08717229, y: 0.89959055, z: -0.21045254, w: -0.3726226}
+    m_Value: {x: -0.27598935, y: -0.04235738, z: 0.012180508, w: -0.9601644}
   m_Size:
-    m_Target: 10
+    m_Target: 2.018544
     speed: 2
-    m_Value: 10
+    m_Value: 2.018544
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -1227,10 +1478,10 @@ MonoBehaviour:
     m_FarClip: 10000
     m_DynamicClip: 1
     m_OcclusionCulling: 0
-  m_LastSceneViewRotation: {x: 0.07068232, y: -0.7903987, z: 0.09290082, w: 0.6013605}
+  m_LastSceneViewRotation: {x: 0.56153476, y: -0.39042872, z: 0.33963695, w: 0.6457416}
   m_LastSceneViewOrtho: 0
   m_Viewpoint:
-    m_SceneView: {fileID: 13}
+    m_SceneView: {fileID: 18}
     m_CameraOverscanSettings:
       m_Opacity: 50
       m_Scale: 1
@@ -1243,78 +1494,7 @@ MonoBehaviour:
     name: Contributors / Receivers
     section: Lighting
   m_ViewIsLockedToObject: 0
---- !u!114 &14
-MonoBehaviour:
-  m_ObjectHideFlags: 52
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 1
-  m_Script: {fileID: 12061, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
-  m_TitleContent:
-    m_Text: Hierarchy
-    m_Image: {fileID: 7966133145522015247, guid: 0000000000000000d000000000000000, type: 0}
-    m_Tooltip: 
-    m_TextWithWhitespace: "Hierarchy\u200B"
-  m_Pos:
-    serializedVersion: 2
-    x: 0
-    y: 24
-    width: 254
-    height: 416
-  m_SerializedDataModeController:
-    m_DataMode: 0
-    m_PreferredDataMode: 0
-    m_SupportedDataModes: 
-    isAutomatic: 1
-  m_ViewDataDictionary: {fileID: 0}
-  m_OverlayCanvas:
-    m_LastAppliedPresetName: Default
-    m_SaveData: []
-    m_ContainerData: []
-    m_DynamicPanelContainerData: []
-    m_OverlaysVisible: 1
-    m_DynamicPanelBehavior: 0
-  m_SceneHierarchy:
-    m_TreeViewState:
-      scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: []
-      m_LastClickedID:
-        m_Data: 0
-      m_ExpandedIDs: []
-      m_RenameOverlay:
-        m_UserAcceptedRename: 0
-        m_Name: 
-        m_OriginalName: 
-        m_EditFieldRect:
-          serializedVersion: 2
-          x: 0
-          y: 0
-          width: 0
-          height: 0
-        m_UserData:
-          m_Data: 0
-        m_IsWaitingForDelay: 0
-        m_IsRenaming: 0
-        m_OriginalEventType: 11
-        m_IsRenamingFilename: 0
-        m_TrimLeadingAndTrailingWhitespace: 0
-        m_ClientGUIView: {fileID: 8}
-      m_SearchString: 
-    m_ExpandedScenes: []
-    m_CurrenRootEntityId:
-      m_Data: 0
-    m_LockTracker:
-      m_IsLocked: 0
-    m_CurrentSortingName: TransformSorting
-  m_WindowGUID: 4c969a2b90040154d917609493e03593
---- !u!114 &15
+--- !u!114 &19
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1330,15 +1510,15 @@ MonoBehaviour:
   m_MaxSize: {x: 4000, y: 4000}
   m_TitleContent:
     m_Text: Game
-    m_Image: {fileID: -6423792434712278376, guid: 0000000000000000d000000000000000, type: 0}
+    m_Image: {fileID: 4621777727084837110, guid: 0000000000000000d000000000000000, type: 0}
     m_Tooltip: 
     m_TextWithWhitespace: "Game\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 258
-    y: 73
-    width: 784
-    height: 343
+    x: 655.5
+    y: 24
+    width: 441.5
+    height: 417.5
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -1352,20 +1532,22 @@ MonoBehaviour:
     m_DynamicPanelContainerData: []
     m_OverlaysVisible: 1
     m_DynamicPanelBehavior: 0
-  m_SerializedViewNames: []
-  m_SerializedViewValues: []
+  m_SerializedViewNames:
+  - UnityEditor.DeviceSimulation.SimulatorWindow
+  m_SerializedViewValues:
+  - C:\Users\mkowa\GKIO projekt\Library\PlayModeViewStates\f6d96de6d5383ee48a3cfe0282cf36ae
   m_PlayModeViewName: GameView
-  m_ShowGizmos: 0
+  m_ShowGizmos: 1
   m_TargetDisplay: 0
   m_ClearColor: {r: 0, g: 0, b: 0, a: 0}
-  m_TargetSize: {x: 784, y: 322}
+  m_TargetSize: {x: 441.5, y: 396.5}
   m_TextureFilterMode: 0
   m_TextureHideFlags: 61
   m_RenderIMGUI: 1
   m_EnterPlayModeBehavior: 0
   m_UseMipMap: 0
   m_VSyncEnabled: 0
-  m_Gizmos: 0
+  m_Gizmos: 1
   m_Stats: 0
   m_SelectedSizes: 00000000000000000000000000000000000000000000000000000000000000000000000000000000
   m_ZoomArea:
@@ -1373,10 +1555,10 @@ MonoBehaviour:
     m_VRangeLocked: 0
     hZoomLockedByDefault: 0
     vZoomLockedByDefault: 0
-    m_HBaseRangeMin: -392
-    m_HBaseRangeMax: 392
-    m_VBaseRangeMin: -161
-    m_VBaseRangeMax: 161
+    m_HBaseRangeMin: -110.375
+    m_HBaseRangeMax: 110.375
+    m_VBaseRangeMin: -99.125
+    m_VBaseRangeMax: 99.125
     m_HAllowExceedBaseRangeMin: 1
     m_HAllowExceedBaseRangeMax: 1
     m_VAllowExceedBaseRangeMin: 1
@@ -1385,7 +1567,7 @@ MonoBehaviour:
     m_HSlider: 0
     m_VSlider: 0
     m_IgnoreScrollWheelUntilClicked: 0
-    m_EnableMouseInput: 0
+    m_EnableMouseInput: 1
     m_EnableSliderZoomHorizontal: 0
     m_EnableSliderZoomVertical: 0
     m_UniformScale: 1
@@ -1394,30 +1576,30 @@ MonoBehaviour:
       serializedVersion: 2
       x: 0
       y: 21
-      width: 784
-      height: 322
-    m_Scale: {x: 1, y: 1}
-    m_Translation: {x: 392, y: 161}
+      width: 441.5
+      height: 396.5
+    m_Scale: {x: 2, y: 2}
+    m_Translation: {x: 220.75, y: 198.25}
     m_MarginLeft: 0
     m_MarginRight: 0
     m_MarginTop: 0
     m_MarginBottom: 0
     m_LastShownAreaInsideMargins:
       serializedVersion: 2
-      x: -392
-      y: -161
-      width: 784
-      height: 322
+      x: -110.375
+      y: -99.125
+      width: 220.75
+      height: 198.25
     m_MinimalGUI: 1
-  m_defaultScale: 1
-  m_LastWindowPixelSize: {x: 784, y: 343}
+  m_defaultScale: 2
+  m_LastWindowPixelSize: {x: 883, y: 835}
   m_ClearInEditMode: 1
   m_NoCameraWarning: 1
   m_LowResolutionForAspectRatios: 01000000000000000000
   m_XRRenderMode: 0
   m_RenderTexture: {fileID: 0}
   m_showToolbar: 1
---- !u!114 &16
+--- !u!114 &20
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1433,15 +1615,15 @@ MonoBehaviour:
   m_MaxSize: {x: 10000, y: 10000}
   m_TitleContent:
     m_Text: Project
-    m_Image: {fileID: -5467254957812901981, guid: 0000000000000000d000000000000000, type: 0}
+    m_Image: {fileID: -5179483145760003458, guid: 0000000000000000d000000000000000, type: 0}
     m_Tooltip: 
     m_TextWithWhitespace: "Project\u200B"
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 437
-    width: 1043
-    height: 260
+    y: 467.5
+    width: 1097
+    height: 305.5
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -1466,7 +1648,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets
+    - Assets/Scripts/Prefabs
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -1475,10 +1657,9 @@ MonoBehaviour:
     m_FilterByTypeIntersection: 0
   m_ViewMode: 0
   m_StartGridSize: 64
-  m_LastFolders:
-  - Assets/Scenes
+  m_LastFolders: []
   m_LastFoldersGridSize: -1
-  m_LastProjectPath: C:\Users\mkowa\test
+  m_LastProjectPath: /Users/jaygee/RiderProjects/UnityMovementShooterProject
   m_LockTracker:
     m_IsLocked: 0
   m_LastLocalAssetsSearchArea: 1
@@ -1487,7 +1668,31 @@ MonoBehaviour:
     m_SelectedIDs: []
     m_LastClickedID:
       m_Data: 0
-    m_ExpandedIDs: []
+    m_ExpandedIDs:
+    - m_Data: 0
+    - m_Data: 68944
+    - m_Data: 70040
+    - m_Data: 70042
+    - m_Data: 70044
+    - m_Data: 70046
+    - m_Data: 70048
+    - m_Data: 70050
+    - m_Data: 70052
+    - m_Data: 70054
+    - m_Data: 70056
+    - m_Data: 70058
+    - m_Data: 70060
+    - m_Data: 70062
+    - m_Data: 70064
+    - m_Data: 70066
+    - m_Data: 70068
+    - m_Data: 70070
+    - m_Data: 70072
+    - m_Data: 70074
+    - m_Data: 70076
+    - m_Data: 70078
+    - m_Data: 70080
+    - m_Data: 70082
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1515,11 +1720,36 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_AssetTreeState:
-    scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: []
+    scrollPos: {x: 0, y: 1117.9852}
+    m_SelectedIDs:
+    - m_Data: -76318
     m_LastClickedID:
       m_Data: 0
-    m_ExpandedIDs: []
+    m_ExpandedIDs:
+    - m_Data: 0
+    - m_Data: 68944
+    - m_Data: 70040
+    - m_Data: 70042
+    - m_Data: 70044
+    - m_Data: 70046
+    - m_Data: 70048
+    - m_Data: 70050
+    - m_Data: 70052
+    - m_Data: 70054
+    - m_Data: 70056
+    - m_Data: 70058
+    - m_Data: 70060
+    - m_Data: 70062
+    - m_Data: 70064
+    - m_Data: 70066
+    - m_Data: 70068
+    - m_Data: 70070
+    - m_Data: 70072
+    - m_Data: 70074
+    - m_Data: 70076
+    - m_Data: 70078
+    - m_Data: 70080
+    - m_Data: 70082
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1537,7 +1767,7 @@ MonoBehaviour:
       m_OriginalEventType: 11
       m_IsRenamingFilename: 1
       m_TrimLeadingAndTrailingWhitespace: 0
-      m_ClientGUIView: {fileID: 10}
+      m_ClientGUIView: {fileID: 11}
     m_SearchString: 
     m_CreateAssetUtility:
       m_EndAction: {fileID: 0}
@@ -1547,9 +1777,10 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: []
+    m_SelectedInstanceIDs:
+    - m_Data: -76318
     m_LastClickedEntityId:
-      m_Data: 0
+      m_Data: -76318
     m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: []
     m_RenameOverlay:
@@ -1569,7 +1800,7 @@ MonoBehaviour:
       m_OriginalEventType: 11
       m_IsRenamingFilename: 1
       m_TrimLeadingAndTrailingWhitespace: 0
-      m_ClientGUIView: {fileID: 10}
+      m_ClientGUIView: {fileID: 11}
     m_CreateAssetUtility:
       m_EndAction: {fileID: 0}
       m_EntityId:
@@ -1578,11 +1809,11 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
     m_NewAssetIndexInList: -1
-    m_ScrollPosition: {x: 0, y: 0}
+    m_ScrollPosition: {x: 0, y: 75.003815}
     m_GridSize: 64
   m_SkipHiddenPackages: 0
   m_DirectoriesAreaWidth: 207
---- !u!114 &17
+--- !u!114 &21
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1590,23 +1821,23 @@ MonoBehaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
-  m_EditorHideFlags: 1
-  m_Script: {fileID: 12003, guid: 0000000000000000e000000000000000, type: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 15025, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
-  m_EditorClassIdentifier: 
-  m_MinSize: {x: 100, y: 100}
+  m_EditorClassIdentifier: UnityEditor.MultiplayerModule.dll::Unity.Multiplayer.PlayMode.Editor.MultiplayerWindow
+  m_MinSize: {x: 275, y: 400}
   m_MaxSize: {x: 4000, y: 4000}
   m_TitleContent:
-    m_Text: Console
-    m_Image: {fileID: -4327648978806127646, guid: 0000000000000000d000000000000000, type: 0}
+    m_Text: Multiplayer Play Mode
+    m_Image: {fileID: 0}
     m_Tooltip: 
-    m_TextWithWhitespace: "Console\u200B"
+    m_TextWithWhitespace: "Multiplayer Play Mode\u200B"
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 466
-    width: 1031
-    height: 155
+    y: 630.5
+    width: 1097
+    height: 305.5
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -1620,7 +1851,49 @@ MonoBehaviour:
     m_DynamicPanelContainerData: []
     m_OverlaysVisible: 1
     m_DynamicPanelBehavior: 0
---- !u!114 &18
+--- !u!114 &22
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d990fbdc06718b4a9db66b91b6c006d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.NetCode.Editor::Unity.NetCode.Editor.MultiplayerPlayModeWindow
+  m_MinSize: {x: 600, y: 210}
+  m_MaxSize: {x: 1200, y: 4000}
+  m_TitleContent:
+    m_Text: PlayMode Tools
+    m_Image: {fileID: 0}
+    m_Tooltip: 'Netcode for Entities editor playmode tools. View and control world
+      creation, connection status and flows etc.
+
+
+      <i>It has no impact on builds.</i>'
+    m_TextWithWhitespace: "PlayMode Tools\u200B"
+  m_Pos:
+    serializedVersion: 2
+    x: 0
+    y: 630.5
+    width: 1097
+    height: 305.5
+  m_SerializedDataModeController:
+    m_DataMode: 0
+    m_PreferredDataMode: 0
+    m_SupportedDataModes: 
+    isAutomatic: 1
+  m_ViewDataDictionary: {fileID: 0}
+  m_OverlayCanvas:
+    m_LastAppliedPresetName: Default
+    m_SaveData: []
+    m_ContainerData: []
+    m_DynamicPanelContainerData: []
+    m_OverlaysVisible: 1
+    m_DynamicPanelBehavior: 0
+--- !u!114 &23
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1636,15 +1909,67 @@ MonoBehaviour:
   m_MaxSize: {x: 4000, y: 4000}
   m_TitleContent:
     m_Text: Inspector
-    m_Image: {fileID: -2667387946076563598, guid: 0000000000000000d000000000000000, type: 0}
+    m_Image: {fileID: -440750813802333266, guid: 0000000000000000d000000000000000, type: 0}
     m_Tooltip: 
     m_TextWithWhitespace: "Inspector\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1033
+    x: 1099
     y: 24
-    width: 317
-    height: 597
+    width: 413
+    height: 749
+  m_SerializedDataModeController:
+    m_DataMode: 1
+    m_PreferredDataMode: 1
+    m_SupportedDataModes: 010000000200000003000000
+    isAutomatic: 1
+  m_ViewDataDictionary: {fileID: 0}
+  m_OverlayCanvas:
+    m_LastAppliedPresetName: Default
+    m_SaveData: []
+    m_ContainerData: []
+    m_DynamicPanelContainerData: []
+    m_OverlaysVisible: 1
+    m_DynamicPanelBehavior: 0
+  m_ObjectsLockedBeforeSerialization: []
+  m_EntityIdsLockedBeforeSerialization: []
+  m_PreviewResizer:
+    m_CachedPref: 151
+    m_ControlHash: -371814159
+    m_PrefName: Preview_InspectorPreview
+  m_LastInspectedObjectEntityId:
+    m_Data: 0
+  m_LastVerticalScrollValue: 0
+  m_GlobalObjectId: 
+  m_InspectorMode: 0
+  m_LockTracker:
+    m_IsLocked: 0
+  m_PreviewWindow: {fileID: 0}
+--- !u!114 &24
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 878de1d12faee3c4e934e1fed97fedc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.spoiledcat.git.ui::Unity.VersionControl.Git.UI.FileHistoryWindow
+  m_MinSize: {x: 50, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: File History
+    m_Image: {fileID: 0}
+    m_Tooltip: 
+    m_TextWithWhitespace: "File History\u200B"
+  m_Pos:
+    serializedVersion: 2
+    x: 1077
+    y: 97
+    width: 434
+    height: 749
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -1658,17 +1983,1434 @@ MonoBehaviour:
     m_DynamicPanelContainerData: []
     m_OverlaysVisible: 1
     m_DynamicPanelBehavior: 0
+  locked: 0
+  fileHistoryView:
+    currentFileLogHasUpdate: 0
+    currentStatusEntriesHasUpdate: 0
+    gitFileLog:
+      path: 
+      logEntries: []
+    historyControl:
+      scroll: {x: 0, y: 0}
+      entries: []
+      statusAhead: 0
+      selectedIndex: -1
+    selectedEntry:
+      commitID: 
+      mergeA: 
+      mergeB: 
+      authorName: 
+      authorEmail: 
+      commitEmail: 
+      commitName: 
+      summary: 
+      description: 
+      timeString: 0001-01-01T00:00:00.000+00:00
+      commitTimeString: 0001-01-01T00:00:00.000+00:00
+      changes:
+      - path: .vsconfig
+        fullPath: C:\Users\mkowa\GKIO projekt\.vsconfig
+        projectPath: .vsconfig
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\InputSystem_Actions.inputactions
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\InputSystem_Actions.inputactions
+        projectPath: Assets\InputSystem_Actions.inputactions
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\InputSystem_Actions.inputactions.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\InputSystem_Actions.inputactions.meta
+        projectPath: Assets\InputSystem_Actions.inputactions.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Readme.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Readme.asset
+        projectPath: Assets\Readme.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Readme.asset.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Readme.asset.meta
+        projectPath: Assets\Readme.asset.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Scenes.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Scenes.meta
+        projectPath: Assets\Scenes.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Scenes\SampleScene.unity
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Scenes\SampleScene.unity
+        projectPath: Assets\Scenes\SampleScene.unity
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Scenes\SampleScene.unity.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Scenes\SampleScene.unity.meta
+        projectPath: Assets\Scenes\SampleScene.unity.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings.meta
+        projectPath: Assets\Settings.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\DefaultVolumeProfile.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\DefaultVolumeProfile.asset
+        projectPath: Assets\Settings\DefaultVolumeProfile.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\DefaultVolumeProfile.asset.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\DefaultVolumeProfile.asset.meta
+        projectPath: Assets\Settings\DefaultVolumeProfile.asset.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\Mobile_RPAsset.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\Mobile_RPAsset.asset
+        projectPath: Assets\Settings\Mobile_RPAsset.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\Mobile_RPAsset.asset.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\Mobile_RPAsset.asset.meta
+        projectPath: Assets\Settings\Mobile_RPAsset.asset.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\Mobile_Renderer.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\Mobile_Renderer.asset
+        projectPath: Assets\Settings\Mobile_Renderer.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\Mobile_Renderer.asset.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\Mobile_Renderer.asset.meta
+        projectPath: Assets\Settings\Mobile_Renderer.asset.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\PC_RPAsset.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\PC_RPAsset.asset
+        projectPath: Assets\Settings\PC_RPAsset.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\PC_RPAsset.asset.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\PC_RPAsset.asset.meta
+        projectPath: Assets\Settings\PC_RPAsset.asset.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\PC_Renderer.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\PC_Renderer.asset
+        projectPath: Assets\Settings\PC_Renderer.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\PC_Renderer.asset.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\PC_Renderer.asset.meta
+        projectPath: Assets\Settings\PC_Renderer.asset.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\SampleSceneProfile.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\SampleSceneProfile.asset
+        projectPath: Assets\Settings\SampleSceneProfile.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\SampleSceneProfile.asset.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\SampleSceneProfile.asset.meta
+        projectPath: Assets\Settings\SampleSceneProfile.asset.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\UniversalRenderPipelineGlobalSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\UniversalRenderPipelineGlobalSettings.asset
+        projectPath: Assets\Settings\UniversalRenderPipelineGlobalSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\UniversalRenderPipelineGlobalSettings.asset.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\UniversalRenderPipelineGlobalSettings.asset.meta
+        projectPath: Assets\Settings\UniversalRenderPipelineGlobalSettings.asset.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo.meta
+        projectPath: Assets\TutorialInfo.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Icons.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Icons.meta
+        projectPath: Assets\TutorialInfo\Icons.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Icons\URP.png
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Icons\URP.png
+        projectPath: Assets\TutorialInfo\Icons\URP.png
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Icons\URP.png.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Icons\URP.png.meta
+        projectPath: Assets\TutorialInfo\Icons\URP.png.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Layout.wlt
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Layout.wlt
+        projectPath: Assets\TutorialInfo\Layout.wlt
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Layout.wlt.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Layout.wlt.meta
+        projectPath: Assets\TutorialInfo\Layout.wlt.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Scripts.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Scripts.meta
+        projectPath: Assets\TutorialInfo\Scripts.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Scripts\Editor.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Scripts\Editor.meta
+        projectPath: Assets\TutorialInfo\Scripts\Editor.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Scripts\Editor\ReadmeEditor.cs
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Scripts\Editor\ReadmeEditor.cs
+        projectPath: Assets\TutorialInfo\Scripts\Editor\ReadmeEditor.cs
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Scripts\Editor\ReadmeEditor.cs.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Scripts\Editor\ReadmeEditor.cs.meta
+        projectPath: Assets\TutorialInfo\Scripts\Editor\ReadmeEditor.cs.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Scripts\Readme.cs
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Scripts\Readme.cs
+        projectPath: Assets\TutorialInfo\Scripts\Readme.cs
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Scripts\Readme.cs.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Scripts\Readme.cs.meta
+        projectPath: Assets\TutorialInfo\Scripts\Readme.cs.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Packages\manifest.json
+        fullPath: C:\Users\mkowa\GKIO projekt\Packages\manifest.json
+        projectPath: Packages\manifest.json
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Packages\packages-lock.json
+        fullPath: C:\Users\mkowa\GKIO projekt\Packages\packages-lock.json
+        projectPath: Packages\packages-lock.json
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\AudioManager.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\AudioManager.asset
+        projectPath: ProjectSettings\AudioManager.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\ClusterInputManager.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\ClusterInputManager.asset
+        projectPath: ProjectSettings\ClusterInputManager.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\DynamicsManager.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\DynamicsManager.asset
+        projectPath: ProjectSettings\DynamicsManager.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\EditorBuildSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\EditorBuildSettings.asset
+        projectPath: ProjectSettings\EditorBuildSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\EditorSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\EditorSettings.asset
+        projectPath: ProjectSettings\EditorSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\EntitiesClientSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\EntitiesClientSettings.asset
+        projectPath: ProjectSettings\EntitiesClientSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\GraphicsSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\GraphicsSettings.asset
+        projectPath: ProjectSettings\GraphicsSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\InputManager.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\InputManager.asset
+        projectPath: ProjectSettings\InputManager.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\MemorySettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\MemorySettings.asset
+        projectPath: ProjectSettings\MemorySettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\MultiplayerManager.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\MultiplayerManager.asset
+        projectPath: ProjectSettings\MultiplayerManager.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\NavMeshAreas.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\NavMeshAreas.asset
+        projectPath: ProjectSettings\NavMeshAreas.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\NetCodeClientAndServerSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\NetCodeClientAndServerSettings.asset
+        projectPath: ProjectSettings\NetCodeClientAndServerSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\NetCodeServerSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\NetCodeServerSettings.asset
+        projectPath: ProjectSettings\NetCodeServerSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\PackageManagerSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\PackageManagerSettings.asset
+        projectPath: ProjectSettings\PackageManagerSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\Physics2DSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\Physics2DSettings.asset
+        projectPath: ProjectSettings\Physics2DSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\PresetManager.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\PresetManager.asset
+        projectPath: ProjectSettings\PresetManager.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\ProjectSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\ProjectSettings.asset
+        projectPath: ProjectSettings\ProjectSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\ProjectVersion.txt
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\ProjectVersion.txt
+        projectPath: ProjectSettings\ProjectVersion.txt
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\QualitySettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\QualitySettings.asset
+        projectPath: ProjectSettings\QualitySettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\ShaderGraphSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\ShaderGraphSettings.asset
+        projectPath: ProjectSettings\ShaderGraphSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\TagManager.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\TagManager.asset
+        projectPath: ProjectSettings\TagManager.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\TimeManager.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\TimeManager.asset
+        projectPath: ProjectSettings\TimeManager.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\URPProjectSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\URPProjectSettings.asset
+        projectPath: ProjectSettings\URPProjectSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\UnityConnectSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\UnityConnectSettings.asset
+        projectPath: ProjectSettings\UnityConnectSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\VFXManager.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\VFXManager.asset
+        projectPath: ProjectSettings\VFXManager.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\VersionControlSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\VersionControlSettings.asset
+        projectPath: ProjectSettings\VersionControlSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\XRSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\XRSettings.asset
+        projectPath: ProjectSettings\XRSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: UserSettings\EditorUserSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\UserSettings\EditorUserSettings.asset
+        projectPath: UserSettings\EditorUserSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: UserSettings\Layouts\default-6000.dwlt
+        fullPath: C:\Users\mkowa\GKIO projekt\UserSettings\Layouts\default-6000.dwlt
+        projectPath: UserSettings\Layouts\default-6000.dwlt
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: UserSettings\Search.index
+        fullPath: C:\Users\mkowa\GKIO projekt\UserSettings\Search.index
+        projectPath: UserSettings\Search.index
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: UserSettings\Search.settings
+        fullPath: C:\Users\mkowa\GKIO projekt\UserSettings\Search.settings
+        projectPath: UserSettings\Search.settings
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+    treeChanges:
+      assets:
+        keys: []
+        values: []
+      folders:
+        keys: []
+        values: []
+      checkedFileNodes:
+        keys: []
+        values: []
+      title: 
+      pathSeparator: /
+      displayRootNode: 0
+      isSelectable: 1
+      isCheckable: 0
+      isUsingGlobalSelection: 0
+      nodes: []
+      selectedNode:
+        path: 
+        label: 
+        level: 0
+        isFolder: 0
+        isContainer: 0
+        isCollapsed: 0
+        isHidden: 0
+        isActive: 0
+        treeIsCheckable: 0
+        checkState: 0
+        isLocked: 0
+        gitStatusEntry:
+          path: 
+          fullPath: 
+          projectPath: 
+          originalPath: 
+          indexStatus: 0
+          workTreeStatus: 0
+    detailsScroll: {x: 0, y: 0}
+    gitStatusEntries: []
+    lastStatusEntriesChangedEvent:
+      updatedTimeString: 0001-01-01T00:00:00.000+00:00
+      cacheType: 6
+    lastFileLogChangedEvent:
+      updatedTimeString: 0001-01-01T00:00:00.000+00:00
+      cacheType: 4
+  selectedObject: {fileID: 0}
+  selectedObjectAssetPath: 
+  selectedObjectRepositoryPath: .
+--- !u!114 &25
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 12019, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.InspectorWindow
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Inspector
+    m_Image: {fileID: -440750813802333266, guid: 0000000000000000d000000000000000, type: 0}
+    m_Tooltip: 
+    m_TextWithWhitespace: "Inspector\u200B"
+  m_Pos:
+    serializedVersion: 2
+    x: 973
+    y: 79
+    width: 392
+    height: 613
+  m_SerializedDataModeController:
+    m_DataMode: 1
+    m_PreferredDataMode: 1
+    m_SupportedDataModes: 010000000200000003000000
+    isAutomatic: 1
+  m_ViewDataDictionary: {fileID: 0}
+  m_OverlayCanvas:
+    m_LastAppliedPresetName: Default
+    m_SaveData: []
+    m_ContainerData: []
+    m_DynamicPanelContainerData: []
+    m_OverlaysVisible: 1
+    m_DynamicPanelBehavior: 0
   m_ObjectsLockedBeforeSerialization: []
   m_EntityIdsLockedBeforeSerialization: []
   m_PreviewResizer:
     m_CachedPref: 160
-    m_ControlHash: -371814159
+    m_ControlHash: 1412526313
     m_PrefName: Preview_InspectorPreview
   m_LastInspectedObjectEntityId:
-    m_Data: 0
+    m_Data: -76318
   m_LastVerticalScrollValue: 0
   m_GlobalObjectId: 
   m_InspectorMode: 0
   m_LockTracker:
     m_IsLocked: 0
   m_PreviewWindow: {fileID: 0}
+--- !u!114 &26
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ffb9ccd5681bd841ae77e9e5571f770, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.spoiledcat.git.ui::Unity.VersionControl.Git.UI.Window
+  m_MinSize: {x: 50, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Git for Unity
+    m_Image: {fileID: 0}
+    m_Tooltip: 
+    m_TextWithWhitespace: "Git for Unity\u200B"
+  m_Pos:
+    serializedVersion: 2
+    x: 1077
+    y: 97
+    width: 434
+    height: 749
+  m_SerializedDataModeController:
+    m_DataMode: 0
+    m_PreferredDataMode: 0
+    m_SupportedDataModes: 
+    isAutomatic: 1
+  m_ViewDataDictionary: {fileID: 0}
+  m_OverlayCanvas:
+    m_LastAppliedPresetName: Default
+    m_SaveData: []
+    m_ContainerData: []
+    m_DynamicPanelContainerData: []
+    m_OverlaysVisible: 1
+    m_DynamicPanelBehavior: 0
+  progressMessageClearTime: 682.538436667
+  notificationClearTime: -1
+  timeSinceLastRotation: -1
+  currentBranchAndRemoteHasUpdate: 0
+  currentTrackingStatusHasUpdate: 0
+  currentStatusEntriesHasUpdate: 0
+  repositoryProgressHasUpdate: 1
+  appManagerProgressHasUpdate: 1
+  changeTab: 5
+  activeTab: 5
+  initProjectView:
+    hasCompletedInitialCheck: 0
+    isUserDataPresent: 0
+    lastCheckUserChangedEvent:
+      updatedTimeString: 0001-01-01T00:00:00.000+00:00
+      cacheType: 8
+  branchesView:
+    treeLocals:
+      IsRemote: 0
+      folders:
+        keys:
+        - Local branches
+        values:
+        - path: Local branches
+          label: Local branches
+          level: 0
+          isFolder: 1
+          isContainer: 0
+          isCollapsed: 0
+          isHidden: 0
+          isActive: 0
+          treeIsCheckable: 0
+          checkState: 0
+      checkedFileNodes:
+        keys: []
+        values: []
+      title: Local branches
+      pathSeparator: /
+      displayRootNode: 1
+      isSelectable: 1
+      isCheckable: 0
+      nodes:
+      - path: Local branches
+        label: Local branches
+        level: 0
+        isFolder: 1
+        isContainer: 0
+        isCollapsed: 0
+        isHidden: 0
+        isActive: 0
+        treeIsCheckable: 0
+        checkState: 0
+      - path: master
+        label: master
+        level: 1
+        isFolder: 0
+        isContainer: 0
+        isCollapsed: 0
+        isHidden: 0
+        isActive: 0
+        treeIsCheckable: 0
+        checkState: 0
+      - path: Netcode
+        label: Netcode
+        level: 1
+        isFolder: 0
+        isContainer: 0
+        isCollapsed: 0
+        isHidden: 0
+        isActive: 0
+        treeIsCheckable: 0
+        checkState: 0
+      selectedNode:
+        path: 
+        label: 
+        level: 0
+        isFolder: 0
+        isContainer: 0
+        isCollapsed: 0
+        isHidden: 0
+        isActive: 0
+        treeIsCheckable: 0
+        checkState: 0
+    treeRemotes:
+      IsRemote: 1
+      folders:
+        keys:
+        - Remote branches
+        - origin
+        values:
+        - path: Remote branches
+          label: Remote branches
+          level: 0
+          isFolder: 1
+          isContainer: 0
+          isCollapsed: 0
+          isHidden: 0
+          isActive: 0
+          treeIsCheckable: 0
+          checkState: 0
+        - path: origin
+          label: origin
+          level: 1
+          isFolder: 1
+          isContainer: 0
+          isCollapsed: 0
+          isHidden: 0
+          isActive: 0
+          treeIsCheckable: 0
+          checkState: 0
+      checkedFileNodes:
+        keys: []
+        values: []
+      title: Remote branches
+      pathSeparator: /
+      displayRootNode: 1
+      isSelectable: 1
+      isCheckable: 0
+      nodes:
+      - path: Remote branches
+        label: Remote branches
+        level: 0
+        isFolder: 1
+        isContainer: 0
+        isCollapsed: 0
+        isHidden: 0
+        isActive: 0
+        treeIsCheckable: 0
+        checkState: 0
+      - path: origin
+        label: origin
+        level: 1
+        isFolder: 1
+        isContainer: 0
+        isCollapsed: 0
+        isHidden: 0
+        isActive: 0
+        treeIsCheckable: 0
+        checkState: 0
+      - path: origin/HEAD
+        label: HEAD
+        level: 2
+        isFolder: 0
+        isContainer: 0
+        isCollapsed: 0
+        isHidden: 0
+        isActive: 0
+        treeIsCheckable: 0
+        checkState: 0
+      - path: origin/Netcode
+        label: Netcode
+        level: 2
+        isFolder: 0
+        isContainer: 0
+        isCollapsed: 0
+        isHidden: 0
+        isActive: 0
+        treeIsCheckable: 0
+        checkState: 0
+      selectedNode:
+        path: 
+        label: 
+        level: 0
+        isFolder: 0
+        isContainer: 0
+        isCollapsed: 0
+        isHidden: 0
+        isActive: 0
+        treeIsCheckable: 0
+        checkState: 0
+    mode: 0
+    newBranchName: 
+    scroll: {x: 0, y: 0}
+    disableDelete: 1
+    disableCreate: 1
+    lastLocalAndRemoteBranchListChangedEvent:
+      updatedTimeString: 2026-07-12T15:36:30.334+02:00
+      cacheType: 2
+    lastCurrentBranchAndRemoteChange:
+      updatedTimeString: 0001-01-01T00:00:00.000+00:00
+      cacheType: 1
+    currentBranch:
+      name: 
+      tracking: 
+    currentRemote:
+      name: 
+      url: 
+      login: 
+      user: 
+      host: 
+      function: 0
+      token: 
+    localBranches:
+    - name: master
+      tracking: origin/master
+    - name: Netcode
+      tracking: origin/Netcode
+    remoteBranches:
+    - name: origin/HEAD
+      tracking: '[None]'
+    - name: origin/Netcode
+      tracking: '[None]'
+  changesView:
+    currentBranchHasUpdate: 0
+    currentStatusEntriesHasUpdate: 0
+    currentLocksHasUpdate: 0
+    commitBody: 
+    commitMessage: 
+    currentBranch: '[unknown]'
+    treeScroll: {x: 0, y: 0}
+    treeChanges:
+      assets:
+        keys: []
+        values: []
+      folders:
+        keys: []
+        values: []
+      checkedFileNodes:
+        keys: []
+        values: []
+      title: 
+      pathSeparator: /
+      displayRootNode: 0
+      isSelectable: 1
+      isCheckable: 1
+      isUsingGlobalSelection: 1
+      nodes: []
+      selectedNode:
+        path: 
+        label: 
+        level: 0
+        isFolder: 0
+        isContainer: 0
+        isCollapsed: 0
+        isHidden: 0
+        isActive: 0
+        treeIsCheckable: 0
+        checkState: 0
+        isLocked: 0
+        gitStatusEntry:
+          path: 
+          fullPath: 
+          projectPath: 
+          originalPath: 
+          indexStatus: 0
+          workTreeStatus: 0
+    gitStatusEntries: []
+    changedFilesText: No changed files
+    lastCurrentBranchChangedEvent:
+      updatedTimeString: 
+      cacheType: 0
+    lastStatusEntriesChangedEvent:
+      updatedTimeString: 
+      cacheType: 0
+    lastLocksChangedEvent:
+      updatedTimeString: 
+      cacheType: 0
+  historyView:
+    currentLogHasUpdate: 0
+    currentTrackingStatusHasUpdate: 0
+    logEntries: []
+    statusAhead: 0
+    lastLogChangedEvent:
+      updatedTimeString: 0001-01-01T00:00:00.000+00:00
+      cacheType: 3
+    lastTrackingStatusChangedEvent:
+      updatedTimeString: 0001-01-01T00:00:00.000+00:00
+      cacheType: 5
+    historyControl:
+      scroll: {x: 0, y: 0}
+      entries: []
+      statusAhead: 0
+      selectedIndex: -1
+    selectedEntry:
+      commitID: 
+      mergeA: 
+      mergeB: 
+      authorName: 
+      authorEmail: 
+      commitEmail: 
+      commitName: 
+      summary: 
+      description: 
+      timeString: 0001-01-01T00:00:00.000+00:00
+      commitTimeString: 0001-01-01T00:00:00.000+00:00
+      changes:
+      - path: .vsconfig
+        fullPath: C:\Users\mkowa\GKIO projekt\.vsconfig
+        projectPath: .vsconfig
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\InputSystem_Actions.inputactions
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\InputSystem_Actions.inputactions
+        projectPath: Assets\InputSystem_Actions.inputactions
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\InputSystem_Actions.inputactions.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\InputSystem_Actions.inputactions.meta
+        projectPath: Assets\InputSystem_Actions.inputactions.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Readme.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Readme.asset
+        projectPath: Assets\Readme.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Readme.asset.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Readme.asset.meta
+        projectPath: Assets\Readme.asset.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Scenes.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Scenes.meta
+        projectPath: Assets\Scenes.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Scenes\SampleScene.unity
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Scenes\SampleScene.unity
+        projectPath: Assets\Scenes\SampleScene.unity
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Scenes\SampleScene.unity.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Scenes\SampleScene.unity.meta
+        projectPath: Assets\Scenes\SampleScene.unity.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings.meta
+        projectPath: Assets\Settings.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\DefaultVolumeProfile.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\DefaultVolumeProfile.asset
+        projectPath: Assets\Settings\DefaultVolumeProfile.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\DefaultVolumeProfile.asset.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\DefaultVolumeProfile.asset.meta
+        projectPath: Assets\Settings\DefaultVolumeProfile.asset.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\Mobile_RPAsset.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\Mobile_RPAsset.asset
+        projectPath: Assets\Settings\Mobile_RPAsset.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\Mobile_RPAsset.asset.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\Mobile_RPAsset.asset.meta
+        projectPath: Assets\Settings\Mobile_RPAsset.asset.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\Mobile_Renderer.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\Mobile_Renderer.asset
+        projectPath: Assets\Settings\Mobile_Renderer.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\Mobile_Renderer.asset.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\Mobile_Renderer.asset.meta
+        projectPath: Assets\Settings\Mobile_Renderer.asset.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\PC_RPAsset.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\PC_RPAsset.asset
+        projectPath: Assets\Settings\PC_RPAsset.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\PC_RPAsset.asset.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\PC_RPAsset.asset.meta
+        projectPath: Assets\Settings\PC_RPAsset.asset.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\PC_Renderer.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\PC_Renderer.asset
+        projectPath: Assets\Settings\PC_Renderer.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\PC_Renderer.asset.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\PC_Renderer.asset.meta
+        projectPath: Assets\Settings\PC_Renderer.asset.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\SampleSceneProfile.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\SampleSceneProfile.asset
+        projectPath: Assets\Settings\SampleSceneProfile.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\SampleSceneProfile.asset.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\SampleSceneProfile.asset.meta
+        projectPath: Assets\Settings\SampleSceneProfile.asset.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\UniversalRenderPipelineGlobalSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\UniversalRenderPipelineGlobalSettings.asset
+        projectPath: Assets\Settings\UniversalRenderPipelineGlobalSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\Settings\UniversalRenderPipelineGlobalSettings.asset.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\Settings\UniversalRenderPipelineGlobalSettings.asset.meta
+        projectPath: Assets\Settings\UniversalRenderPipelineGlobalSettings.asset.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo.meta
+        projectPath: Assets\TutorialInfo.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Icons.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Icons.meta
+        projectPath: Assets\TutorialInfo\Icons.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Icons\URP.png
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Icons\URP.png
+        projectPath: Assets\TutorialInfo\Icons\URP.png
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Icons\URP.png.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Icons\URP.png.meta
+        projectPath: Assets\TutorialInfo\Icons\URP.png.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Layout.wlt
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Layout.wlt
+        projectPath: Assets\TutorialInfo\Layout.wlt
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Layout.wlt.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Layout.wlt.meta
+        projectPath: Assets\TutorialInfo\Layout.wlt.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Scripts.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Scripts.meta
+        projectPath: Assets\TutorialInfo\Scripts.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Scripts\Editor.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Scripts\Editor.meta
+        projectPath: Assets\TutorialInfo\Scripts\Editor.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Scripts\Editor\ReadmeEditor.cs
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Scripts\Editor\ReadmeEditor.cs
+        projectPath: Assets\TutorialInfo\Scripts\Editor\ReadmeEditor.cs
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Scripts\Editor\ReadmeEditor.cs.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Scripts\Editor\ReadmeEditor.cs.meta
+        projectPath: Assets\TutorialInfo\Scripts\Editor\ReadmeEditor.cs.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Scripts\Readme.cs
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Scripts\Readme.cs
+        projectPath: Assets\TutorialInfo\Scripts\Readme.cs
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Assets\TutorialInfo\Scripts\Readme.cs.meta
+        fullPath: C:\Users\mkowa\GKIO projekt\Assets\TutorialInfo\Scripts\Readme.cs.meta
+        projectPath: Assets\TutorialInfo\Scripts\Readme.cs.meta
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Packages\manifest.json
+        fullPath: C:\Users\mkowa\GKIO projekt\Packages\manifest.json
+        projectPath: Packages\manifest.json
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: Packages\packages-lock.json
+        fullPath: C:\Users\mkowa\GKIO projekt\Packages\packages-lock.json
+        projectPath: Packages\packages-lock.json
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\AudioManager.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\AudioManager.asset
+        projectPath: ProjectSettings\AudioManager.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\ClusterInputManager.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\ClusterInputManager.asset
+        projectPath: ProjectSettings\ClusterInputManager.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\DynamicsManager.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\DynamicsManager.asset
+        projectPath: ProjectSettings\DynamicsManager.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\EditorBuildSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\EditorBuildSettings.asset
+        projectPath: ProjectSettings\EditorBuildSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\EditorSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\EditorSettings.asset
+        projectPath: ProjectSettings\EditorSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\EntitiesClientSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\EntitiesClientSettings.asset
+        projectPath: ProjectSettings\EntitiesClientSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\GraphicsSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\GraphicsSettings.asset
+        projectPath: ProjectSettings\GraphicsSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\InputManager.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\InputManager.asset
+        projectPath: ProjectSettings\InputManager.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\MemorySettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\MemorySettings.asset
+        projectPath: ProjectSettings\MemorySettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\MultiplayerManager.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\MultiplayerManager.asset
+        projectPath: ProjectSettings\MultiplayerManager.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\NavMeshAreas.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\NavMeshAreas.asset
+        projectPath: ProjectSettings\NavMeshAreas.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\NetCodeClientAndServerSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\NetCodeClientAndServerSettings.asset
+        projectPath: ProjectSettings\NetCodeClientAndServerSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\NetCodeServerSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\NetCodeServerSettings.asset
+        projectPath: ProjectSettings\NetCodeServerSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\PackageManagerSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\PackageManagerSettings.asset
+        projectPath: ProjectSettings\PackageManagerSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\Physics2DSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\Physics2DSettings.asset
+        projectPath: ProjectSettings\Physics2DSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\PresetManager.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\PresetManager.asset
+        projectPath: ProjectSettings\PresetManager.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\ProjectSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\ProjectSettings.asset
+        projectPath: ProjectSettings\ProjectSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\ProjectVersion.txt
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\ProjectVersion.txt
+        projectPath: ProjectSettings\ProjectVersion.txt
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\QualitySettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\QualitySettings.asset
+        projectPath: ProjectSettings\QualitySettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\ShaderGraphSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\ShaderGraphSettings.asset
+        projectPath: ProjectSettings\ShaderGraphSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\TagManager.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\TagManager.asset
+        projectPath: ProjectSettings\TagManager.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\TimeManager.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\TimeManager.asset
+        projectPath: ProjectSettings\TimeManager.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\URPProjectSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\URPProjectSettings.asset
+        projectPath: ProjectSettings\URPProjectSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\UnityConnectSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\UnityConnectSettings.asset
+        projectPath: ProjectSettings\UnityConnectSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\VFXManager.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\VFXManager.asset
+        projectPath: ProjectSettings\VFXManager.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\VersionControlSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\VersionControlSettings.asset
+        projectPath: ProjectSettings\VersionControlSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: ProjectSettings\XRSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\ProjectSettings\XRSettings.asset
+        projectPath: ProjectSettings\XRSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: UserSettings\EditorUserSettings.asset
+        fullPath: C:\Users\mkowa\GKIO projekt\UserSettings\EditorUserSettings.asset
+        projectPath: UserSettings\EditorUserSettings.asset
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: UserSettings\Layouts\default-6000.dwlt
+        fullPath: C:\Users\mkowa\GKIO projekt\UserSettings\Layouts\default-6000.dwlt
+        projectPath: UserSettings\Layouts\default-6000.dwlt
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: UserSettings\Search.index
+        fullPath: C:\Users\mkowa\GKIO projekt\UserSettings\Search.index
+        projectPath: UserSettings\Search.index
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+      - path: UserSettings\Search.settings
+        fullPath: C:\Users\mkowa\GKIO projekt\UserSettings\Search.settings
+        projectPath: UserSettings\Search.settings
+        originalPath: 
+        indexStatus: 4
+        workTreeStatus: 0
+    treeChanges:
+      assets:
+        keys: []
+        values: []
+      folders:
+        keys: []
+        values: []
+      checkedFileNodes:
+        keys: []
+        values: []
+      title: 
+      pathSeparator: /
+      displayRootNode: 0
+      isSelectable: 1
+      isCheckable: 0
+      isUsingGlobalSelection: 0
+      nodes: []
+      selectedNode:
+        path: 
+        label: 
+        level: 0
+        isFolder: 0
+        isContainer: 0
+        isCollapsed: 0
+        isHidden: 0
+        isActive: 0
+        treeIsCheckable: 0
+        checkState: 0
+        isLocked: 0
+        gitStatusEntry:
+          path: 
+          fullPath: 
+          projectPath: 
+          originalPath: 
+          indexStatus: 0
+          workTreeStatus: 0
+    detailsScroll: {x: 0, y: 0}
+  settingsView:
+    gitPathView:
+      gitPath: /usr/bin/git
+      gitLfsPath: /Users/jaygee/Library/Application Support/GitForUnity/git/libexec/git-core/git-lfs
+      errorMessage: 
+      resetToBundled: 0
+      resetToSystem: 1
+      changingManually: 0
+      installSettingsHidden: 0
+    hasRemote: 0
+    lastCurrentRemoteChangedEvent:
+      updatedTimeString: 0001-01-01T00:00:00.000+00:00
+      cacheType: 1
+    newRepositoryRemoteUrl: https://github.com/bones384/UnityMovementShooterProject.git
+    repositoryRemoteName: origin
+    repositoryRemoteUrl: 
+    scroll: {x: 0, y: 0}
+    userSettingsView:
+      gitName: 
+      gitEmail: 
+      newGitName: 
+      newGitEmail: 
+      needsSaving: 0
+      lastCheckUserChangedEvent:
+        updatedTimeString: 0001-01-01T00:00:00.000+00:00
+        cacheType: 8
+      configSettingsHidden: 0
+    repositorySettingsHidden: 0
+    generalSettingsHidden: 0
+    debugSettingsHidden: 0
+    uiSceneSettingsHidden: 0
+    uiProjectSettingsHidden: 0
+  locksView:
+    currentRemoteHasUpdate: 0
+    currentStatusEntriesHasUpdate: 0
+    currentLocksHasUpdate: 0
+    keychainHasUpdate: 0
+    locksControl:
+      scroll: {x: 0, y: 0}
+      gitLockEntries: []
+      assets:
+        keys: []
+        values: []
+      gitStatusDictionary:
+        keys: []
+        values: []
+      selectedEntry:
+        gitLock:
+          id: 
+          path: 
+          owner:
+            name: 
+            email: 
+          lockedAtString: 
+        gitFileStatus: 0
+        lockedAt: 
+    lastCurrentRemoteChangedEvent:
+      updatedTimeString: 
+      cacheType: 0
+    lastLocksChangedEvent:
+      updatedTimeString: 
+      cacheType: 0
+    lastStatusEntriesChangedEvent:
+      updatedTimeString: 
+      cacheType: 0
+    lockedFiles: []
+    gitStatusEntries: []
+    currentUsername: 
+    unlockFileMenuContent:
+      m_Text: Release Lock
+      m_Image: {fileID: 0}
+      m_Tooltip: 
+      m_TextWithWhitespace: "Release Lock\u200B"
+    forceUnlockFileMenuContent:
+      m_Text: Release Lock (forced)
+      m_Image: {fileID: 0}
+      m_Tooltip: 
+      m_TextWithWhitespace: "Release Lock (forced)\u200B"
+  hasRemote: 0
+  currentRemoteName: 
+  currentBranch: 
+  currentRemoteUrl: No remote configured
+  statusAhead: 0
+  statusBehind: 0
+  hasItemsToCommit: 0
+  isTrackingRemoteBranch: 0
+  currentBranchContent:
+    m_Text: 
+    m_Image: {fileID: 0}
+    m_Tooltip: Active branch
+    m_TextWithWhitespace: 
+  currentRemoteUrlContent:
+    m_Text: No remote configured
+    m_Image: {fileID: 0}
+    m_Tooltip: Add a remote in the Settings tab
+    m_TextWithWhitespace: "No remote configured\u200B"
+  lastCurrentBranchAndRemoteChangedEvent:
+    updatedTimeString: 0001-01-01T00:00:00.000+00:00
+    cacheType: 1
+  lastTrackingStatusChangedEvent:
+    updatedTimeString: 0001-01-01T00:00:00.000+00:00
+    cacheType: 5
+  lastStatusEntriesChangedEvent:
+    updatedTimeString: 0001-01-01T00:00:00.000+00:00
+    cacheType: 6
+  pullButtonContent:
+    m_Text: Pull
+    m_Image: {fileID: 0}
+    m_Tooltip: 
+    m_TextWithWhitespace: "Pull\u200B"
+  pushButtonContent:
+    m_Text: Push
+    m_Image: {fileID: 0}
+    m_Tooltip: 
+    m_TextWithWhitespace: "Push\u200B"
+  refreshButtonContent:
+    m_Text: Refresh
+    m_Image: {fileID: 0}
+    m_Tooltip: 
+    m_TextWithWhitespace: "Refresh\u200B"
+  fetchButtonContent:
+    m_Text: Fetch
+    m_Image: {fileID: 0}
+    m_Tooltip: 
+    m_TextWithWhitespace: "Fetch\u200B"
+  repositoryProgressValue: 1
+  repositoryProgressMessage: Refreshing
+  appManagerProgressValue: 0.99999964
+  appManagerProgressMessage: 
+  primaryConnectionUsername: 
