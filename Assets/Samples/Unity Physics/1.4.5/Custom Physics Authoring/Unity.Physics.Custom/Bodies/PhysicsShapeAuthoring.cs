@@ -6,13 +6,13 @@ using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.Search;
 #endif
 
 namespace Unity.Physics.Authoring
