@@ -153,7 +153,7 @@ namespace Entities.Netcode.Shooting
                             Owner = entity,
                             Origin = spawnOrigin,
                             Direction = aimDirection,
-                            Speed = 1f,
+                            Speed = 10f,
                             Damage = 35f,
                             Lifespan = 10f,
                             ApplyGravity = false,
