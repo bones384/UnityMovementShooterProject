@@ -36,5 +36,11 @@ namespace Entities.Netcode
                 playerInput.ValueRW.ThirdAbilityInput = _controls.Player.Ability3.IsPressed();
             }
         }
+
+        protected override void OnDestroy()
+        {
+            _controls.Disable();
+            _controls.Dispose();
+        }
     }
 }

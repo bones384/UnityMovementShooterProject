@@ -9,6 +9,7 @@ namespace Entities.Netcode
     {
         public override bool Initialize(string defaultWorldName)
         {
+            return false;
             Cursor.lockState = CursorLockMode.Locked;
             AutoConnectPort = 7979;
             return base.Initialize(defaultWorldName);

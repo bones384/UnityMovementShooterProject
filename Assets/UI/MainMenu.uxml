@@ -1,0 +1,22 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/MainMenu.uss?fileID=7433441132597879392&amp;guid=fa6fd1f8b22284db2b2b41610880ed81&amp;type=3#MainMenu"/>
+    <ui:VisualElement class="main-container">
+        <ui:Label text="BLOCK SHOOTER" class="title-text"/>
+        <ui:VisualElement name="login-container" class="button-container">
+            <ui:TextField name="input-username" label="USERNAME" class="username-input"/>
+            <ui:Button name="btn-login" text="CONNECT" class="menu-button login-button"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="play-container" class="button-container" style="display: none;">
+            <ui:Label name="lbl-welcome" text="Welcome, Player!" class="welcome-text"/>
+            <ui:Button name="btn-play" text="PLAY GAME" class="menu-button"/>
+            <ui:Button name="btn-exit" text="EXIT" class="menu-button exit-button"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="matchmaking-overlay" class="popup-overlay" style="display: none;">
+        <ui:VisualElement class="popup-box">
+            <ui:Label text="MATCHMAKING" class="popup-title"/>
+            <ui:Label name="lbl-status" text="Connecting to servers..." class="popup-status"/>
+            <ui:Button name="btn-cancel" text="CANCEL" class="menu-button cancel-button"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

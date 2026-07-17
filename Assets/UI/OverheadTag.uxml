@@ -1,16 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ui:UXML
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ui="UnityEngine.UIElements"
-    xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd"
->
-    <Style src="project://database/Assets/OverheadTag.uss" />
-    
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/OverheadTag.uss?fileID=7433441132597879392&amp;guid=a4dfbadafb32441109053422b70c34e0&amp;type=3#OverheadTag"/>
     <ui:VisualElement class="overhead-root">
         <ui:Label name="player-name" text="Player 0"/>
         <ui:VisualElement class="health-bg">
             <ui:VisualElement name="health-fill"/>
-            <ui:Label name="health-text-overhead" text="100/100" />
+            <ui:Label name="health-text-overhead" text="100/100"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

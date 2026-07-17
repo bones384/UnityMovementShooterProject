@@ -18,7 +18,7 @@ namespace Entities.Netcode.GameMechanics
             state.RequireForUpdate<NetworkTime>();
             state.RequireForUpdate<EntitiesReferences>();
         }
-
+        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             var networkTime = SystemAPI.GetSingleton<NetworkTime>();
@@ -96,12 +96,7 @@ namespace Entities.Netcode.GameMechanics
                         }
 
                         validSpawns.Dispose();
-
-                        if (networkTime.IsFirstTimeFullyPredictingTick)
-                        {
-                            string role = state.WorldUnmanaged.IsServer() ? "Server" : "Client";
-                            UnityEngine.Debug.Log($"[{role}] Player {entity.Index} respawned!");
-                        }
+                        
                     }
                 }
             }
