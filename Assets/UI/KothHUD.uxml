@@ -1,5 +1,5 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/KothUI.uss?fileID=7433441132597879392&amp;guid=34c2e3b1dad2448e792979a131047f10&amp;type=3#KothUI"/>
+    <Style src="project://database/Assets/UI/KothUI.uss?fileID=7433441132597879392&amp;guid=34c2e3b1dad2448e792979a131047f10&amp;type=3#KothUI"/>
     <ui:VisualElement class="koth-root">
         <ui:VisualElement class="timers-row">
             <ui:Label name="team-a-timer" text="3:00" class="team-timer timer-blue"/>
@@ -12,7 +12,7 @@
         <ui:Label name="overtime-label" text="OVERTIME"/>
         <ui:VisualElement name="victory-overlay">
             <ui:VisualElement name="victory-box">
-                <ui:Label name="victory-text" text="YOU WIN!" />
+                <ui:Label name="victory-text" text="YOU WIN!"/>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
