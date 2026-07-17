@@ -23,7 +23,7 @@ namespace Entities.Movement
             state.RequireForUpdate<MovementRaycasterComponent>();
         }
 
-        //[BurstCompile]
+        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             var collisionWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().CollisionWorld;
@@ -46,12 +46,7 @@ namespace Entities.Movement
                     contacts.ValueRW.GroundNormal = hit.SurfaceNormal;
                     contacts.ValueRW.GroundHit = hit.Position;
                 }
-
-
-                Debug.DrawLine(pos, pos - transform.ValueRO.Right() * wallDistance, Color.blue);
-                Debug.DrawLine(pos, pos + transform.ValueRO.Right() * wallDistance, Color.green);
-
-
+                
                 contacts.ValueRW.HasWallLeft =
                     Raycast(collisionWorld, pos, -transform.ValueRO.Right(), wallDistance, out hit);
                 if (contacts.ValueRW.HasWallLeft)
@@ -74,12 +69,12 @@ namespace Entities.Movement
         {
         }
 
-
+        [BurstCompile]
         private static bool Raycast(
-            CollisionWorld collisionWorld,
-            float3 origin,
-            float3 direction,
-            float distance, out RaycastHit hit)
+            in CollisionWorld collisionWorld,
+            in float3 origin,
+            in float3 direction,
+            in float distance, out RaycastHit hit)
         {
             var input = new RaycastInput
             {

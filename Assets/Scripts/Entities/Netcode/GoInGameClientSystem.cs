@@ -1,3 +1,4 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.NetCode;
@@ -11,9 +12,10 @@ namespace Entities.Netcode
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<NetworkId>();
+            state.RequireForUpdate<EntitiesReferences>();
         }
 
-        //[BurstCompile]
+        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             var buffer = new EntityCommandBuffer(Allocator.Temp);
@@ -21,8 +23,6 @@ namespace Entities.Netcode
                          .WithNone<NetworkStreamInGame>().WithEntityAccess())
             {
                 buffer.AddComponent<NetworkStreamInGame>(entity);
-                Debug.Log("Setting client as InGame");
-
                 var rpcEntity = buffer.CreateEntity();
                 buffer.AddComponent(rpcEntity, new GoInGameRequestRpc());
                 buffer.AddComponent(rpcEntity, new SendRpcCommandRequest());

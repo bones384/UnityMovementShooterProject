@@ -11,6 +11,7 @@ namespace Entities.Netcode.GameMechanics
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     public partial struct KothLogicSystem : ISystem
     {
+        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             var dt = SystemAPI.Time.DeltaTime;
@@ -24,7 +25,6 @@ namespace Entities.Netcode.GameMechanics
                     koth.ValueRW.RestartTimer -= dt;
                     if (koth.ValueRO.RestartTimer <= 0)
                     {
-                        UnityEngine.Debug.Log("[Server] Restarting Match!");
                         koth.ValueRW.IsGameOver = false;
                         koth.ValueRW.WinningTeam = -1;
                         koth.ValueRW.CurrentOwner = -1;
@@ -103,7 +103,6 @@ namespace Entities.Netcode.GameMechanics
                             {
                                 koth.ValueRW.CurrentOwner = soleTeamOnPoint;
                                 koth.ValueRW.CaptureProgress = 0f;
-                                UnityEngine.Debug.Log($"[Server] *** Team {soleTeamOnPoint} CAPTURED the hill! ***");
                             }
                         }
                     }
@@ -139,9 +138,9 @@ namespace Entities.Netcode.GameMechanics
             }
         }
 
-        private void TriggerWin( RefRW<KothPointComponent> koth, int winningTeam)
+        [BurstCompile]
+        private void TriggerWin( in RefRW<KothPointComponent> koth, in int winningTeam)
         {
-            UnityEngine.Debug.Log($"[Server] TEAM {winningTeam} WINS THE MATCH!");
             koth.ValueRW.IsGameOver = true;
             koth.ValueRW.WinningTeam = winningTeam;
             koth.ValueRW.RestartTimer = 5f;
