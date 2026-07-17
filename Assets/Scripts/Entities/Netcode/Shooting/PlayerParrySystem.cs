@@ -1,8 +1,7 @@
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
-using Unity.Mathematics;
 using Unity.NetCode;
+using UnityEngine;
 
 namespace Entities.Netcode.Abilities
 {
@@ -33,14 +32,14 @@ namespace Entities.Netcode.Abilities
                 if (pState.ValueRO.ThirdCooldownTimer > 0)
                     pState.ValueRW.ThirdCooldownTimer -= dt;
 
-                bool isPressed = input.ValueRO.ThirdAbilityInput;
-                bool wasPressed = pState.ValueRO.PreviousThirdInput;
-                
-                // 2. Gate trigger by cooldown
-                bool triggered = isPressed && !wasPressed && pState.ValueRO.ThirdCooldownTimer <= 0;
+                var isPressed = input.ValueRO.ThirdAbilityInput;
+                var wasPressed = pState.ValueRO.PreviousThirdInput;
 
-                bool shouldLog = isServer || networkTime.IsFirstTimeFullyPredictingTick;
-                string role = isServer ? "Server" : "Client";
+                // 2. Gate trigger by cooldown
+                var triggered = isPressed && !wasPressed && pState.ValueRO.ThirdCooldownTimer <= 0;
+
+                var shouldLog = isServer || networkTime.IsFirstTimeFullyPredictingTick;
+                var role = isServer ? "Server" : "Client";
 
                 if (pState.ValueRO.ParryTimer > 0)
                 {
@@ -48,20 +47,20 @@ namespace Entities.Netcode.Abilities
                     if (pState.ValueRO.ParryTimer <= 0)
                     {
                         pState.ValueRW.IsParrying = false;
-                        if (shouldLog) 
-                            UnityEngine.Debug.Log($"[{role}] Parry ENDED for Player {entity.Index}");
+                        if (shouldLog)
+                            Debug.Log($"[{role}] Parry ENDED for Player {entity.Index}");
                     }
                 }
                 else if (triggered)
                 {
                     pState.ValueRW.IsParrying = true;
-                    pState.ValueRW.ParryTimer = 0.5f; 
-                    
+                    pState.ValueRW.ParryTimer = 0.5f;
+
                     // 3. Reset Cooldown Timer
                     pState.ValueRW.ThirdCooldownTimer = entitiesReferences.thirdCooldown;
-                    
-                    if (shouldLog) 
-                        UnityEngine.Debug.Log($"[{role}] Parry BEGAN for Player {entity.Index}");
+
+                    if (shouldLog)
+                        Debug.Log($"[{role}] Parry BEGAN for Player {entity.Index}");
                 }
 
                 pState.ValueRW.PreviousThirdInput = isPressed;

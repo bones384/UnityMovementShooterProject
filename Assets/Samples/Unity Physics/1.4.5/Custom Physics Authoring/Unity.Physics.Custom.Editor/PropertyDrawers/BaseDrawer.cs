@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Unity.Physics.Editor
 {
-    abstract class BaseDrawer : PropertyDrawer
+    internal abstract class BaseDrawer : PropertyDrawer
     {
         protected abstract bool IsCompatible(SerializedProperty property);
 
@@ -19,7 +19,8 @@ namespace Unity.Physics.Editor
             if (IsCompatible(property))
                 DoGUI(position, property, label);
             else
-                EditorGUIControls.DisplayCompatibilityWarning(position, label, ObjectNames.NicifyVariableName(GetType().Name));
+                EditorGUIControls.DisplayCompatibilityWarning(position, label,
+                    ObjectNames.NicifyVariableName(GetType().Name));
         }
 
         protected abstract void DoGUI(Rect position, SerializedProperty property, GUIContent label);

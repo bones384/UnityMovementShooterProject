@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
 using Entities.Netcode;
-using Unity.Cinemachine;
-using Unity.Cinemachine.Editor;
 using Unity.Entities;
 using UnityEngine;
 
@@ -10,9 +7,9 @@ public class PlayerVisualisationManager : MonoBehaviour
 {
     public static GameObject PlayerViewPrefab;
     public static PlayerStateComponent? LocalPlayer = null;
+    public static PlayerVisualisationManager Instance;
 
     public GameObject playerPrefab;
-    public static PlayerVisualisationManager Instance;
     public Material friendMaterial;
     public Material enemyMaterial;
 
@@ -26,7 +23,6 @@ public class PlayerVisualisationManager : MonoBehaviour
         {
             Instance = this;
             PlayerViewPrefab = playerPrefab;
-
         }
     }
 

@@ -46,7 +46,7 @@ namespace Entities.Movement
                     contacts.ValueRW.GroundNormal = hit.SurfaceNormal;
                     contacts.ValueRW.GroundHit = hit.Position;
                 }
-                
+
                 contacts.ValueRW.HasWallLeft =
                     Raycast(collisionWorld, pos, -transform.ValueRO.Right(), wallDistance, out hit);
                 if (contacts.ValueRW.HasWallLeft)

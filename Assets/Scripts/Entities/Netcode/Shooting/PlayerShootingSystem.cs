@@ -8,8 +8,8 @@ using Unity.Transforms;
 namespace Entities.Netcode.Shooting
 {
     [UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
-    [UpdateBefore(typeof(HitscanShootingSystem))] 
-    [UpdateBefore(typeof(ProjectileSpawnerSystem))] 
+    [UpdateBefore(typeof(HitscanShootingSystem))]
+    [UpdateBefore(typeof(ProjectileSpawnerSystem))]
     public partial struct PlayerShootingSystem : ISystem
     {
         [BurstCompile]
@@ -19,47 +19,44 @@ namespace Entities.Netcode.Shooting
             state.RequireForUpdate<EntitiesReferences>();
         }
 
-[BurstCompile]
+        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             var networkTime = SystemAPI.GetSingleton<NetworkTime>();
             var entitiesReferences = SystemAPI.GetSingleton<EntitiesReferences>();
             var dt = SystemAPI.Time.DeltaTime;
-            
+
             var ecb = new EntityCommandBuffer(Allocator.Temp);
 
             foreach (var (input, transform, look, pState, entity) in SystemAPI
-                         .Query<RefRO<PlayerInput>, RefRO<LocalTransform>, RefRO<PlayerLook>, RefRW<PlayerStateComponent>>()
+                         .Query<RefRO<PlayerInput>, RefRO<LocalTransform>, RefRO<PlayerLook>,
+                             RefRW<PlayerStateComponent>>()
                          .WithAll<Simulate>()
                          .WithEntityAccess())
             {
-                if (pState.ValueRO.IsDead) continue; 
-                
+                if (pState.ValueRO.IsDead) continue;
+
                 // --- 1. TICK COOLDOWNS & AUTO-RELOAD ---
                 if (pState.ValueRO.PrimaryCooldownTimer > 0)
                 {
                     pState.ValueRW.PrimaryCooldownTimer -= dt;
-                    
+
                     // If the reload timer just finished and we are empty, refill the magazine!
                     if (pState.ValueRO.PrimaryCooldownTimer <= 0 && pState.ValueRO.CurrentAmmo <= 0)
-                    {
                         pState.ValueRW.CurrentAmmo = entitiesReferences.MagazineSize;
-                    }
                 }
+
 // --- NEW: TICK HITMARKER ---
-                if (pState.ValueRO.HitMarkerTimer > 0)
-                {
-                    pState.ValueRW.HitMarkerTimer -= dt;
-                }
+                if (pState.ValueRO.HitMarkerTimer > 0) pState.ValueRW.HitMarkerTimer -= dt;
                 if (pState.ValueRO.SecondaryCooldownTimer > 0) pState.ValueRW.SecondaryCooldownTimer -= dt;
                 if (pState.ValueRO.FourthCooldownTimer > 0) pState.ValueRW.FourthCooldownTimer -= dt;
-                
+
                 // --- 2. READ INPUTS ---
-                bool isPrimaryHeld = input.ValueRO.PrimaryAbilityInput;
-                bool isSecondaryPressed = input.ValueRO.SecondaryAbilityInput;
-                bool wasSecondaryPressed = pState.ValueRO.PreviousSecondaryInput;
-                bool isFourthPressed = input.ValueRO.FourthAbilityInput;
-                bool wasFourthPressed = pState.ValueRO.PreviousFourthInput;
+                var isPrimaryHeld = input.ValueRO.PrimaryAbilityInput;
+                var isSecondaryPressed = input.ValueRO.SecondaryAbilityInput;
+                var wasSecondaryPressed = pState.ValueRO.PreviousSecondaryInput;
+                var isFourthPressed = input.ValueRO.FourthAbilityInput;
+                var wasFourthPressed = pState.ValueRO.PreviousFourthInput;
 
                 // --- 3. HANDLE EMPTY MAG ON SPAWN ---
                 // If they hold fire, have no cooldown, but the gun is empty, force a reload to start.
@@ -70,12 +67,19 @@ namespace Entities.Netcode.Shooting
                     if (networkTime.IsFirstTimeFullyPredictingTick)
                     {
                         var audioReq = ecb.CreateEntity();
-                        ecb.AddComponent(audioReq, new AudioRequest { Effect = SFX.Reload, Position = transform.ValueRO.Position, Pitch = 1f, LocalTargetNetworkId = -1 });
+                        ecb.AddComponent(audioReq,
+                            new AudioRequest
+                            {
+                                Effect = SFX.Reload, Position = transform.ValueRO.Position, Pitch = 1f,
+                                LocalTargetNetworkId = -1
+                            });
                     }
                 }
 
-                bool primaryTriggered = isPrimaryHeld && pState.ValueRO.PrimaryCooldownTimer <= 0 && pState.ValueRO.CurrentAmmo > 0;
-                bool secondaryTriggered = isSecondaryPressed && !wasSecondaryPressed && pState.ValueRO.SecondaryCooldownTimer <= 0;
+                var primaryTriggered = isPrimaryHeld && pState.ValueRO.PrimaryCooldownTimer <= 0 &&
+                                       pState.ValueRO.CurrentAmmo > 0;
+                var secondaryTriggered = isSecondaryPressed && !wasSecondaryPressed &&
+                                         pState.ValueRO.SecondaryCooldownTimer <= 0;
 
                 // --- 4. EXECUTE PRIMARY (SHOOT) ---
                 if (primaryTriggered)
@@ -90,7 +94,12 @@ namespace Entities.Netcode.Shooting
                         if (networkTime.IsFirstTimeFullyPredictingTick)
                         {
                             var audioReq = ecb.CreateEntity();
-                            ecb.AddComponent(audioReq, new AudioRequest { Effect = SFX.Reload, Position = transform.ValueRO.Position, Pitch = 1f, LocalTargetNetworkId = -1 });
+                            ecb.AddComponent(audioReq,
+                                new AudioRequest
+                                {
+                                    Effect = SFX.Reload, Position = transform.ValueRO.Position, Pitch = 1f,
+                                    LocalTargetNetworkId = -1
+                                });
                         }
                     }
                     else
@@ -101,12 +110,16 @@ namespace Entities.Netcode.Shooting
                     // B. Spawn visual/network requests ONLY on forward ticks
                     if (networkTime.IsFirstTimeFullyPredictingTick)
                     {
-                        
-                        var aimRotation = math.mul(quaternion.RotateY(look.ValueRO.Yaw), quaternion.RotateX(-look.ValueRO.Pitch));
+                        var aimRotation = math.mul(quaternion.RotateY(look.ValueRO.Yaw),
+                            quaternion.RotateX(-look.ValueRO.Pitch));
                         var aimDirection = math.mul(aimRotation, new float3(0, 0, 1));
-                        var spawnOrigin = transform.ValueRO.Position + new float3(0, 1.8f, 0); 
+                        var spawnOrigin = transform.ValueRO.Position + new float3(0, 1.8f, 0);
                         var audioReq = ecb.CreateEntity();
-                        ecb.AddComponent(audioReq, new AudioRequest { Effect = SFX.FireHitscan, Position = spawnOrigin, Pitch = 1f, LocalTargetNetworkId = -1 });
+                        ecb.AddComponent(audioReq,
+                            new AudioRequest
+                            {
+                                Effect = SFX.FireHitscan, Position = spawnOrigin, Pitch = 1f, LocalTargetNetworkId = -1
+                            });
 
                         var reqEntity = ecb.CreateEntity();
                         ecb.AddComponent(reqEntity, new HitscanBulletRequest
@@ -129,9 +142,10 @@ namespace Entities.Netcode.Shooting
 
                     if (networkTime.IsFirstTimeFullyPredictingTick)
                     {
-                        var aimRotation = math.mul(quaternion.RotateY(look.ValueRO.Yaw), quaternion.RotateX(-look.ValueRO.Pitch));
+                        var aimRotation = math.mul(quaternion.RotateY(look.ValueRO.Yaw),
+                            quaternion.RotateX(-look.ValueRO.Pitch));
                         var aimDirection = math.mul(aimRotation, new float3(0, 0, 1));
-                        var spawnOrigin = transform.ValueRO.Position + new float3(0, 1.8f, 0); 
+                        var spawnOrigin = transform.ValueRO.Position + new float3(0, 1.8f, 0);
 
                         var reqEntity = ecb.CreateEntity();
                         ecb.AddComponent(reqEntity, new ProjectileSpawnRequest
@@ -139,17 +153,19 @@ namespace Entities.Netcode.Shooting
                             Owner = entity,
                             Origin = spawnOrigin,
                             Direction = aimDirection,
-                            Speed = 1f,             
+                            Speed = 1f,
                             Damage = 35f,
                             Lifespan = 10f,
                             ApplyGravity = false,
                             Radius = 0.2f
                         });
                         var audioReq = ecb.CreateEntity();
-                        ecb.AddComponent(audioReq, new AudioRequest { Effect = SFX.FireProj, Position = spawnOrigin, Pitch = 1f, LocalTargetNetworkId = -1 });
+                        ecb.AddComponent(audioReq,
+                            new AudioRequest
+                            {
+                                Effect = SFX.FireProj, Position = spawnOrigin, Pitch = 1f, LocalTargetNetworkId = -1
+                            });
                     }
-                  
-                    
                 }
 
                 // --- 6. EXECUTE FOURTH (DEBUG SUICIDE) ---
@@ -161,7 +177,7 @@ namespace Entities.Netcode.Shooting
                     pState.ValueRW.LastKillerTeamIndex = pState.ValueRO.TeamIndex;
                     pState.ValueRW.LastKillerNetworkId = pState.ValueRO.NetworkId;
                 }
-                
+
                 // --- 7. SAVE INPUTS FOR EDGE DETECTION ---
                 pState.ValueRW.PreviousPrimaryInput = isPrimaryHeld;
                 pState.ValueRW.PreviousSecondaryInput = isSecondaryPressed;
@@ -170,5 +186,6 @@ namespace Entities.Netcode.Shooting
 
             ecb.Playback(state.EntityManager);
             ecb.Dispose();
-        }    }
+        }
+    }
 }

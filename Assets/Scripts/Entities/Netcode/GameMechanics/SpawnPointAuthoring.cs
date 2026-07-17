@@ -7,7 +7,7 @@ namespace Entities.Netcode.GameMechanics
     {
         public int TeamIndex;
 
-        class Baker : Baker<SpawnPointAuthoring>
+        private class Baker : Baker<SpawnPointAuthoring>
         {
             public override void Bake(SpawnPointAuthoring authoring)
             {

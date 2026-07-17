@@ -15,10 +15,10 @@ namespace Entities.Netcode
         public float dampenSpeed = 25.0f;
         public float maxFallSpeed = 35f;
         public float airControlFactor = 0.2f;
-        public float WallRunMaxTime = 1.0f;     // Time before slowdown starts
-        public float WallRunDrag = 15f;         // How fast they slow down
-        public float WallRunMinSpeed = 4f;      // Drop-off threshold
-        public float WallJumpBoost = 1.2f;      // Multiplier when jumping off a wall
+        public float WallRunMaxTime = 1.0f; // Time before slowdown starts
+        public float WallRunDrag = 15f; // How fast they slow down
+        public float WallRunMinSpeed = 4f; // Drop-off threshold
+        public float WallJumpBoost = 1.2f; // Multiplier when jumping off a wall
         public bool ApplyWallGravity = true;
         public float WallGravityMultiplier = 0.4f; // 40% of normal gravity
         public GameObject ProjectilePrefab;
@@ -54,7 +54,7 @@ namespace Entities.Netcode
                 WallJumpBoost = authoring.WallJumpBoost,
                 ApplyWallGravity = authoring.ApplyWallGravity,
                 WallGravityMultiplier = authoring.WallGravityMultiplier,
-                ProjectilePrefab =  GetEntity(authoring.ProjectilePrefab, TransformUsageFlags.Dynamic),
+                ProjectilePrefab = GetEntity(authoring.ProjectilePrefab, TransformUsageFlags.Dynamic),
                 primaryCooldown = authoring.PrimaryCooldown,
                 secondaryCooldown = authoring.SecondaryCooldown,
                 thirdCooldown = authoring.ThirdCooldown,
@@ -62,7 +62,7 @@ namespace Entities.Netcode
                 RespawnDelay = authoring.RespawnDelay,
                 MagazineSize = authoring.MagazineSize,
                 ReloadTime = authoring.ReloadTime,
-                FireRate = authoring.FireRate,
+                FireRate = authoring.FireRate
             });
         }
     }

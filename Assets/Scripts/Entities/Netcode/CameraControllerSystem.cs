@@ -24,22 +24,19 @@ namespace Entities.Netcode
             var camera = Camera.main;
             if (camera == null) return;
 
-            foreach (var (localToWorld, input, pState) in SystemAPI.Query<RefRO<LocalToWorld>, RefRO<PlayerLook>, RefRO<PlayerStateComponent>>()
+            foreach (var (localToWorld, input, pState) in SystemAPI
+                         .Query<RefRO<LocalToWorld>, RefRO<PlayerLook>, RefRO<PlayerStateComponent>>()
                          .WithAll<GhostOwnerIsLocal>())
             {
                 camera.transform.rotation = math.mul(quaternion.RotateY(input.ValueRO.Yaw),
                     quaternion.RotateX(-input.ValueRO.Pitch));
-                
-                if (!pState.ValueRO.IsDead) 
-                {
+
+                if (!pState.ValueRO.IsDead)
                     // Alive: Follow the actively moving body
                     camera.transform.position = localToWorld.ValueRO.Position + input.ValueRO.CameraOffset;
-                }
                 else
-                {
                     // Dead: Lock the camera rigidly to the death coordinates
                     camera.transform.position = pState.ValueRO.DeathPosition + input.ValueRO.CameraOffset;
-                }
             }
         }
     }

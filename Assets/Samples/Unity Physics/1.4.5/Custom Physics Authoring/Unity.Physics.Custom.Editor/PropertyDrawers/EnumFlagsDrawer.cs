@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Unity.Physics.Editor
 {
     [CustomPropertyDrawer(typeof(EnumFlagsAttribute))]
-    class EnumFlagsDrawer : BaseDrawer
+    internal class EnumFlagsDrawer : BaseDrawer
     {
         protected override bool IsCompatible(SerializedProperty property)
         {

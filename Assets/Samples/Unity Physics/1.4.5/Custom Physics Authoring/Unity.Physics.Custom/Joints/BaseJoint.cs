@@ -7,7 +7,7 @@ namespace Unity.Physics.Authoring
         public bool EnableCollision;
         public float3 MaxImpulse = float.PositiveInfinity;
 
-        void OnEnable()
+        private void OnEnable()
         {
             // included so tick box appears in Editor
         }

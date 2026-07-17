@@ -15,17 +15,13 @@ public class GameplayBootstrapper : MonoBehaviour
 
         // 1. Load the level into the Client World (Everyone gets this)
         if (ClientServerBootstrap.ClientWorld != null)
-        {
             SceneSystem.LoadSceneAsync(ClientServerBootstrap.ClientWorld.Unmanaged, gameplaySubScene, loadParameters);
-        }
 
         // 2. Load the level into the Server World (Only the Host has this)
         if (MatchmakingState.IsHost && ClientServerBootstrap.ServerWorld != null)
-        {
             SceneSystem.LoadSceneAsync(ClientServerBootstrap.ServerWorld.Unmanaged, gameplaySubScene, loadParameters);
-        }
     }
-    
+
     private void OnDestroy()
     {
         // Clean up the worlds if we leave the Gameplay scene to go back to the Main Menu

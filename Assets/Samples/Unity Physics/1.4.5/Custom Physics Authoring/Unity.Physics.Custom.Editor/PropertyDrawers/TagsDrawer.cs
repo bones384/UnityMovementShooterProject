@@ -6,37 +6,29 @@ using UnityEngine;
 
 namespace Unity.Physics.Editor
 {
-    abstract class TagsDrawer<T> : PropertyDrawer where T : ScriptableObject, ITagNames
+    internal abstract class TagsDrawer<T> : PropertyDrawer where T : ScriptableObject, ITagNames
     {
-        static class Styles
-        {
-            public static readonly string EverythingName = L10n.Tr("Everything");
-            public static readonly string MixedName = L10n.Tr("Mixed...");
-            public static readonly string NothingName = L10n.Tr("Nothing");
+        private string[] m_DefaultOptions;
 
-            public static readonly string MultipleAssetsTooltip =
-                L10n.Tr("Multiple {0} assets found. UI will display labels defined in {1}.");
+        private T[] m_NamesAssets;
 
-            public static readonly GUIContent MultipleAssetsWarning =
-                new GUIContent { image = EditorGUIUtility.Load("console.warnicon") as Texture };
-        }
+        private string[] m_Options;
 
         protected abstract int MaxNumCategories { get; }
         protected abstract string DefaultCategoryName { get; }
         internal string FirstChildPropertyPath { get; set; } // TODO: remove when all usages of bool[] are migrated
 
-        string DefaultFormatString => L10n.Tr($"(Undefined {DefaultCategoryName})");
+        private string DefaultFormatString => L10n.Tr($"(Undefined {DefaultCategoryName})");
 
-        string[] DefaultOptions =>
+        private string[] DefaultOptions =>
             m_DefaultOptions ?? (
                 m_DefaultOptions =
                     Enumerable.Range(0, MaxNumCategories)
                         .Select(i => string.Format(DefaultFormatString, i))
                         .ToArray()
             );
-        string[] m_DefaultOptions;
 
-        string[] GetOptions()
+        private string[] GetOptions()
         {
             if (m_Options != null)
                 return m_Options;
@@ -60,9 +52,7 @@ namespace Unity.Physics.Editor
             return m_Options;
         }
 
-        string[] m_Options;
-
-        static string GetButtonLabel(int value, IReadOnlyList<string> optionNames)
+        private static string GetButtonLabel(int value, IReadOnlyList<string> optionNames)
         {
             switch (value)
             {
@@ -73,20 +63,17 @@ namespace Unity.Physics.Editor
                 default:
                 {
                     for (var i = 0; i < 32; i++)
-                    {
                         if (value == 1 << i)
                             return optionNames[i];
-                    }
                     break;
                 }
             }
+
             return Styles.MixedName;
         }
 
-        T[] m_NamesAssets;
-
         // TODO: remove when all usages of bool[] are migrated
-        SerializedProperty GetFirstChildProperty(SerializedProperty property)
+        private SerializedProperty GetFirstChildProperty(SerializedProperty property)
         {
             if (!string.IsNullOrEmpty(FirstChildPropertyPath))
                 return property.FindPropertyRelative(FirstChildPropertyPath);
@@ -118,6 +105,7 @@ namespace Unity.Physics.Editor
                 everything |= 1 << i;
                 sp.NextVisible(false);
             }
+
             // in case size is smaller than 32
             if (value == everything)
                 value = ~0;
@@ -145,6 +133,7 @@ namespace Unity.Physics.Editor
                             sp.boolValue = false;
                             sp.NextVisible(false);
                         }
+
                         sp.serializedObject.ApplyModifiedProperties();
                     }
                 );
@@ -160,6 +149,7 @@ namespace Unity.Physics.Editor
                             sp.boolValue = true;
                             sp.NextVisible(false);
                         }
+
                         sp.serializedObject.ApplyModifiedProperties();
                     }
                 );
@@ -191,7 +181,9 @@ namespace Unity.Physics.Editor
                     () =>
                     {
                         if (m_NamesAssets.Length > 0)
+                        {
                             Selection.activeObject = m_NamesAssets[0];
+                        }
                         else
                         {
                             var assetPath = AssetDatabase.GenerateUniqueAssetPath($"Assets/{typeof(T).Name}.asset");
@@ -225,24 +217,37 @@ namespace Unity.Physics.Editor
                 }
             }
         }
+
+        private static class Styles
+        {
+            public static readonly string EverythingName = L10n.Tr("Everything");
+            public static readonly string MixedName = L10n.Tr("Mixed...");
+            public static readonly string NothingName = L10n.Tr("Nothing");
+
+            public static readonly string MultipleAssetsTooltip =
+                L10n.Tr("Multiple {0} assets found. UI will display labels defined in {1}.");
+
+            public static readonly GUIContent MultipleAssetsWarning =
+                new() { image = EditorGUIUtility.Load("console.warnicon") as Texture };
+        }
     }
 
     [CustomPropertyDrawer(typeof(CustomPhysicsBodyTags))]
-    class CustomBodyTagsDrawer : TagsDrawer<CustomPhysicsBodyTagNames>
+    internal class CustomBodyTagsDrawer : TagsDrawer<CustomPhysicsBodyTagNames>
     {
         protected override string DefaultCategoryName => "Custom Physics Body Tag";
         protected override int MaxNumCategories => 8;
     }
 
     [CustomPropertyDrawer(typeof(CustomPhysicsMaterialTags))]
-    class CustomMaterialTagsDrawer : TagsDrawer<CustomPhysicsMaterialTagNames>
+    internal class CustomMaterialTagsDrawer : TagsDrawer<CustomPhysicsMaterialTagNames>
     {
         protected override string DefaultCategoryName => "Custom Physics Material Tag";
         protected override int MaxNumCategories => 8;
     }
 
     [CustomPropertyDrawer(typeof(PhysicsCategoryTags))]
-    class PhysicsCategoryTagsDrawer : TagsDrawer<PhysicsCategoryNames>
+    internal class PhysicsCategoryTagsDrawer : TagsDrawer<PhysicsCategoryNames>
     {
         protected override string DefaultCategoryName => "Physics Category";
         protected override int MaxNumCategories => 32;

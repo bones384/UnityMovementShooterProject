@@ -5,15 +5,16 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Profiling;
+using UnityEngine.Rendering;
 
 namespace Unity.Physics.Authoring
 {
-    class PhysicsShapeBaker : BaseColliderBaker<PhysicsShapeAuthoring>
+    internal class PhysicsShapeBaker : BaseColliderBaker<PhysicsShapeAuthoring>
     {
-        public static List<PhysicsShapeAuthoring> physicsShapeComponents = new List<PhysicsShapeAuthoring>();
-        public static List<UnityEngine.Collider> colliderComponents = new List<UnityEngine.Collider>();
+        public static List<PhysicsShapeAuthoring> physicsShapeComponents = new();
+        public static List<UnityEngine.Collider> colliderComponents = new();
 
-        bool ShouldConvertShape(PhysicsShapeAuthoring authoring)
+        private bool ShouldConvertShape(PhysicsShapeAuthoring authoring)
         {
             return authoring.enabled;
         }
@@ -22,14 +23,12 @@ namespace Unity.Physics.Authoring
         {
             var pb = FindFirstEnabledAncestor(shape, PhysicsShapeExtensions_NonBursted.s_PhysicsBodiesBuffer);
             var rb = FindFirstEnabledAncestor(shape, PhysicsShapeExtensions_NonBursted.s_RigidbodiesBuffer);
-            hasBodyComponent = (pb != null || rb != null);
+            hasBodyComponent = pb != null || rb != null;
             isStaticBody = false;
 
             if (pb != null)
-            {
                 return rb == null ? pb.gameObject :
                     pb.transform.IsChildOf(rb.transform) ? pb.gameObject : rb.gameObject;
-            }
 
             if (rb != null)
                 return rb.gameObject;
@@ -46,16 +45,17 @@ namespace Unity.Physics.Authoring
             return topCollider == null
                 ? topShape == null ? shape.gameObject : topShape
                 : topShape == null
-                ? topCollider
-                : topShape.transform.IsChildOf(topCollider.transform)
-                ? topCollider
-                : topShape;
+                    ? topCollider
+                    : topShape.transform.IsChildOf(topCollider.transform)
+                        ? topCollider
+                        : topShape;
         }
 
-        ShapeComputationDataBaking GetInputDataFromAuthoringComponent(PhysicsShapeAuthoring shape, Entity colliderEntity)
+        private ShapeComputationDataBaking GetInputDataFromAuthoringComponent(PhysicsShapeAuthoring shape,
+            Entity colliderEntity)
         {
-            GameObject shapeGameObject = shape.gameObject;
-            var body = GetPrimaryBody(shapeGameObject, out bool hasBodyComponent, out bool isStaticBody);
+            var shapeGameObject = shape.gameObject;
+            var body = GetPrimaryBody(shapeGameObject, out var hasBodyComponent, out var isStaticBody);
             var child = shapeGameObject;
             var shapeInstanceID = shape.GetInstanceID();
 
@@ -64,26 +64,29 @@ namespace Unity.Physics.Authoring
             // prepare the static root
             if (isStaticBody)
             {
-                var staticRootMarker = CreateAdditionalEntity(TransformUsageFlags.Dynamic, true, "StaticRootBakeMarker");
-                AddComponent(staticRootMarker, new BakeStaticRoot() { Body = bodyEntity, ConvertedBodyInstanceID = body.transform.GetInstanceID() });
+                var staticRootMarker =
+                    CreateAdditionalEntity(TransformUsageFlags.Dynamic, true, "StaticRootBakeMarker");
+                AddComponent(staticRootMarker,
+                    new BakeStaticRoot { Body = bodyEntity, ConvertedBodyInstanceID = body.transform.GetInstanceID() });
             }
 
             // Track dependencies to the transforms
-            Transform shapeTransform = GetComponent<Transform>(shape);
-            Transform bodyTransform = GetComponent<Transform>(body);
+            var shapeTransform = GetComponent<Transform>(shape);
+            var bodyTransform = GetComponent<Transform>(body);
             var instance = new ColliderInstanceBaking
             {
                 AuthoringComponentId = shapeInstanceID,
                 BodyEntity = bodyEntity,
                 ShapeEntity = GetEntity(shapeGameObject, TransformUsageFlags.Dynamic),
                 ChildEntity = GetEntity(child, TransformUsageFlags.Dynamic),
-                BodyFromShape = ColliderInstanceBaking.GetCompoundFromChild(shapeTransform, bodyTransform),
+                BodyFromShape = ColliderInstanceBaking.GetCompoundFromChild(shapeTransform, bodyTransform)
             };
 
-            ForceUniqueColliderAuthoring forceUniqueComponent = body.GetComponent<ForceUniqueColliderAuthoring>();
-            bool isForceUniqueComponentPresent = forceUniqueComponent != null && forceUniqueComponent.enabled;
+            var forceUniqueComponent = body.GetComponent<ForceUniqueColliderAuthoring>();
+            var isForceUniqueComponentPresent = forceUniqueComponent != null && forceUniqueComponent.enabled;
 
-            var data = GenerateComputationData(shape, bodyTransform, instance, colliderEntity, isForceUniqueComponentPresent);
+            var data = GenerateComputationData(shape, bodyTransform, instance, colliderEntity,
+                isForceUniqueComponentPresent);
 
             data.Instance.ConvertedAuthoringInstanceID = shapeInstanceID;
             data.Instance.ConvertedBodyInstanceID = bodyTransform.GetInstanceID();
@@ -91,14 +94,15 @@ namespace Unity.Physics.Authoring
             var rb = FindFirstEnabledAncestor(shapeGameObject, PhysicsShapeExtensions_NonBursted.s_RigidbodiesBuffer);
             var pb = FindFirstEnabledAncestor(shapeGameObject, PhysicsShapeExtensions_NonBursted.s_PhysicsBodiesBuffer);
             // The Rigidbody cannot know about the Physics Shape Component. We need to take responsibility of baking the collider.
-            if (rb || (!rb && !pb) && body == shapeGameObject)
+            if (rb || (!rb && !pb && body == shapeGameObject))
             {
                 GetComponents(physicsShapeComponents);
                 GetComponents(colliderComponents);
                 // We need to check that there are no other colliders in the same object, if so, only the first one should do this, otherwise there will be 2 bakers adding this to the entity
                 // This will be needed to trigger BuildCompoundColliderBakingSystem
                 // If they are legacy Colliders and PhysicsShapeAuthoring in the same object, the PhysicsShapeAuthoring will add this
-                if (colliderComponents.Count == 0 && physicsShapeComponents.Count > 0 && physicsShapeComponents[0].GetInstanceID() == shapeInstanceID)
+                if (colliderComponents.Count == 0 && physicsShapeComponents.Count > 0 &&
+                    physicsShapeComponents[0].GetInstanceID() == shapeInstanceID)
                 {
                     var entity = GetEntity(TransformUsageFlags.Dynamic);
 
@@ -109,11 +113,11 @@ namespace Unity.Physics.Authoring
                         PostProcessTransform(bodyTransform);
                     }
 
-                    AddComponent(entity, new PhysicsCompoundData()
+                    AddComponent(entity, new PhysicsCompoundData
                     {
                         AssociateBlobToBody = false,
                         ConvertedBodyInstanceID = shapeInstanceID,
-                        Hash = default,
+                        Hash = default
                     });
                     AddComponent<PhysicsRootBaked>(entity);
                     AddComponent<PhysicsCollider>(entity);
@@ -123,7 +127,7 @@ namespace Unity.Physics.Authoring
             return data;
         }
 
-        Material ProduceMaterial(PhysicsShapeAuthoring shape)
+        private Material ProduceMaterial(PhysicsShapeAuthoring shape)
         {
             var materialTemplate = shape.MaterialTemplate;
             if (materialTemplate != null)
@@ -131,12 +135,12 @@ namespace Unity.Physics.Authoring
             return shape.GetMaterial();
         }
 
-        CollisionFilter ProduceCollisionFilter(PhysicsShapeAuthoring shape)
+        private CollisionFilter ProduceCollisionFilter(PhysicsShapeAuthoring shape)
         {
             return shape.GetFilter();
         }
 
-        UnityEngine.Mesh GetMesh(PhysicsShapeAuthoring shape, out float4x4 childToShape)
+        private UnityEngine.Mesh GetMesh(PhysicsShapeAuthoring shape, out float4x4 childToShape)
         {
             var mesh = shape.CustomMesh;
             childToShape = float4x4.identity;
@@ -149,21 +153,21 @@ namespace Unity.Physics.Authoring
                 {
                     mesh = filter.sharedMesh;
                     var childTransform = GetComponent<Transform>(filter);
-                    childToShape = math.mul(shape.transform.worldToLocalMatrix, childTransform.localToWorldMatrix);;
+                    childToShape = math.mul(shape.transform.worldToLocalMatrix, childTransform.localToWorldMatrix);
+                    ;
                 }
             }
 
             if (mesh == null)
-            {
                 throw new InvalidOperationException(
                     $"No {nameof(PhysicsShapeAuthoring.CustomMesh)} assigned on {shape.name}."
                 );
-            }
             DependsOn(mesh);
             return mesh;
         }
 
-        bool GetMeshes(PhysicsShapeAuthoring shape, out List<UnityEngine.Mesh> meshes, out List<float4x4> childrenToShape)
+        private bool GetMeshes(PhysicsShapeAuthoring shape, out List<UnityEngine.Mesh> meshes,
+            out List<float4x4> childrenToShape)
         {
             meshes = new List<UnityEngine.Mesh>();
             childrenToShape = new List<float4x4>();
@@ -179,21 +183,20 @@ namespace Unity.Physics.Authoring
                 var meshFilters = GetComponentsInChildren<MeshFilter>();
 
                 foreach (var meshFilter in meshFilters)
-                {
                     if (meshFilter != null && meshFilter.sharedMesh != null)
                     {
                         var shapeAuthoring = GetComponent<PhysicsShapeAuthoring>(meshFilter);
                         if (shapeAuthoring != null && shapeAuthoring != shape)
-                        {
                             // Skip this case, since it will be treated independently
                             continue;
-                        }
 
                         meshes.Add(meshFilter.sharedMesh);
 
                         // Don't calculate the children to shape if not needed, to avoid approximation that could prevent collider to be shared
                         if (shape.transform.localToWorldMatrix.Equals(meshFilter.transform.localToWorldMatrix))
+                        {
                             childrenToShape.Add(float4x4.identity);
+                        }
                         else
                         {
                             var transform = math.mul(shape.transform.worldToLocalMatrix,
@@ -203,13 +206,13 @@ namespace Unity.Physics.Authoring
 
                         DependsOn(meshes.Last());
                     }
-                }
             }
 
             return meshes.Count > 0;
         }
 
-        UnityEngine.Mesh CombineMeshes(PhysicsShapeAuthoring shape, List<UnityEngine.Mesh> meshes, List<float4x4> childrenToShape)
+        private UnityEngine.Mesh CombineMeshes(PhysicsShapeAuthoring shape, List<UnityEngine.Mesh> meshes,
+            List<float4x4> childrenToShape)
         {
             var instances = new List<CombineInstance>();
             var numVertices = 0;
@@ -218,11 +221,9 @@ namespace Unity.Physics.Authoring
                 var currentMesh = meshes[i];
                 var currentChildToShape = childrenToShape[i];
                 if (!currentMesh.IsValidForConversion(shape.gameObject))
-                {
                     throw new InvalidOperationException(
                         $"Mesh '{currentMesh}' assigned on {shape.name} is not readable. Ensure that you have enabled Read/Write on its import settings."
                     );
-                }
 
                 // Combine submeshes manually
                 numVertices += meshes[i].vertexCount;
@@ -230,32 +231,31 @@ namespace Unity.Physics.Authoring
                 combinedSubmeshes.vertices = currentMesh.vertices;
 
                 var combinedIndices = new List<int>();
-                for (int indexSubMesh = 0; indexSubMesh < meshes[i].subMeshCount; ++indexSubMesh)
-                {
+                for (var indexSubMesh = 0; indexSubMesh < meshes[i].subMeshCount; ++indexSubMesh)
                     combinedIndices.AddRange(currentMesh.GetIndices(indexSubMesh));
-                }
 
                 combinedSubmeshes.SetIndices(combinedIndices, MeshTopology.Triangles, 0);
                 combinedSubmeshes.RecalculateNormals();
                 var instance = new CombineInstance
                 {
                     mesh = combinedSubmeshes,
-                    transform = currentChildToShape,
+                    transform = currentChildToShape
                 };
                 instances.Add(instance);
             }
 
             var mesh = new UnityEngine.Mesh();
-            mesh.indexFormat = numVertices > UInt16.MaxValue ? UnityEngine.Rendering.IndexFormat.UInt32 : UnityEngine.Rendering.IndexFormat.UInt16;
+            mesh.indexFormat = numVertices > ushort.MaxValue ? IndexFormat.UInt32 : IndexFormat.UInt16;
             mesh.CombineMeshes(instances.ToArray());
             mesh.RecalculateBounds();
 
             return mesh;
         }
 
-        private ShapeComputationDataBaking GenerateComputationData(PhysicsShapeAuthoring shape, Transform bodyTransform, ColliderInstanceBaking colliderInstance, Entity colliderEntity, bool isForceUniqueComponentPresent)
+        private ShapeComputationDataBaking GenerateComputationData(PhysicsShapeAuthoring shape, Transform bodyTransform,
+            ColliderInstanceBaking colliderInstance, Entity colliderEntity, bool isForceUniqueComponentPresent)
         {
-            bool isUnique = isForceUniqueComponentPresent || shape.ForceUnique;
+            var isUnique = isForceUniqueComponentPresent || shape.ForceUnique;
             var res = new ShapeComputationDataBaking
             {
                 Instance = colliderInstance,
@@ -343,7 +343,8 @@ namespace Unity.Physics.Authoring
                     shape.GetPlaneProperties(out var center, out var size, out orientation);
                     PhysicsShapeExtensions.BakeToBodySpace(
                         center, size, orientation, colliderBakeMatrix,
-                        out res.PlaneVertices.c0, out res.PlaneVertices.c1, out res.PlaneVertices.c2, out res.PlaneVertices.c3
+                        out res.PlaneVertices.c0, out res.PlaneVertices.c1, out res.PlaneVertices.c2,
+                        out res.PlaneVertices.c3
                     );
                     break;
                 }
@@ -369,20 +370,19 @@ namespace Unity.Physics.Authoring
             return res;
         }
 
-        private void CreateMeshAuthoringData(PhysicsShapeAuthoring shape, float4x4 colliderBakeMatrix, Entity colliderEntity)
+        private void CreateMeshAuthoringData(PhysicsShapeAuthoring shape, float4x4 colliderBakeMatrix,
+            Entity colliderEntity)
         {
             if (GetMeshes(shape, out var meshes, out var childrenToShape))
             {
                 // Combine all detected meshes into a single one
                 var mesh = CombineMeshes(shape, meshes, childrenToShape);
                 if (!mesh.IsValidForConversion(shape.gameObject))
-                {
                     throw new InvalidOperationException(
                         $"Mesh '{mesh}' assigned on {shape.name} is not readable. Ensure that you have enabled Read/Write on its import settings."
                     );
-                }
 
-                var meshBakingData = new PhysicsMeshAuthoringData()
+                var meshBakingData = new PhysicsMeshAuthoringData
                 {
                     Convex = shape.ShapeType == ShapeType.ConvexHull,
                     Mesh = mesh,
@@ -416,13 +416,15 @@ namespace Unity.Physics.Authoring
                 AddComponent(colliderEntity, shapeBakingData);
 
                 // The data will be filled in by the BaseShapeBakingSystem, but we add it here so it gets reverted from the entity if the collider component is deleted
-                AddComponent(colliderEntity, new PhysicsColliderBakedData()
+                AddComponent(colliderEntity, new PhysicsColliderBakedData
                 {
                     BodyEntity = shapeBakingData.ShapeComputationalData.Instance.BodyEntity,
                     BodyFromShape = shapeBakingData.ShapeComputationalData.Instance.BodyFromShape,
                     ChildEntity = shapeBakingData.ShapeComputationalData.Instance.ChildEntity,
                     // It is a leaf if the Shape Entity equals Body Entity
-                    IsLeafEntityBody = (shapeBakingData.ShapeComputationalData.Instance.ShapeEntity.Equals(shapeBakingData.ShapeComputationalData.Instance.BodyEntity))
+                    IsLeafEntityBody =
+                        shapeBakingData.ShapeComputationalData.Instance.ShapeEntity.Equals(shapeBakingData
+                            .ShapeComputationalData.Instance.BodyEntity)
                 });
             }
 

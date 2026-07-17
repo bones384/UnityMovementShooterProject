@@ -5,17 +5,17 @@ using UnityEngine;
 namespace Unity.Physics.Editor
 {
     [CustomPropertyDrawer(typeof(PhysicsMaterialCoefficient))]
-    class PhysicsMaterialCoefficientDrawer : BaseDrawer
+    internal class PhysicsMaterialCoefficientDrawer : BaseDrawer
     {
-        static class Styles
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            public const float PopupWidth = 100f;
+            return EditorGUIUtility.singleLineHeight;
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label) =>
-            EditorGUIUtility.singleLineHeight;
-
-        protected override bool IsCompatible(SerializedProperty property) => true;
+        protected override bool IsCompatible(SerializedProperty property)
+        {
+            return true;
+        }
 
         protected override void DoGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -29,12 +29,18 @@ namespace Unity.Physics.Editor
             var indent = EditorGUI.indentLevel;
             EditorGUI.indentLevel = 0;
             EditorGUI.PropertyField(
-                new Rect(position) { xMin = position.xMax - Styles.PopupWidth + EditorGUIUtility.standardVerticalSpacing },
+                new Rect(position)
+                    { xMin = position.xMax - Styles.PopupWidth + EditorGUIUtility.standardVerticalSpacing },
                 property.FindPropertyRelative("CombineMode"),
                 GUIContent.none
             );
             EditorGUI.indentLevel = indent;
             EditorGUI.EndProperty();
+        }
+
+        private static class Styles
+        {
+            public const float PopupWidth = 100f;
         }
     }
 }

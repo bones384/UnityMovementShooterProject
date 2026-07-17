@@ -9,10 +9,10 @@ namespace Entities.Netcode.Shooting
         public float ProjectileSpeed = 30f;
         public float ProjectileDamage = 20f;
         public float ProjectileLifespan = 10f;
-        public bool ProjectileApplyGravity = false;
+        public bool ProjectileApplyGravity;
         public float ProjectileRadius = 0.5f;
 
-        class Baker : Baker<TurretAuthoring>
+        private class Baker : Baker<TurretAuthoring>
         {
             public override void Bake(TurretAuthoring authoring)
             {

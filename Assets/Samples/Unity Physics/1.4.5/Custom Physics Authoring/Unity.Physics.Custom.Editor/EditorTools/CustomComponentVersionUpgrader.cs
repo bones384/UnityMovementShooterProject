@@ -1,17 +1,18 @@
 ﻿using System;
+using Unity.Physics.Authoring;
 using UnityEditor;
 
 #if UNITY_EDITOR
 
 namespace Unity.Physics.Editor
 {
-    static class CustomComponentVersionUpgrader
+    internal static class CustomComponentVersionUpgrader
     {
         [MenuItem("Tools/Unity Physics/Upgrade Physics Shape Versions")]
-        static void UpgradeAssetsWithPhysicsShape()
+        private static void UpgradeAssetsWithPhysicsShape()
         {
-            var componentNeedsUpgradeFunction = new Func<Authoring.PhysicsShapeAuthoring, bool>(
-                component => component.NeedsVersionUpgrade);
+            var componentNeedsUpgradeFunction =
+                new Func<PhysicsShapeAuthoring, bool>(component => component.NeedsVersionUpgrade);
             ComponentVersionUpgrader.UpgradeAssets("Physics Shape", componentNeedsUpgradeFunction);
         }
     }

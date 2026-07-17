@@ -1,5 +1,4 @@
 using Unity.Entities;
-using Unity.NetCode;
 
 namespace Entities.Netcode.GameMechanics
 {
@@ -17,7 +16,7 @@ namespace Entities.Netcode.GameMechanics
     {
         public void OnUpdate(ref SystemState state)
         {
-            bool found = false;
+            var found = false;
 
             foreach (var koth in SystemAPI.Query<RefRO<KothPointComponent>>())
             {
@@ -25,7 +24,7 @@ namespace Entities.Netcode.GameMechanics
                 KothBridge.IsGameOver = koth.ValueRO.IsGameOver;
                 KothBridge.WinningTeam = koth.ValueRO.WinningTeam;
                 found = true;
-                break; 
+                break;
             }
 
             KothBridge.IsActive = found;

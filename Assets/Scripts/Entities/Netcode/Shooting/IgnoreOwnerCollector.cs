@@ -6,7 +6,7 @@ namespace Entities.Netcode.Shooting
     public struct IgnoreOwnerColliderCollector : ICollector<ColliderCastHit>
     {
         public Entity IgnoreEntity;
-        
+
         public bool EarlyOutOnFirstHit => false;
         public float MaxFraction { get; private set; }
         public int NumHits { get; private set; }

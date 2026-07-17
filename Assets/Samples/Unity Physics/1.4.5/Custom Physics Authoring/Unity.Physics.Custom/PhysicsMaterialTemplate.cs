@@ -2,30 +2,66 @@ using UnityEngine;
 
 namespace Unity.Physics.Authoring
 {
-    [CreateAssetMenu(menuName = "Unity Physics/Physics Material Template", fileName = "Physics Material Template", order = 508)]
+    [CreateAssetMenu(menuName = "Unity Physics/Physics Material Template", fileName = "Physics Material Template",
+        order = 508)]
     public sealed class PhysicsMaterialTemplate : ScriptableObject, IPhysicsMaterialProperties
     {
-        PhysicsMaterialTemplate() {}
+        [SerializeField] private PhysicsMaterialProperties m_Value = new(false);
 
-        public CollisionResponsePolicy CollisionResponse { get => m_Value.CollisionResponse; set => m_Value.CollisionResponse = value; }
+        private PhysicsMaterialTemplate()
+        {
+        }
 
-        public PhysicsMaterialCoefficient Friction { get => m_Value.Friction; set => m_Value.Friction = value; }
+        private void Reset()
+        {
+            OnValidate();
+        }
 
-        public PhysicsMaterialCoefficient Restitution { get => m_Value.Restitution; set => m_Value.Restitution = value; }
+        private void OnValidate()
+        {
+            PhysicsMaterialProperties.OnValidate(ref m_Value, false);
+        }
 
-        public PhysicsCategoryTags BelongsTo { get => m_Value.BelongsTo; set => m_Value.BelongsTo = value; }
+        public CollisionResponsePolicy CollisionResponse
+        {
+            get => m_Value.CollisionResponse;
+            set => m_Value.CollisionResponse = value;
+        }
 
-        public PhysicsCategoryTags CollidesWith { get => m_Value.CollidesWith; set => m_Value.CollidesWith = value; }
+        public PhysicsMaterialCoefficient Friction
+        {
+            get => m_Value.Friction;
+            set => m_Value.Friction = value;
+        }
 
-        public CustomPhysicsMaterialTags CustomTags { get => m_Value.CustomTags; set => m_Value.CustomTags = value; }
+        public PhysicsMaterialCoefficient Restitution
+        {
+            get => m_Value.Restitution;
+            set => m_Value.Restitution = value;
+        }
 
-        public PhysicsMaterialFlag DetailedStaticMeshCollision { get => m_Value.DetailedStaticMeshCollision; set => m_Value.DetailedStaticMeshCollision = value; }
+        public PhysicsCategoryTags BelongsTo
+        {
+            get => m_Value.BelongsTo;
+            set => m_Value.BelongsTo = value;
+        }
 
-        [SerializeField]
-        PhysicsMaterialProperties m_Value = new PhysicsMaterialProperties(false);
+        public PhysicsCategoryTags CollidesWith
+        {
+            get => m_Value.CollidesWith;
+            set => m_Value.CollidesWith = value;
+        }
 
-        void Reset() => OnValidate();
+        public CustomPhysicsMaterialTags CustomTags
+        {
+            get => m_Value.CustomTags;
+            set => m_Value.CustomTags = value;
+        }
 
-        void OnValidate() => PhysicsMaterialProperties.OnValidate(ref m_Value, false);
+        public PhysicsMaterialFlag DetailedStaticMeshCollision
+        {
+            get => m_Value.DetailedStaticMeshCollision;
+            set => m_Value.DetailedStaticMeshCollision = value;
+        }
     }
 }

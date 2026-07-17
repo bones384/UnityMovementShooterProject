@@ -7,18 +7,18 @@ namespace Unity.Physics.Authoring
 {
     public struct GetActiveChildrenScope<T> : IDisposable where T : UnityComponent
     {
-        static readonly List<PhysicsShapeAuthoring> s_PhysicsShapes = new List<PhysicsShapeAuthoring>(8);
+        private static readonly List<PhysicsShapeAuthoring> s_PhysicsShapes = new(8);
 
-        static bool s_BufferUsed;
-        static List<T> s_Buffer = new List<T>(8);
+        private static bool s_BufferUsed;
+        private static readonly List<T> s_Buffer = new(8);
 
         public List<T> Buffer => m_Disposed ? null : s_Buffer;
 
-        bool m_Disposed;
-        PhysicsShapeAuthoring m_Shape;
-        Transform m_Root;
-        GameObject m_PrimaryBody;
-        bool m_CheckIfComponentBelongsToShape;
+        private bool m_Disposed;
+        private readonly PhysicsShapeAuthoring m_Shape;
+        private readonly Transform m_Root;
+        private readonly GameObject m_PrimaryBody;
+        private readonly bool m_CheckIfComponentBelongsToShape;
 
         public GetActiveChildrenScope(PhysicsShapeAuthoring shape, Transform root)
         {

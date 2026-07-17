@@ -8,12 +8,28 @@ using Cursor = UnityEngine.Cursor;
 
 public class PauseMenuManager : MonoBehaviour
 {
-    private UIDocument _doc;
-    private VisualElement _pauseOverlay;
-    private Button _btnResume;
     private Button _btnQuit;
+    private Button _btnResume;
+    private UIDocument _doc;
 
-    private bool _isPaused = false;
+    private bool _isPaused;
+    private VisualElement _pauseOverlay;
+    private bool toggled;
+
+    private void Update()
+    {
+        // Toggle Pause Menu with Escape
+        if (Keyboard.current.escapeKey.wasPressedThisFrame && !toggled)
+        {
+            toggled = true;
+            if (_isPaused) ResumeGame();
+            else PauseGame();
+        }
+        else
+        {
+            toggled = false;
+        }
+    }
 
     private void OnEnable()
     {
@@ -30,44 +46,31 @@ public class PauseMenuManager : MonoBehaviour
         // Ensure it starts hidden
         _pauseOverlay.style.display = DisplayStyle.None;
     }
-   private bool toggled = false;
-
-    private void Update()
-    {
-        // Toggle Pause Menu with Escape
-        if (Keyboard.current.escapeKey.wasPressedThisFrame && !toggled)
-        {
-            toggled = true;
-            if (_isPaused) ResumeGame();
-            else PauseGame();
-        }
-        else toggled = false;
-    }
 
     private void PauseGame()
     {
         _isPaused = true;
         _pauseOverlay.style.display = DisplayStyle.Flex;
-        
+
         // Optional: Unlock and show the mouse cursor so they can click the buttons!
-        UnityEngine.Cursor.lockState = CursorLockMode.None;
-        UnityEngine.Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     private void ResumeGame()
     {
         _isPaused = false;
         _pauseOverlay.style.display = DisplayStyle.None;
-        
+
         // Re-lock the cursor for gameplay
-        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        UnityEngine.Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private async void QuitToMainMenu()
     {
         Debug.Log("Quitting Session...");
-        
+
         // Prevent the player from spam-clicking quit while the cloud is processing
         _btnQuit.SetEnabled(false);
         _btnResume.SetEnabled(false);
@@ -80,37 +83,28 @@ public class PauseMenuManager : MonoBehaviour
                 // If the Host leaves, deleting the session instantly removes it from the matchmaking pool 
                 // so no other players get trapped trying to join a dead game.
                 if (MatchmakingState.IsHost)
-                {
                     await MatchmakingState.CurrentSession.AsHost().DeleteAsync();
-                }
                 else
-                {
                     await MatchmakingState.CurrentSession.LeaveAsync();
-                }
             }
             catch (Exception e)
             {
                 Debug.LogWarning($"Session cleanup threw a warning, proceeding anyway: {e.Message}");
             }
-            
+
             MatchmakingState.CurrentSession = null;
         }
 
         // 2. Destroy the ECS Worlds
-        if (ClientServerBootstrap.ClientWorld != null)
-        {
-            ClientServerBootstrap.ClientWorld.Dispose();
-        }
+        if (ClientServerBootstrap.ClientWorld != null) ClientServerBootstrap.ClientWorld.Dispose();
 
-        if (ClientServerBootstrap.ServerWorld != null)
-        {
-            ClientServerBootstrap.ServerWorld.Dispose();
-        }
+        if (ClientServerBootstrap.ServerWorld != null) ClientServerBootstrap.ServerWorld.Dispose();
 
         MatchmakingState.IsHost = false;
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        SceneManager.LoadScene("MainMenuScene"); 
-    }}
+        SceneManager.LoadScene("MainMenuScene");
+    }
+}

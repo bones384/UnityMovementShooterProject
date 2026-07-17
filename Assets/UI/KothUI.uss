@@ -20,8 +20,17 @@
     text-shadow: 2px 2px 0 rgb(0, 0, 0);
 }
 
-.timer-blue { background-color: rgba(30, 80, 200, 0.5); padding: 5px 15px; border-radius: 8px; }
-.timer-red { background-color: rgba(200, 40, 40, 0.5); padding: 5px 15px; border-radius: 8px; }
+.timer-blue {
+    background-color: rgba(30, 80, 200, 0.5);
+    padding: 5px 15px;
+    border-radius: 8px;
+}
+
+.timer-red {
+    background-color: rgba(200, 40, 40, 0.5);
+    padding: 5px 15px;
+    border-radius: 8px;
+}
 
 /* Bold class used dynamically via C# for 0:00 */
 .timer-zero {
@@ -85,8 +94,13 @@
     border-color: rgba(255, 255, 255, 0.4);
 }
 
-.victory-blue { background-color: rgba(30, 80, 200, 0.85); }
-.victory-red { background-color: rgba(200, 40, 40, 0.85); }
+.victory-blue {
+    background-color: rgba(30, 80, 200, 0.85);
+}
+
+.victory-red {
+    background-color: rgba(200, 40, 40, 0.85);
+}
 
 #victory-box {
     padding: 40px 100px;

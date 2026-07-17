@@ -1,13 +1,10 @@
-using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
-using Unity.NetCode;
-using Unity.Physics;
+using UnityEngine;
 
 namespace Entities.Netcode.GameMechanics
 {
     // --- 1. AUTHORING & BAKER ---
-    public class KillzoneAuthoring : UnityEngine.MonoBehaviour
+    public class KillzoneAuthoring : MonoBehaviour
     {
         // You can add properties here later (e.g., specific damage types), 
         // but an empty MonoBehaviour is all we need to tag the Entity!
@@ -22,7 +19,7 @@ namespace Entities.Netcode.GameMechanics
         }
     }
 
-    public struct KillzoneTag : IComponentData { }
-
-    
+    public struct KillzoneTag : IComponentData
+    {
+    }
 }

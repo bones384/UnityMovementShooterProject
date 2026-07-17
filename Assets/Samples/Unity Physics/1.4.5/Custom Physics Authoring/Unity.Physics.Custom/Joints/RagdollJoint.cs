@@ -8,16 +8,14 @@ namespace Unity.Physics.Authoring
 {
     public class RagdollJoint : BallAndSocketJoint
     {
-        const int k_LatestVersion = 1;
+        private const int k_LatestVersion = 1;
 
         // Editor only settings
-        [HideInInspector]
-        public bool EditAxes;
-        [HideInInspector]
-        public bool EditLimits;
+        [HideInInspector] public bool EditAxes;
 
-        [SerializeField]
-        int m_Version;
+        [HideInInspector] public bool EditLimits;
+
+        [SerializeField] private int m_Version;
 
         public float3 TwistAxisLocal;
         public float3 TwistAxisInConnectedEntity;
@@ -29,17 +27,7 @@ namespace Unity.Physics.Authoring
         public float MinTwistAngle;
         public float MaxTwistAngle;
 
-        internal void UpgradeVersionIfNecessary()
-        {
-            if (m_Version >= k_LatestVersion)
-                return;
-
-            MinPerpendicularAngle -= 90f;
-            MaxPerpendicularAngle -= 90f;
-            m_Version = k_LatestVersion;
-        }
-
-        void OnValidate()
+        private void OnValidate()
         {
             UpgradeVersionIfNecessary();
 
@@ -64,19 +52,29 @@ namespace Unity.Physics.Authoring
             }
         }
 
+        internal void UpgradeVersionIfNecessary()
+        {
+            if (m_Version >= k_LatestVersion)
+                return;
+
+            MinPerpendicularAngle -= 90f;
+            MaxPerpendicularAngle -= 90f;
+            m_Version = k_LatestVersion;
+        }
+
         public override void UpdateAuto()
         {
             base.UpdateAuto();
             if (AutoSetConnected)
             {
-                RigidTransform bFromA = math.mul(math.inverse(worldFromB), worldFromA);
+                var bFromA = math.mul(math.inverse(worldFromB), worldFromA);
                 TwistAxisInConnectedEntity = math.mul(bFromA.rot, TwistAxisLocal);
                 PerpendicularAxisInConnectedEntity = math.mul(bFromA.rot, PerpendicularAxisLocal);
             }
         }
     }
 
-    class RagdollJointBaker : JointBaker<RagdollJoint>
+    internal class RagdollJointBaker : JointBaker<RagdollJoint>
     {
         public override void Bake(RagdollJoint authoring)
         {
@@ -84,8 +82,17 @@ namespace Unity.Physics.Authoring
             authoring.UpgradeVersionIfNecessary();
 
             PhysicsJoint.CreateRagdoll(
-                new BodyFrame { Axis = authoring.TwistAxisLocal, PerpendicularAxis = authoring.PerpendicularAxisLocal, Position = authoring.PositionLocal },
-                new BodyFrame { Axis = authoring.TwistAxisInConnectedEntity, PerpendicularAxis = authoring.PerpendicularAxisInConnectedEntity, Position = authoring.PositionInConnectedEntity },
+                new BodyFrame
+                {
+                    Axis = authoring.TwistAxisLocal, PerpendicularAxis = authoring.PerpendicularAxisLocal,
+                    Position = authoring.PositionLocal
+                },
+                new BodyFrame
+                {
+                    Axis = authoring.TwistAxisInConnectedEntity,
+                    PerpendicularAxis = authoring.PerpendicularAxisInConnectedEntity,
+                    Position = authoring.PositionInConnectedEntity
+                },
                 math.radians(authoring.MaxConeAngle),
                 math.radians(new FloatRange(authoring.MinPerpendicularAngle, authoring.MaxPerpendicularAngle)),
                 math.radians(new FloatRange(authoring.MinTwistAngle, authoring.MaxTwistAngle)),
@@ -98,11 +105,12 @@ namespace Unity.Physics.Authoring
 
             var constraintBodyPair = GetConstrainedBodyPair(authoring);
 
-            using NativeList<Entity> entities = new NativeList<Entity>(1, Allocator.TempJob);
-            uint worldIndex = GetWorldIndexFromBaseJoint(authoring);
+            using var entities = new NativeList<Entity>(1, Allocator.TempJob);
+            var worldIndex = GetWorldIndexFromBaseJoint(authoring);
             CreateJointEntities(worldIndex,
                 constraintBodyPair,
-                new NativeArray<PhysicsJoint>(2, Allocator.Temp) { [0] = primaryCone, [1] = perpendicularCone }, entities);
+                new NativeArray<PhysicsJoint>(2, Allocator.Temp) { [0] = primaryCone, [1] = perpendicularCone },
+                entities);
         }
     }
 }

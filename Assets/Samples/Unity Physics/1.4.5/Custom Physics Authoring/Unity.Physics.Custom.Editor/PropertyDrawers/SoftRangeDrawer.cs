@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Unity.Physics.Editor
 {
     [CustomPropertyDrawer(typeof(SoftRangeAttribute))]
-    class SoftRangeDrawer : BaseDrawer
+    internal class SoftRangeDrawer : BaseDrawer
     {
         protected override bool IsCompatible(SerializedProperty property)
         {

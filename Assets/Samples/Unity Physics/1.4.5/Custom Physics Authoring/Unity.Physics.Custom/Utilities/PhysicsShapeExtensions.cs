@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
@@ -10,18 +8,20 @@ using UnityEngine;
 namespace Unity.Physics.Authoring
 {
     // put static UnityObject buffers in separate utility class so other methods can Burst compile
-    static class PhysicsShapeExtensions_NonBursted
+    internal static class PhysicsShapeExtensions_NonBursted
     {
-        internal static readonly List<PhysicsBodyAuthoring> s_PhysicsBodiesBuffer = new List<PhysicsBodyAuthoring>(16);
-        internal static readonly List<PhysicsShapeAuthoring> s_ShapesBuffer = new List<PhysicsShapeAuthoring>(16);
-        internal static readonly List<Rigidbody> s_RigidbodiesBuffer = new List<Rigidbody>(16);
-        internal static readonly List<UnityEngine.Collider> s_CollidersBuffer = new List<UnityEngine.Collider>(16);
+        internal static readonly List<PhysicsBodyAuthoring> s_PhysicsBodiesBuffer = new(16);
+        internal static readonly List<PhysicsShapeAuthoring> s_ShapesBuffer = new(16);
+        internal static readonly List<Rigidbody> s_RigidbodiesBuffer = new(16);
+        internal static readonly List<UnityEngine.Collider> s_CollidersBuffer = new(16);
     }
 
     public static partial class PhysicsShapeExtensions
     {
         // avoids drift in axes we're not actually changing
         public const float kMinimumChange = HashableShapeInputs.k_DefaultLinearPrecision;
+
+        private const float k_HashFloatTolerance = 0.01f;
 
         internal static CollisionFilter GetFilter(this PhysicsShapeAuthoring shape)
         {
@@ -54,7 +54,6 @@ namespace Unity.Physics.Authoring
             shape.GetComponentsInParent(true, buffer);
             GameObject result = null;
             for (var i = buffer.Count - 1; i >= 0; --i)
-            {
                 if (
                     (buffer[i] as UnityEngine.Collider)?.enabled ??
                     (buffer[i] as MonoBehaviour)?.enabled ?? true
@@ -63,29 +62,32 @@ namespace Unity.Physics.Authoring
                     result = buffer[i].gameObject;
                     break;
                 }
-            }
+
             buffer.Clear();
             return result;
         }
 
-        public static GameObject GetPrimaryBody(this PhysicsShapeAuthoring shape) => GetPrimaryBody(shape.gameObject);
+        public static GameObject GetPrimaryBody(this PhysicsShapeAuthoring shape)
+        {
+            return GetPrimaryBody(shape.gameObject);
+        }
 
         public static GameObject GetPrimaryBody(GameObject shape)
         {
-            var pb = ColliderExtensions.FindFirstEnabledAncestor(shape, PhysicsShapeExtensions_NonBursted.s_PhysicsBodiesBuffer);
-            var rb = ColliderExtensions.FindFirstEnabledAncestor(shape, PhysicsShapeExtensions_NonBursted.s_RigidbodiesBuffer);
+            var pb = ColliderExtensions.FindFirstEnabledAncestor(shape,
+                PhysicsShapeExtensions_NonBursted.s_PhysicsBodiesBuffer);
+            var rb = ColliderExtensions.FindFirstEnabledAncestor(shape,
+                PhysicsShapeExtensions_NonBursted.s_RigidbodiesBuffer);
 
             if (pb != null)
-            {
                 return rb == null ? pb.gameObject :
                     pb.transform.IsChildOf(rb.transform) ? pb.gameObject : rb.gameObject;
-            }
 
             if (rb != null)
                 return rb.gameObject;
 
             // for implicit static shape, first see if it is part of static optimized hierarchy
-            ColliderExtensions.FindTopmostStaticEnabledAncestor(shape, out GameObject topStatic);
+            ColliderExtensions.FindTopmostStaticEnabledAncestor(shape, out var topStatic);
             if (topStatic != null)
                 return topStatic;
 
@@ -96,10 +98,10 @@ namespace Unity.Physics.Authoring
             return topCollider == null
                 ? topShape == null ? shape.gameObject : topShape
                 : topShape == null
-                ? topCollider
-                : topShape.transform.IsChildOf(topCollider.transform)
-                ? topCollider
-                : topShape;
+                    ? topCollider
+                    : topShape.transform.IsChildOf(topCollider.transform)
+                        ? topCollider
+                        : topShape;
         }
 
         public static BoxGeometry GetBakedBoxProperties(this PhysicsShapeAuthoring shape)
@@ -109,7 +111,8 @@ namespace Unity.Physics.Authoring
         }
 
         internal static BoxGeometry BakeToBodySpace(
-            this BoxGeometry box, float4x4 localToWorld, float4x4 shapeToWorld, EulerAngles orientation, bool bakeUniformScale = true
+            this BoxGeometry box, float4x4 localToWorld, float4x4 shapeToWorld, EulerAngles orientation,
+            bool bakeUniformScale = true
         )
         {
             using (var geometry = new NativeArray<BoxGeometry>(1, Allocator.TempJob) { [0] = box })
@@ -129,9 +132,9 @@ namespace Unity.Physics.Authoring
 
         public static void SetBakedBoxSize(this PhysicsShapeAuthoring shape, float3 size, float bevelRadius)
         {
-            var box         = shape.GetBoxProperties(out var orientation);
-            var center      = box.Center;
-            var prevSize    = math.abs(box.Size);
+            var box = shape.GetBoxProperties(out var orientation);
+            var center = box.Center;
+            var prevSize = math.abs(box.Size);
             size = math.abs(size);
 
             var bakeToShape = BakeBoxJobExtension.GetBakeToShape(shape, center, orientation);
@@ -155,10 +158,11 @@ namespace Unity.Physics.Authoring
             return capsule.BakeToBodySpace(shape.transform.localToWorldMatrix, shape.GetShapeToWorldMatrix());
         }
 
-        public static void SetBakedCylinderSize(this PhysicsShapeAuthoring shape, float height, float radius, float bevelRadius)
+        public static void SetBakedCylinderSize(this PhysicsShapeAuthoring shape, float height, float radius,
+            float bevelRadius)
         {
-            var cylinder    = shape.GetCylinderProperties(out EulerAngles orientation);
-            var center      = cylinder.Center;
+            var cylinder = shape.GetCylinderProperties(out var orientation);
+            var center = cylinder.Center;
 
             var bakeToShape = BakeCylinderJobExtension.GetBakeToShape(shape, center, orientation);
             var scale = bakeToShape.DecomposeScale();
@@ -173,14 +177,17 @@ namespace Unity.Physics.Authoring
             shape.SetCylinder(cylinder, orientation);
         }
 
-        internal static SphereGeometry GetBakedSphereProperties(this PhysicsShapeAuthoring shape, out EulerAngles orientation)
+        internal static SphereGeometry GetBakedSphereProperties(this PhysicsShapeAuthoring shape,
+            out EulerAngles orientation)
         {
             var sphere = shape.GetSphereProperties(out orientation);
-            return sphere.BakeToBodySpace(shape.transform.localToWorldMatrix, shape.GetShapeToWorldMatrix(), ref orientation);
+            return sphere.BakeToBodySpace(shape.transform.localToWorldMatrix, shape.GetShapeToWorldMatrix(),
+                ref orientation);
         }
 
         internal static void GetBakedPlaneProperties(
-            this PhysicsShapeAuthoring shape, out float3 vertex0, out float3 vertex1, out float3 vertex2, out float3 vertex3
+            this PhysicsShapeAuthoring shape, out float3 vertex0, out float3 vertex1, out float3 vertex2,
+            out float3 vertex3
         )
         {
             var bakeToShape = shape.GetLocalToShapeMatrix();
@@ -205,8 +212,6 @@ namespace Unity.Physics.Authoring
             shape.GetMeshProperties(vertices, triangles, true, default, meshAssets);
             shape.BakePoints(vertices.AsArray());
         }
-
-        const float k_HashFloatTolerance = 0.01f;
 
         // used to hash convex hull generation properties in a way that is robust to imprecision
         public static uint GetStableHash(
@@ -234,10 +239,8 @@ namespace Unity.Physics.Authoring
                 return math.hash(points.GetUnsafePtr(), UnsafeUtility.SizeOf<float3>() * points.Length);
 
             for (int i = 0, count = points.Length; i < count; ++i)
-            {
                 if (math.cmax(math.abs(points[i] - hashedPoints[i])) > tolerance)
                     return math.hash(points.GetUnsafePtr(), UnsafeUtility.SizeOf<float3>() * points.Length);
-            }
             return math.hash(hashedPoints.GetUnsafePtr(), UnsafeUtility.SizeOf<float3>() * hashedPoints.Length);
         }
 

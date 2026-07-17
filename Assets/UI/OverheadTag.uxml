@@ -1,4 +1,5 @@
-<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+<ui:UXML xmlns:ui="UnityEngine.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd"
+         editor-extension-mode="False">
     <Style src="project://database/Assets/UI/OverheadTag.uss?fileID=7433441132597879392&amp;guid=a4dfbadafb32441109053422b70c34e0&amp;type=3#OverheadTag"/>
     <ui:VisualElement class="overhead-root">
         <ui:Label name="player-name" text="Player 0"/>

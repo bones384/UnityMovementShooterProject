@@ -1,11 +1,13 @@
 :root {
 
-}.hud-root {
-     flex-grow: 1;
-     width: 100%;
-     height: 100%;
-     position: absolute;
- }
+}
+
+.hud-root {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
 
 /* --- CROSSHAIR --- */
 #crosshair {
@@ -90,12 +92,13 @@
 }
 
 #health-bar-fill {
-    width: 100%; 
+    width: 100%;
     height: 100%;
     background-color: rgb(220, 50, 50);
-    transition-duration: 0.1s; 
+    transition-duration: 0.1s;
     transition-timing-function: ease-out;
 }
+
 /* --- DEATH SCREEN --- */
 .death-screen {
     position: absolute;
@@ -198,10 +201,25 @@
 }
 
 /* Push them mathematically out from the center */
-.hitmarker-tl { translate: -12px -12px; rotate: -45deg; }
-.hitmarker-tr { translate: 12px -12px; rotate: 45deg; }
-.hitmarker-bl { translate: -12px 12px; rotate: 45deg; }
-.hitmarker-br { translate: 12px 12px; rotate: -45deg; }
+.hitmarker-tl {
+    translate: -12px -12px;
+    rotate: -45deg;
+}
+
+.hitmarker-tr {
+    translate: 12px -12px;
+    rotate: 45deg;
+}
+
+.hitmarker-bl {
+    translate: -12px 12px;
+    rotate: 45deg;
+}
+
+.hitmarker-br {
+    translate: 12px 12px;
+    rotate: -45deg;
+}
 
 /* The bold/red state for Fatal kills */
 .hitmarker-fatal .hitmarker-line {

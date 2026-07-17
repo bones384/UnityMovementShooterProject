@@ -1,7 +1,6 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Transforms;
 
@@ -9,7 +8,7 @@ namespace Entities.Netcode.Shooting
 {
     // Server-Only, and perfectly safe to run in the standard Simulation group
     [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
-    [UpdateInGroup(typeof(SimulationSystemGroup))] 
+    [UpdateInGroup(typeof(SimulationSystemGroup))]
     public partial struct TurretSystem : ISystem
     {
         [BurstCompile]
@@ -46,11 +45,11 @@ namespace Entities.Netcode.Shooting
 
 
                     var reqEntity = ecb.CreateEntity();
-                    var spawnOrigin = transform.ValueRO.Position + (transform.ValueRO.Forward() * 1.5f);
+                    var spawnOrigin = transform.ValueRO.Position + transform.ValueRO.Forward() * 1.5f;
 
                     ecb.AddComponent(reqEntity, new ProjectileSpawnRequest
                     {
-                        Owner = entity, 
+                        Owner = entity,
                         Origin = spawnOrigin,
                         Direction = transform.ValueRO.Forward(),
                         Speed = turret.ValueRO.ProjectileSpeed,

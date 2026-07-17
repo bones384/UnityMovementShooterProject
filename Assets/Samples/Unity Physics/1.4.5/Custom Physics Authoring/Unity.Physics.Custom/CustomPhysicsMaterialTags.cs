@@ -6,8 +6,8 @@ namespace Unity.Physics.Authoring
     [Serializable]
     public struct CustomPhysicsMaterialTags : IEquatable<CustomPhysicsMaterialTags>
     {
-        public static CustomPhysicsMaterialTags Everything => new CustomPhysicsMaterialTags { Value = unchecked((byte)~0) };
-        public static CustomPhysicsMaterialTags Nothing => new CustomPhysicsMaterialTags { Value = 0 };
+        public static CustomPhysicsMaterialTags Everything => new() { Value = unchecked((byte)~0) };
+        public static CustomPhysicsMaterialTags Nothing => new() { Value = 0 };
 
         public bool Tag00;
         public bool Tag01;
@@ -81,10 +81,19 @@ namespace Unity.Physics.Authoring
             }
         }
 
-        public bool Equals(CustomPhysicsMaterialTags other) => Value == other.Value;
+        public bool Equals(CustomPhysicsMaterialTags other)
+        {
+            return Value == other.Value;
+        }
 
-        public override bool Equals(object obj) => obj is CustomPhysicsMaterialTags other && Equals(other);
+        public override bool Equals(object obj)
+        {
+            return obj is CustomPhysicsMaterialTags other && Equals(other);
+        }
 
-        public override int GetHashCode() => Value;
+        public override int GetHashCode()
+        {
+            return Value;
+        }
     }
 }

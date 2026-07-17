@@ -3,17 +3,19 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Physics;
+using UnityEngine;
+using RaycastHit = Unity.Physics.RaycastHit;
 
 namespace Entities.Netcode.Shooting
 {
     public struct IgnoreOwnerCollector : ICollector<RaycastHit>
     {
         public Entity IgnoreEntity;
-        
+
         // We cannot early out because the first hit might be the owner we want to ignore.
         // We must evaluate everything along the ray.
         public bool EarlyOutOnFirstHit => false;
-        
+
         public float MaxFraction { get; private set; }
         public int NumHits { get; private set; }
         public RaycastHit ClosestHit;
@@ -57,7 +59,7 @@ namespace Entities.Netcode.Shooting
         public void OnUpdate(ref SystemState state)
         {
             var networkTime = SystemAPI.GetSingleton<NetworkTime>();
-            
+
             if (!networkTime.IsFirstTimeFullyPredictingTick)
                 return;
 
@@ -65,9 +67,9 @@ namespace Entities.Netcode.Shooting
             var physicsWorldSingleton = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
             var physicsWorld = physicsWorldSingleton.PhysicsWorld;
             var defaultCollisionWorld = physicsWorldSingleton.CollisionWorld;
-            
-            bool hasHistory = SystemAPI.TryGetSingleton<PhysicsWorldHistorySingleton>(out var collisionHistory);
-            
+
+            var hasHistory = SystemAPI.TryGetSingleton<PhysicsWorldHistorySingleton>(out var collisionHistory);
+
             var delayLookup = SystemAPI.GetComponentLookup<CommandDataInterpolationDelay>(true);
 
             var ecb = new EntityCommandBuffer(Allocator.Temp);
@@ -79,7 +81,7 @@ namespace Entities.Netcode.Shooting
                 if (isServer && hasHistory)
                 {
                     const uint additionalRenderDelay = 1;
-                    uint delay = additionalRenderDelay;
+                    var delay = additionalRenderDelay;
 
                     delayLookup.TryGetComponent(request.ValueRO.Owner, out var interpDelay);
                     {
@@ -87,11 +89,11 @@ namespace Entities.Netcode.Shooting
                     }
 
                     collisionHistory.GetCollisionWorldFromTick(
-                        request.ValueRO.Tick, 
-                        delay, 
-                        ref physicsWorld, 
-                        out collisionWorld, 
-                        out var expectedTick, 
+                        request.ValueRO.Tick,
+                        delay,
+                        ref physicsWorld,
+                        out collisionWorld,
+                        out var expectedTick,
                         out var returnedTick);
                 }
 
@@ -106,7 +108,7 @@ namespace Entities.Netcode.Shooting
                     Filter = new CollisionFilter
                     {
                         BelongsTo = 1u << 7,
-                        CollidesWith = (1u << 6) | (1u << 7), 
+                        CollidesWith = (1u << 6) | (1u << 7),
                         GroupIndex = 0
                     }
                 };
@@ -114,55 +116,62 @@ namespace Entities.Netcode.Shooting
                 var collector = new IgnoreOwnerCollector(request.ValueRO.Owner);
                 collisionWorld.CastRay(input, ref collector);
 
-                bool hit = collector.NumHits > 0;
+                var hit = collector.NumHits > 0;
                 var hitResult = collector.ClosestHit;
 
-                float3 targetEnd = origin + direction * distance;
-                string role = isServer ? "Server" : "Client";
+                var targetEnd = origin + direction * distance;
+                var role = isServer ? "Server" : "Client";
 
                 if (hit)
                 {
                     targetEnd = hitResult.Position;
-                    
+
                     if (SystemAPI.HasComponent<PlayerStateComponent>(hitResult.Entity))
                     {
                         var pState = SystemAPI.GetComponent<PlayerStateComponent>(hitResult.Entity);
                         var ownerState = SystemAPI.GetComponent<PlayerStateComponent>(request.ValueRO.Owner);
-                        bool isSameTeam = pState.TeamIndex == ownerState.TeamIndex;
-                        if(!isSameTeam)
+                        var isSameTeam = pState.TeamIndex == ownerState.TeamIndex;
+                        if (!isSameTeam)
                         {
                             pState.Health -= request.ValueRO.Damage;
                             // Record Killzone Death
-                            if(pState.Health <= 0)
-                            { 
+                            if (pState.Health <= 0)
+                            {
                                 pState.LastKillerNetworkId = ownerState.NetworkId;
                                 pState.LastDeathReason = 0;
                                 pState.LastKillerTeamIndex = ownerState.TeamIndex; // <-- NEW
                             }
+
                             // --- NEW: HITMARKER LOGIC ---
                             // Find the shooter and give them a hitmarker
-                                ownerState.HitMarkerTimer = 0.2f;
-                                ownerState.WasLastHitFatal = pState.Health <= 0;
-                                SystemAPI.SetComponent(request.ValueRO.Owner, ownerState);
-                                
+                            ownerState.HitMarkerTimer = 0.2f;
+                            ownerState.WasLastHitFatal = pState.Health <= 0;
+                            SystemAPI.SetComponent(request.ValueRO.Owner, ownerState);
                         }
-                        SystemAPI.SetComponent(hitResult.Entity, pState);
-                        
 
-                        UnityEngine.Debug.Log($"[{role}] HIT Player! Target Health is now: {pState.Health}");
+                        SystemAPI.SetComponent(hitResult.Entity, pState);
+
+
+                        Debug.Log($"[{role}] HIT Player! Target Health is now: {pState.Health}");
                     }
                     else
                     {
-                        UnityEngine.Debug.Log($"[{role}] HIT Environment at {targetEnd}");
+                        Debug.Log($"[{role}] HIT Environment at {targetEnd}");
                         var audioReq = ecb.CreateEntity();
-                        ecb.AddComponent(audioReq, new AudioRequest { Effect = SFX.HitGround, Position = targetEnd, Pitch = 1f, LocalTargetNetworkId = -1 });
+                        ecb.AddComponent(audioReq,
+                            new AudioRequest
+                            {
+                                Effect = SFX.HitGround, Position = targetEnd, Pitch = 1f, LocalTargetNetworkId = -1
+                            });
                     }
                 }
                 else
                 {
-                    UnityEngine.Debug.Log($"[{role}] MISS!");
+                    Debug.Log($"[{role}] MISS!");
                     var audioReq = ecb.CreateEntity();
-                    ecb.AddComponent(audioReq, new AudioRequest { Effect = SFX.HitGround, Position = targetEnd, Pitch = 1f, LocalTargetNetworkId = -1 });
+                    ecb.AddComponent(audioReq,
+                        new AudioRequest
+                            { Effect = SFX.HitGround, Position = targetEnd, Pitch = 1f, LocalTargetNetworkId = -1 });
                 }
 
                 lastStart = origin;
@@ -177,8 +186,8 @@ namespace Entities.Netcode.Shooting
 
             if (hasLine)
             {
-                var color = isServer ? UnityEngine.Color.red : UnityEngine.Color.blue;
-                UnityEngine.Debug.DrawLine(lastStart, lastEnd, color);
+                var color = isServer ? Color.red : Color.blue;
+                Debug.DrawLine(lastStart, lastEnd, color);
             }
         }
     }

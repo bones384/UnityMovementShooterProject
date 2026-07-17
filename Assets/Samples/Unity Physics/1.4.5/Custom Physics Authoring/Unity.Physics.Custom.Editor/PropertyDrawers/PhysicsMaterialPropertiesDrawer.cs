@@ -6,55 +6,14 @@ using UnityEngine;
 namespace Unity.Physics.Editor
 {
     [CustomPropertyDrawer(typeof(PhysicsMaterialProperties))]
-    class PhysicsMaterialPropertiesDrawer : BaseDrawer
+    internal class PhysicsMaterialPropertiesDrawer : BaseDrawer
     {
-        static class Content
-        {
-            public static readonly GUIContent AdvancedGroupFoldout = EditorGUIUtility.TrTextContent("Advanced");
-            public static readonly GUIContent BelongsToLabel = EditorGUIUtility.TrTextContent(
-                "Belongs To",
-                "Specifies the categories to which this object belongs."
-            );
-            public static readonly GUIContent CollidesWithLabel = EditorGUIUtility.TrTextContent(
-                "Collides With",
-                "Specifies the categories of objects with which this object will collide, " +
-                "or with which it will raise events if intersecting a trigger."
-            );
-            public static readonly GUIContent CollisionFilterGroupFoldout =
-                EditorGUIUtility.TrTextContent("Collision Filter");
-            public static readonly GUIContent CustomFlagsLabel =
-                EditorGUIUtility.TrTextContent("Custom Tags", "Specify custom tags to read at run-time.");
-            public static readonly GUIContent FrictionLabel = EditorGUIUtility.TrTextContent(
-                "Friction",
-                "Specifies how resistant the body is to motion when sliding along other surfaces, " +
-                "as well as what value should be used when colliding with an object that has a different value."
-            );
-            public static readonly GUIContent RestitutionLabel = EditorGUIUtility.TrTextContent(
-                "Restitution",
-                "Specifies how bouncy the object will be when colliding with other surfaces, " +
-                "as well as what value should be used when colliding with an object that has a different value."
-            );
-            public static readonly GUIContent CollisionResponseLabel = EditorGUIUtility.TrTextContent(
-                "Collision Response",
-                "Specifies whether the shape should collide normally, raise trigger events when intersecting other shapes, " +
-                "collide normally and raise notifications of collision events with other shapes, " +
-                "or completely ignore collisions (but still move and intercept queries)."
-            );
+        private const string k_CollisionFilterGroupKey = "m_BelongsToCategories";
+        private const string k_AdvancedGroupKey = "m_CustomMaterialTags";
 
-            public static readonly GUIContent DetailedStaticMeshCollisionLabel = EditorGUIUtility.TrTextContent(
-               "Detailed Static Mesh Collision",
-               "When enabled, this option processes contact detection for dynamic objects colliding with static colliders " +
-               "across both the current and next frame. This helps predict and refine collision accuracy, reducing the " +
-               "likelihood of ghost collisions. Disable this if detailed precision is not required, as it may impact performance."
-           );
-        }
+        private readonly Dictionary<string, SerializedObject> m_SerializedTemplates = new();
 
-        const string k_CollisionFilterGroupKey = "m_BelongsToCategories";
-        const string k_AdvancedGroupKey = "m_CustomMaterialTags";
-
-        Dictionary<string, SerializedObject> m_SerializedTemplates = new Dictionary<string, SerializedObject>();
-
-        SerializedProperty GetTemplateValueProperty(SerializedProperty property)
+        private SerializedProperty GetTemplateValueProperty(SerializedProperty property)
         {
             var key = property.propertyPath;
             var template = property.FindPropertyRelative("m_Template").objectReferenceValue;
@@ -63,12 +22,13 @@ namespace Unity.Physics.Editor
                 !m_SerializedTemplates.TryGetValue(key, out serializedTemplate)
                 || serializedTemplate?.targetObject != template
             )
-                m_SerializedTemplates[key] = serializedTemplate = template == null ? null : new SerializedObject(template);
+                m_SerializedTemplates[key] =
+                    serializedTemplate = template == null ? null : new SerializedObject(template);
             serializedTemplate?.Update();
             return serializedTemplate?.FindProperty("m_Value");
         }
 
-        void FindToggleAndValueProperties(
+        private void FindToggleAndValueProperties(
             SerializedProperty property, SerializedProperty templateValueProperty, string relativePath,
             out SerializedProperty toggle, out SerializedProperty value
         )
@@ -102,9 +62,10 @@ namespace Unity.Physics.Editor
                 height += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
             // m_Friction, m_Restitution
-            FindToggleAndValueProperties(property, templateValueProperty, "m_CollisionResponse", out _, out var collisionResponse);
+            FindToggleAndValueProperties(property, templateValueProperty, "m_CollisionResponse", out _,
+                out var collisionResponse);
             // Check if regular collider
-            CollisionResponsePolicy collisionResponseEnum = (CollisionResponsePolicy)collisionResponse.intValue;
+            var collisionResponseEnum = (CollisionResponsePolicy)collisionResponse.intValue;
             if (collisionResponseEnum == CollisionResponsePolicy.Collide ||
                 collisionResponseEnum == CollisionResponsePolicy.CollideRaiseCollisionEvents)
                 height += 2f * (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing);
@@ -112,9 +73,12 @@ namespace Unity.Physics.Editor
             return height;
         }
 
-        protected override bool IsCompatible(SerializedProperty property) => true;
+        protected override bool IsCompatible(SerializedProperty property)
+        {
+            return true;
+        }
 
-        static void DisplayOverridableProperty(
+        private static void DisplayOverridableProperty(
             Rect position, GUIContent label, SerializedProperty toggle, SerializedProperty value, bool templateAssigned
         )
         {
@@ -122,20 +86,22 @@ namespace Unity.Physics.Editor
             {
                 var labelWidth = EditorGUIUtility.labelWidth;
                 EditorGUIUtility.labelWidth -= 16f + EditorGUIUtility.standardVerticalSpacing;
-                var togglePosition = new Rect(position) { width = EditorGUIUtility.labelWidth + 16f + EditorGUIUtility.standardVerticalSpacing };
+                var togglePosition = new Rect(position)
+                    { width = EditorGUIUtility.labelWidth + 16f + EditorGUIUtility.standardVerticalSpacing };
                 EditorGUI.PropertyField(togglePosition, toggle, label);
                 EditorGUIUtility.labelWidth = labelWidth;
 
                 EditorGUI.BeginDisabledGroup(!toggle.boolValue);
                 var indent = EditorGUI.indentLevel;
                 EditorGUI.indentLevel = 0;
-                EditorGUI.PropertyField(new Rect(position) { xMin = togglePosition.xMax }, value, GUIContent.none, true);
+                EditorGUI.PropertyField(new Rect(position) { xMin = togglePosition.xMax }, value, GUIContent.none,
+                    true);
                 EditorGUI.indentLevel = indent;
                 EditorGUI.EndDisabledGroup();
             }
             else
             {
-                EditorGUI.PropertyField(position, value,  label, true);
+                EditorGUI.PropertyField(position, value, label, true);
             }
         }
 
@@ -154,14 +120,16 @@ namespace Unity.Physics.Editor
 
             var templateValue = GetTemplateValueProperty(property);
 
-            FindToggleAndValueProperties(property, templateValue, "m_CollisionResponse", out var collisionResponseDropDown, out var collisionResponse);
+            FindToggleAndValueProperties(property, templateValue, "m_CollisionResponse",
+                out var collisionResponseDropDown, out var collisionResponse);
             position.height = EditorGUIUtility.singleLineHeight;
-            DisplayOverridableProperty(position, Content.CollisionResponseLabel, collisionResponseDropDown, collisionResponse, templateAssigned);
+            DisplayOverridableProperty(position, Content.CollisionResponseLabel, collisionResponseDropDown,
+                collisionResponse, templateAssigned);
 
             SerializedProperty toggle;
 
             // Check if regular collider
-            CollisionResponsePolicy collisionResponseEnum = (CollisionResponsePolicy)collisionResponse.intValue;
+            var collisionResponseEnum = (CollisionResponsePolicy)collisionResponse.intValue;
             if (collisionResponseEnum == CollisionResponsePolicy.Collide ||
                 collisionResponseEnum == CollisionResponsePolicy.CollideRaiseCollisionEvents)
             {
@@ -186,12 +154,14 @@ namespace Unity.Physics.Editor
             {
                 ++EditorGUI.indentLevel;
 
-                FindToggleAndValueProperties(property, templateValue, "m_BelongsToCategories", out toggle, out var belongsTo);
+                FindToggleAndValueProperties(property, templateValue, "m_BelongsToCategories", out toggle,
+                    out var belongsTo);
                 position.y = position.yMax + EditorGUIUtility.standardVerticalSpacing;
                 position.height = EditorGUIUtility.singleLineHeight;
                 DisplayOverridableProperty(position, Content.BelongsToLabel, toggle, belongsTo, templateAssigned);
 
-                FindToggleAndValueProperties(property, templateValue, "m_CollidesWithCategories", out toggle, out var collidesWith);
+                FindToggleAndValueProperties(property, templateValue, "m_CollidesWithCategories", out toggle,
+                    out var collidesWith);
                 position.y = position.yMax + EditorGUIUtility.standardVerticalSpacing;
                 position.height = EditorGUIUtility.singleLineHeight;
                 DisplayOverridableProperty(position, Content.CollidesWithLabel, toggle, collidesWith, templateAssigned);
@@ -209,18 +179,69 @@ namespace Unity.Physics.Editor
             {
                 ++EditorGUI.indentLevel;
 
-                FindToggleAndValueProperties(property, templateValue, "m_DetailedStaticMeshCollision", out toggle, out var detailedStaticMeshCollision);
+                FindToggleAndValueProperties(property, templateValue, "m_DetailedStaticMeshCollision", out toggle,
+                    out var detailedStaticMeshCollision);
                 position.y = position.yMax + EditorGUIUtility.standardVerticalSpacing;
                 position.height = EditorGUIUtility.singleLineHeight;
-                DisplayOverridableProperty(position, Content.DetailedStaticMeshCollisionLabel, toggle, detailedStaticMeshCollision, templateAssigned);
+                DisplayOverridableProperty(position, Content.DetailedStaticMeshCollisionLabel, toggle,
+                    detailedStaticMeshCollision, templateAssigned);
 
-                FindToggleAndValueProperties(property, templateValue, "m_CustomMaterialTags", out toggle, out var customFlags);
+                FindToggleAndValueProperties(property, templateValue, "m_CustomMaterialTags", out toggle,
+                    out var customFlags);
                 position.y = position.yMax + EditorGUIUtility.standardVerticalSpacing;
                 position.height = EditorGUIUtility.singleLineHeight;
                 DisplayOverridableProperty(position, Content.CustomFlagsLabel, toggle, customFlags, templateAssigned);
 
                 --EditorGUI.indentLevel;
             }
+        }
+
+        private static class Content
+        {
+            public static readonly GUIContent AdvancedGroupFoldout = EditorGUIUtility.TrTextContent("Advanced");
+
+            public static readonly GUIContent BelongsToLabel = EditorGUIUtility.TrTextContent(
+                "Belongs To",
+                "Specifies the categories to which this object belongs."
+            );
+
+            public static readonly GUIContent CollidesWithLabel = EditorGUIUtility.TrTextContent(
+                "Collides With",
+                "Specifies the categories of objects with which this object will collide, " +
+                "or with which it will raise events if intersecting a trigger."
+            );
+
+            public static readonly GUIContent CollisionFilterGroupFoldout =
+                EditorGUIUtility.TrTextContent("Collision Filter");
+
+            public static readonly GUIContent CustomFlagsLabel =
+                EditorGUIUtility.TrTextContent("Custom Tags", "Specify custom tags to read at run-time.");
+
+            public static readonly GUIContent FrictionLabel = EditorGUIUtility.TrTextContent(
+                "Friction",
+                "Specifies how resistant the body is to motion when sliding along other surfaces, " +
+                "as well as what value should be used when colliding with an object that has a different value."
+            );
+
+            public static readonly GUIContent RestitutionLabel = EditorGUIUtility.TrTextContent(
+                "Restitution",
+                "Specifies how bouncy the object will be when colliding with other surfaces, " +
+                "as well as what value should be used when colliding with an object that has a different value."
+            );
+
+            public static readonly GUIContent CollisionResponseLabel = EditorGUIUtility.TrTextContent(
+                "Collision Response",
+                "Specifies whether the shape should collide normally, raise trigger events when intersecting other shapes, " +
+                "collide normally and raise notifications of collision events with other shapes, " +
+                "or completely ignore collisions (but still move and intercept queries)."
+            );
+
+            public static readonly GUIContent DetailedStaticMeshCollisionLabel = EditorGUIUtility.TrTextContent(
+                "Detailed Static Mesh Collision",
+                "When enabled, this option processes contact detection for dynamic objects colliding with static colliders " +
+                "across both the current and next frame. This helps predict and refine collision accuracy, reducing the " +
+                "likelihood of ghost collisions. Disable this if detailed precision is not required, as it may impact performance."
+            );
         }
     }
 }

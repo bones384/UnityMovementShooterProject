@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Unity.Entities;
-using Unity.NetCode;
 
 namespace Entities.Netcode.GameMechanics
 {
@@ -8,7 +7,7 @@ namespace Entities.Netcode.GameMechanics
     [UpdateInGroup(typeof(PresentationSystemGroup))]
     public partial class KillfeedBridgeSystem : SystemBase
     {
-        private Dictionary<Entity, int> _localDeathCounts = new Dictionary<Entity, int>();
+        private readonly Dictionary<Entity, int> _localDeathCounts = new();
 
         protected override void OnUpdate()
         {
@@ -17,7 +16,7 @@ namespace Entities.Netcode.GameMechanics
             foreach (var (pState, entity) in SystemAPI.Query<RefRO<PlayerStateComponent>>().WithEntityAccess())
             {
                 // First time seeing this entity, just record its current count
-                if (!_localDeathCounts.TryGetValue(entity, out int lastSeenCount))
+                if (!_localDeathCounts.TryGetValue(entity, out var lastSeenCount))
                 {
                     _localDeathCounts[entity] = pState.ValueRO.DeathCount;
                     continue;
@@ -30,15 +29,13 @@ namespace Entities.Netcode.GameMechanics
 
                     // -1 means game restart, so we silently skip it
                     if (pState.ValueRO.LastDeathReason != -1)
-                    {
                         KillfeedManager.Instance.AddKillfeedEntry(
                             pState.ValueRO.LastKillerNetworkId,
                             pState.ValueRO.LastKillerTeamIndex, // <-- Killer Team
                             pState.ValueRO.NetworkId,
-                            pState.ValueRO.TeamIndex,           // <-- Victim Team
+                            pState.ValueRO.TeamIndex, // <-- Victim Team
                             pState.ValueRO.LastDeathReason
                         );
-                    }
                 }
             }
         }

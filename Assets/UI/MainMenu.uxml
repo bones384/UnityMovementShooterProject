@@ -1,4 +1,4 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/MainMenu.uss?fileID=7433441132597879392&amp;guid=fa6fd1f8b22284db2b2b41610880ed81&amp;type=3#MainMenu"/>
     <ui:VisualElement class="main-container">
         <ui:Label text="BLOCK SHOOTER" class="title-text"/>

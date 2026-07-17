@@ -1,8 +1,6 @@
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.NetCode;
 using Unity.Transforms;
 
 namespace Entities.Netcode.GameMechanics
@@ -41,27 +39,29 @@ namespace Entities.Netcode.GameMechanics
                             pState.ValueRW.RespawnTimer = 0f; // <--- Instant respawn override!
                             pState.ValueRW.LastKillerTeamIndex = -1; // <-- NEW
                             // SILENT DEATH FOR RESTART
-                            pState.ValueRW.LastDeathReason = -1; 
+                            pState.ValueRW.LastDeathReason = -1;
                             pState.ValueRW.DeathCount++;
                         }
                     }
+
                     continue; // Skip all capture logic while game is over
                 }
 
-                int countA = 0;
-                int countB = 0;
-                float radiusSq = koth.ValueRO.Radius * koth.ValueRO.Radius;
-                float halfHeight = koth.ValueRO.Height * 0.5f; 
-                float3 kothPos = kothTransform.ValueRO.Position;
+                var countA = 0;
+                var countB = 0;
+                var radiusSq = koth.ValueRO.Radius * koth.ValueRO.Radius;
+                var halfHeight = koth.ValueRO.Height * 0.5f;
+                var kothPos = kothTransform.ValueRO.Position;
 
-                foreach (var (pState, pTransform) in SystemAPI.Query<RefRO<PlayerStateComponent>, RefRO<LocalTransform>>())
+                foreach (var (pState, pTransform) in
+                         SystemAPI.Query<RefRO<PlayerStateComponent>, RefRO<LocalTransform>>())
                 {
                     if (pState.ValueRO.Health <= 0) continue;
 
-                    float3 pPos = pTransform.ValueRO.Position;
-                    float dx = pPos.x - kothPos.x;
-                    float dz = pPos.z - kothPos.z;
-                    float distSq = (dx * dx) + (dz * dz);
+                    var pPos = pTransform.ValueRO.Position;
+                    var dx = pPos.x - kothPos.x;
+                    var dz = pPos.z - kothPos.z;
+                    var distSq = dx * dx + dz * dz;
 
                     if (distSq <= radiusSq && math.abs(pPos.y - kothPos.y) <= halfHeight)
                     {
@@ -70,15 +70,23 @@ namespace Entities.Netcode.GameMechanics
                     }
                 }
 
-                bool isContested = countA > 0 && countB > 0;
+                var isContested = countA > 0 && countB > 0;
                 koth.ValueRW.IsContested = isContested;
 
-                int soleTeamOnPoint = -1;
-                int cappingPlayers = 0;
-                
-                if (countA > 0 && countB == 0) { soleTeamOnPoint = 0; cappingPlayers = countA; }
-                else if (countB > 0 && countA == 0) { soleTeamOnPoint = 1; cappingPlayers = countB; }
-                
+                var soleTeamOnPoint = -1;
+                var cappingPlayers = 0;
+
+                if (countA > 0 && countB == 0)
+                {
+                    soleTeamOnPoint = 0;
+                    cappingPlayers = countA;
+                }
+                else if (countB > 0 && countA == 0)
+                {
+                    soleTeamOnPoint = 1;
+                    cappingPlayers = countB;
+                }
+
                 koth.ValueRW.CappingPlayerCount = cappingPlayers;
 
                 if (!isContested && soleTeamOnPoint != -1)
@@ -86,18 +94,20 @@ namespace Entities.Netcode.GameMechanics
                     if (soleTeamOnPoint == koth.ValueRO.CurrentOwner)
                     {
                         if (koth.ValueRO.CaptureProgress > 0)
-                            koth.ValueRW.CaptureProgress = math.max(0f, koth.ValueRO.CaptureProgress - (dt * cappingPlayers));
+                            koth.ValueRW.CaptureProgress =
+                                math.max(0f, koth.ValueRO.CaptureProgress - dt * cappingPlayers);
                     }
                     else
                     {
                         if (koth.ValueRO.CapturingTeam != soleTeamOnPoint && koth.ValueRO.CaptureProgress > 0)
                         {
-                            koth.ValueRW.CaptureProgress = math.max(0f, koth.ValueRO.CaptureProgress - (dt * cappingPlayers));
+                            koth.ValueRW.CaptureProgress =
+                                math.max(0f, koth.ValueRO.CaptureProgress - dt * cappingPlayers);
                         }
                         else
                         {
                             koth.ValueRW.CapturingTeam = soleTeamOnPoint;
-                            koth.ValueRW.CaptureProgress += (dt * cappingPlayers);
+                            koth.ValueRW.CaptureProgress += dt * cappingPlayers;
 
                             if (koth.ValueRO.CaptureProgress >= koth.ValueRO.TimeToCapture)
                             {
@@ -110,7 +120,7 @@ namespace Entities.Netcode.GameMechanics
                 else if (!isContested)
                 {
                     if (koth.ValueRO.CaptureProgress > 0)
-                        koth.ValueRW.CaptureProgress = math.max(0f, koth.ValueRO.CaptureProgress - (dt * 0.5f));
+                        koth.ValueRW.CaptureProgress = math.max(0f, koth.ValueRO.CaptureProgress - dt * 0.5f);
                 }
 
                 if (koth.ValueRO.CurrentOwner == 0 && koth.ValueRO.TeamATimer > 0)
@@ -118,28 +128,28 @@ namespace Entities.Netcode.GameMechanics
                 else if (koth.ValueRO.CurrentOwner == 1 && koth.ValueRO.TeamBTimer > 0)
                     koth.ValueRW.TeamBTimer = math.max(0f, koth.ValueRO.TeamBTimer - dt);
 
-                bool aTimerZero = koth.ValueRO.TeamATimer <= 0;
-                bool bTimerZero = koth.ValueRO.TeamBTimer <= 0;
-                bool aOwns = koth.ValueRO.CurrentOwner == 0;
-                bool bOwns = koth.ValueRO.CurrentOwner == 1;
+                var aTimerZero = koth.ValueRO.TeamATimer <= 0;
+                var bTimerZero = koth.ValueRO.TeamBTimer <= 0;
+                var aOwns = koth.ValueRO.CurrentOwner == 0;
+                var bOwns = koth.ValueRO.CurrentOwner == 1;
 
-                bool bContesting = countB > 0 || (koth.ValueRO.CapturingTeam == 1 && koth.ValueRO.CaptureProgress > 0);
-                bool aContesting = countA > 0 || (koth.ValueRO.CapturingTeam == 0 && koth.ValueRO.CaptureProgress > 0);
+                var bContesting = countB > 0 || (koth.ValueRO.CapturingTeam == 1 && koth.ValueRO.CaptureProgress > 0);
+                var aContesting = countA > 0 || (koth.ValueRO.CapturingTeam == 0 && koth.ValueRO.CaptureProgress > 0);
 
-                bool aWins = aTimerZero && aOwns && !bContesting;
-                bool bWins = bTimerZero && bOwns && !aContesting;
+                var aWins = aTimerZero && aOwns && !bContesting;
+                var bWins = bTimerZero && bOwns && !aContesting;
 
                 koth.ValueRW.IsOvertime = (aTimerZero && !aWins) || (bTimerZero && !bWins);
 
                 // --- TRIGGER WIN ---
-                if (aWins && !bWins) TriggerWin( koth, 0);
-                else if (bWins && !aWins) TriggerWin( koth, 1);
-                else if (aWins && bWins) TriggerWin( koth, koth.ValueRO.CurrentOwner);
+                if (aWins && !bWins) TriggerWin(koth, 0);
+                else if (bWins && !aWins) TriggerWin(koth, 1);
+                else if (aWins && bWins) TriggerWin(koth, koth.ValueRO.CurrentOwner);
             }
         }
 
         [BurstCompile]
-        private void TriggerWin( in RefRW<KothPointComponent> koth, in int winningTeam)
+        private void TriggerWin(in RefRW<KothPointComponent> koth, in int winningTeam)
         {
             koth.ValueRW.IsGameOver = true;
             koth.ValueRW.WinningTeam = winningTeam;

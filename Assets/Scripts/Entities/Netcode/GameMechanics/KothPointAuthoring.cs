@@ -11,7 +11,7 @@ namespace Entities.Netcode.Authoring
         public float TimeToWin = 180f; // 3 minutes
         public float TimeToCapture = 10f;
 
-        class Baker : Baker<KothPointAuthoring>
+        private class Baker : Baker<KothPointAuthoring>
         {
             public override void Bake(KothPointAuthoring authoring)
             {
@@ -22,7 +22,7 @@ namespace Entities.Netcode.Authoring
                     Height = authoring.Height,
                     TimeToWin = authoring.TimeToWin,
                     TimeToCapture = authoring.TimeToCapture,
-                    
+
                     TeamATimer = authoring.TimeToWin,
                     TeamBTimer = authoring.TimeToWin,
                     CurrentOwner = -1,

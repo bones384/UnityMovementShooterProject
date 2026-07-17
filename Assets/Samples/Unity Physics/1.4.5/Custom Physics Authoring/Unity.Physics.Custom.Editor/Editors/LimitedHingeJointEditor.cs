@@ -10,12 +10,35 @@ namespace Unity.Physics.Editor
     [CustomEditor(typeof(LimitedHingeJoint))]
     public class LimitedHingeEditor : UnityEditor.Editor
     {
-        private EditorUtilities.AxisEditor m_AxisEditor = new EditorUtilities.AxisEditor();
-        private JointAngularLimitHandle m_LimitHandle = new JointAngularLimitHandle();
+        private readonly EditorUtilities.AxisEditor m_AxisEditor = new();
+        private readonly JointAngularLimitHandle m_LimitHandle = new();
+
+        protected virtual void OnSceneGUI()
+        {
+            var limitedHinge = (LimitedHingeJoint)target;
+
+            if (limitedHinge.EditPivots)
+                EditorUtilities.EditPivot(limitedHinge.worldFromA, limitedHinge.worldFromB,
+                    limitedHinge.AutoSetConnected,
+                    ref limitedHinge.PositionLocal, ref limitedHinge.PositionInConnectedEntity, limitedHinge);
+            if (limitedHinge.EditAxes)
+                m_AxisEditor.Update(limitedHinge.worldFromA, limitedHinge.worldFromB,
+                    limitedHinge.AutoSetConnected,
+                    limitedHinge.PositionLocal, limitedHinge.PositionInConnectedEntity,
+                    ref limitedHinge.HingeAxisLocal, ref limitedHinge.HingeAxisInConnectedEntity,
+                    ref limitedHinge.PerpendicularAxisLocal, ref limitedHinge.PerpendicularAxisInConnectedEntity,
+                    limitedHinge);
+            if (limitedHinge.EditLimits)
+                EditorUtilities.EditLimits(limitedHinge.worldFromA, limitedHinge.worldFromB,
+                    limitedHinge.PositionLocal,
+                    limitedHinge.HingeAxisLocal, limitedHinge.HingeAxisInConnectedEntity,
+                    limitedHinge.PerpendicularAxisLocal, limitedHinge.PerpendicularAxisInConnectedEntity,
+                    ref limitedHinge.MinAngle, ref limitedHinge.MaxAngle, m_LimitHandle, limitedHinge);
+        }
 
         public override void OnInspectorGUI()
         {
-            LimitedHingeJoint limitedHinge = (LimitedHingeJoint)target;
+            var limitedHinge = (LimitedHingeJoint)target;
 
             EditorGUI.BeginChangeCheck();
 
@@ -27,38 +50,7 @@ namespace Unity.Physics.Editor
             GUILayout.EndHorizontal();
             DrawDefaultInspector();
 
-            if (EditorGUI.EndChangeCheck())
-            {
-                SceneView.RepaintAll();
-            }
-        }
-
-        protected virtual void OnSceneGUI()
-        {
-            LimitedHingeJoint limitedHinge = (LimitedHingeJoint)target;
-
-            if (limitedHinge.EditPivots)
-            {
-                EditorUtilities.EditPivot(limitedHinge.worldFromA, limitedHinge.worldFromB, limitedHinge.AutoSetConnected,
-                    ref limitedHinge.PositionLocal, ref limitedHinge.PositionInConnectedEntity, limitedHinge);
-            }
-            if (limitedHinge.EditAxes)
-            {
-                m_AxisEditor.Update(limitedHinge.worldFromA, limitedHinge.worldFromB,
-                    limitedHinge.AutoSetConnected,
-                    limitedHinge.PositionLocal, limitedHinge.PositionInConnectedEntity,
-                    ref limitedHinge.HingeAxisLocal, ref limitedHinge.HingeAxisInConnectedEntity,
-                    ref limitedHinge.PerpendicularAxisLocal, ref limitedHinge.PerpendicularAxisInConnectedEntity,
-                    limitedHinge);
-            }
-            if (limitedHinge.EditLimits)
-            {
-                EditorUtilities.EditLimits(limitedHinge.worldFromA, limitedHinge.worldFromB,
-                    limitedHinge.PositionLocal,
-                    limitedHinge.HingeAxisLocal, limitedHinge.HingeAxisInConnectedEntity,
-                    limitedHinge.PerpendicularAxisLocal, limitedHinge.PerpendicularAxisInConnectedEntity,
-                    ref limitedHinge.MinAngle, ref limitedHinge.MaxAngle, m_LimitHandle, limitedHinge);
-            }
+            if (EditorGUI.EndChangeCheck()) SceneView.RepaintAll();
         }
     }
 }

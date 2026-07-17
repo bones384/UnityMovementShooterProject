@@ -11,7 +11,7 @@ namespace Entities.Netcode
         public float Range;
         public float3 Origin;
         public float3 Direction;
-        
-        public NetworkTick Tick; 
+
+        public NetworkTick Tick;
     }
 }

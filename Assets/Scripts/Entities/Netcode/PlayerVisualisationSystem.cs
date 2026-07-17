@@ -49,7 +49,7 @@ namespace Entities.Netcode
                 var view = PlayerVisualisationManager.PlayerViewRegistry.Views[entity];
                 view.PlayerState = playerstate.ValueRO;
 
-                if(!playerstate.ValueRO.IsDead)view.transform.position = playerstate.ValueRO.Position;
+                if (!playerstate.ValueRO.IsDead) view.transform.position = playerstate.ValueRO.Position;
                 view.transform.rotation = playerstate.ValueRO.Rotation;
             }
         }

@@ -1,62 +1,59 @@
 using System.Collections.Generic;
 using Entities.Netcode;
 using Unity.Cinemachine;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UIElements;
-using Unity.Mathematics;
+using Random = UnityEngine.Random;
 
 public class PlayerVisualisation : MonoBehaviour
 {
     public bool isLocalPlayer;
-    public PlayerStateComponent PlayerState;
     public GameObject body;
     public GameObject visor;
     public GameObject balls;
-    
-    [Header("Overhead UI")]
-    public UIDocument overheadUI;
+
+    [Header("Overhead UI")] public UIDocument overheadUI;
+
     public LayerMask environmentLayer; // Set this to your level/environment layer in the Inspector!
 
-    private VisualElement _overheadRoot;
-    private VisualElement _healthFill;
-    private Label _healthLabel;
-    private Label _nameLabel;
-    private Camera _mainCamera;
-    private float _footstepTimer;
-    private float _lastHealth = 100f;
-    
-    [Header("Speed FX")]
-    public ParticleSystem windParticles;
+    [Header("Speed FX")] public ParticleSystem windParticles;
+
     public CinemachineCamera virtualCamera; // Link your vcam here!
-    
+
     [Tooltip("Velocity required to start showing wind and increasing FOV")]
     public float minSpeedThreshold = 8f;
+
     [Tooltip("Velocity where FX are at absolute maximum")]
     public float maxSpeedThreshold = 25f;
+
     public float spawnDistanceFront = 15f;
 
-    [Header("FOV")]
-    public float baseFOV = 60f;
+    [Header("FOV")] public float baseFOV = 60f;
+
     public float maxFOV = 90f;
     public float fovLerpSpeed = 5f;
-    
+    private float _footstepTimer;
+    private VisualElement _healthFill;
+    private Label _healthLabel;
+    private float _lastHealth = 100f;
+    private Camera _mainCamera;
+    private Label _nameLabel;
+
+    private VisualElement _overheadRoot;
+    public PlayerStateComponent PlayerState;
+
     private void Start()
     {
-        
         _mainCamera = Camera.main;
-        if (virtualCamera == null)
-        {
-            virtualCamera = FindAnyObjectByType<CinemachineCamera>();
-        }        if (isLocalPlayer)
+        if (virtualCamera == null) virtualCamera = FindAnyObjectByType<CinemachineCamera>();
+        if (isLocalPlayer)
         {
             foreach (Transform childTransform in transform)
-            {
                 if (childTransform.gameObject.TryGetComponent<Renderer>(out var r))
-                {
                     r.shadowCastingMode = ShadowCastingMode.ShadowsOnly;
-                }
-            } 
+
             if (overheadUI != null) overheadUI.gameObject.SetActive(false);
             return;
         }
@@ -75,24 +72,21 @@ public class PlayerVisualisation : MonoBehaviour
         // --- 1. LOCAL TAKE DAMAGE SOUND ---
         if (isLocalPlayer)
         {
-            if (PlayerState.Health < _lastHealth && !PlayerState.IsDead)
-            {
-                AudioManager.Instance.Play2D(SFX.TakeDamage);
-            }
+            if (PlayerState.Health < _lastHealth && !PlayerState.IsDead) AudioManager.Instance.Play2D(SFX.TakeDamage);
             _lastHealth = PlayerState.Health;
         }
 
         // --- 2. FOOTSTEPS (For everyone) ---
         // Only play if they are moving fast enough (ignoring Y falling velocity)
-        float2 horizontalVel = new float2(PlayerState.Velocity.x, PlayerState.Velocity.z);
-        float speed = math.length(horizontalVel);
+        var horizontalVel = new float2(PlayerState.Velocity.x, PlayerState.Velocity.z);
+        var speed = math.length(horizontalVel);
 
         if (speed > 1f && !PlayerState.IsDead && (PlayerState.IsGrounded || PlayerState.IsWallRunning))
         {
             _footstepTimer -= Time.deltaTime * speed; // Frequency scales with velocity
             if (_footstepTimer <= 0)
             {
-                AudioManager.Instance.Play3D(SFX.Footstep, transform.position, UnityEngine.Random.Range(0.9f, 2.1f));
+                AudioManager.Instance.Play3D(SFX.Footstep, transform.position, Random.Range(0.9f, 2.1f));
                 _footstepTimer = 3f; // Base distance threshold before next step
             }
         }
@@ -100,7 +94,7 @@ public class PlayerVisualisation : MonoBehaviour
         {
             _footstepTimer = 0f; // Reset when stopped
         }
-        
+
         if (!isLocalPlayer)
         {
             UpdateRemotePlayerVisuals();
@@ -108,7 +102,7 @@ public class PlayerVisualisation : MonoBehaviour
         }
 
         PlayerVisualisationManager.LocalPlayer = PlayerState;
-        
+
         // Ensure we don't see our own body casting shadows when dead
         var bodyRenderer = body.GetComponent<Renderer>();
         var visorRenderer = visor.GetComponent<Renderer>();
@@ -116,26 +110,31 @@ public class PlayerVisualisation : MonoBehaviour
         bodyRenderer.enabled = !PlayerState.IsDead;
         visorRenderer.enabled = !PlayerState.IsDead;
         ballsRenderer.enabled = !PlayerState.IsDead;
-        
+
         UpdateSpeedEffects();
-        
     }
+
+    private void OnGUI()
+    {
+    }
+
     private void UpdateSpeedEffects()
     {
         if (windParticles == null || virtualCamera == null) return;
 
         // 1. Calculate 3D Speed (Include Y for falling!)
-        float speed = math.length(PlayerState.Velocity);
-        
+        var speed = math.length(PlayerState.Velocity);
+
         // Zero out the effects if dead
         if (PlayerState.IsDead) speed = 0f;
 
         // 2. Normalize speed between our thresholds (0.0 to 1.0)
-        float speedFactor = Mathf.Clamp01((speed - minSpeedThreshold) / (maxSpeedThreshold - minSpeedThreshold));
+        var speedFactor = Mathf.Clamp01((speed - minSpeedThreshold) / (maxSpeedThreshold - minSpeedThreshold));
 
         // 3. Update Cinemachine FOV
-        float targetFOV = Mathf.Lerp(baseFOV, maxFOV, speedFactor);
-        virtualCamera.Lens.FieldOfView = Mathf.Lerp(virtualCamera.Lens.FieldOfView, targetFOV, Time.deltaTime * fovLerpSpeed);
+        var targetFOV = Mathf.Lerp(baseFOV, maxFOV, speedFactor);
+        virtualCamera.Lens.FieldOfView =
+            Mathf.Lerp(virtualCamera.Lens.FieldOfView, targetFOV, Time.deltaTime * fovLerpSpeed);
 
         // 4. Update Particle Spawner
         var emission = windParticles.emission;
@@ -144,16 +143,17 @@ public class PlayerVisualisation : MonoBehaviour
         if (speedFactor > 0f)
         {
             emission.enabled = true;
-            
+
             // Scale emission rate and particle speed based on how fast you are going
             emission.rateOverTime = Mathf.Lerp(0f, 50f, speedFactor);
             main.startSpeed = Mathf.Lerp(20f, 60f, speedFactor);
 
             // Calculate the exact 3D direction vector
-            Vector3 moveDirection = new Vector3(PlayerState.Velocity.x, PlayerState.Velocity.y, PlayerState.Velocity.z) / speed;
+            var moveDirection = new Vector3(PlayerState.Velocity.x, PlayerState.Velocity.y, PlayerState.Velocity.z) /
+                                speed;
 
             // Place the spawner IN FRONT of the player, and rotate it to shoot BACK at the player
-            windParticles.transform.position = transform.position + (moveDirection * spawnDistanceFront);
+            windParticles.transform.position = transform.position + moveDirection * spawnDistanceFront;
             windParticles.transform.rotation = Quaternion.LookRotation(-moveDirection);
         }
         else
@@ -162,7 +162,7 @@ public class PlayerVisualisation : MonoBehaviour
             emission.enabled = false;
         }
     }
-    
+
     private void UpdateRemotePlayerVisuals()
     {
         var bodyRenderer = body.GetComponent<Renderer>();
@@ -176,15 +176,18 @@ public class PlayerVisualisation : MonoBehaviour
             ballsRenderer.enabled = false;
             if (_overheadRoot != null) _overheadRoot.style.display = DisplayStyle.None;
             return;
-        }        
-        
+        }
+
         bodyRenderer.enabled = true; // Turn back on when alive
         ballsRenderer.enabled = true;
         visorRenderer.enabled = true;
-        bool isEnemy = PlayerState.TeamIndex != (PlayerVisualisationManager.LocalPlayer?.TeamIndex);
-        
-        var materials = new List<Material> {
-            isEnemy ? PlayerVisualisationManager.Instance.enemyMaterial : PlayerVisualisationManager.Instance.friendMaterial
+        var isEnemy = PlayerState.TeamIndex != PlayerVisualisationManager.LocalPlayer?.TeamIndex;
+
+        var materials = new List<Material>
+        {
+            isEnemy
+                ? PlayerVisualisationManager.Instance.enemyMaterial
+                : PlayerVisualisationManager.Instance.friendMaterial
         };
         bodyRenderer.SetMaterials(materials);
 
@@ -194,23 +197,19 @@ public class PlayerVisualisation : MonoBehaviour
         uiTransform.LookAt(uiTransform.position + _mainCamera.transform.rotation * Vector3.forward,
             _mainCamera.transform.rotation * Vector3.up);
 
-        bool isVisible = !Physics.Linecast(_mainCamera.transform.position, uiTransform.position, environmentLayer);
-        
+        var isVisible = !Physics.Linecast(_mainCamera.transform.position, uiTransform.position, environmentLayer);
+
         _overheadRoot.style.display = isVisible ? DisplayStyle.Flex : DisplayStyle.None;
 
-        if (!isVisible) return; 
+        if (!isVisible) return;
 
         _nameLabel.text = $"ID: {PlayerState.NetworkId}";
-        _nameLabel.style.color = isEnemy ? new StyleColor(Color.red) : new StyleColor(new Color(0.2f, 0.6f, 1f)); // Blue for ally
+        _nameLabel.style.color =
+            isEnemy ? new StyleColor(Color.red) : new StyleColor(new Color(0.2f, 0.6f, 1f)); // Blue for ally
         _healthFill.style.backgroundColor = isEnemy ? new StyleColor(Color.red) : new StyleColor(Color.white);
 
-        float hpPercent = Mathf.Clamp01(PlayerState.Health / 100f) * 100f;
+        var hpPercent = Mathf.Clamp01(PlayerState.Health / 100f) * 100f;
         _healthFill.style.width = new Length(hpPercent, LengthUnit.Percent);
         _healthLabel.text = $"{PlayerState.Health}/100";
-    }
-
-    private void OnGUI()
-    {
-        
     }
 }

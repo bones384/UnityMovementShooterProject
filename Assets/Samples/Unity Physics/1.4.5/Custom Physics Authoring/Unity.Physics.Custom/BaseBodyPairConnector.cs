@@ -7,16 +7,16 @@ namespace Unity.Physics.Authoring
     [RequireComponent(typeof(PhysicsBodyAuthoring))]
     public abstract class BaseBodyPairConnector : MonoBehaviour
     {
-        public PhysicsBodyAuthoring LocalBody => GetComponent<PhysicsBodyAuthoring>();
         public PhysicsBodyAuthoring ConnectedBody;
+        public PhysicsBodyAuthoring LocalBody => GetComponent<PhysicsBodyAuthoring>();
 
         public RigidTransform worldFromA => LocalBody == null
-        ? RigidTransform.identity
-        : Math.DecomposeRigidBodyTransform(LocalBody.transform.localToWorldMatrix);
+            ? RigidTransform.identity
+            : Math.DecomposeRigidBodyTransform(LocalBody.transform.localToWorldMatrix);
 
         public RigidTransform worldFromB => ConnectedBody == null
-        ? RigidTransform.identity
-        : Math.DecomposeRigidBodyTransform(ConnectedBody.transform.localToWorldMatrix);
+            ? RigidTransform.identity
+            : Math.DecomposeRigidBodyTransform(ConnectedBody.transform.localToWorldMatrix);
 
 
         public Entity EntityA { get; set; }
@@ -24,7 +24,7 @@ namespace Unity.Physics.Authoring
         public Entity EntityB { get; set; }
 
 
-        void OnEnable()
+        private void OnEnable()
         {
             // included so tick box appears in Editor
         }

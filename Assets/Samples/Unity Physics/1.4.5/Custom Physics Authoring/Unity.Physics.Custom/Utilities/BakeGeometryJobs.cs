@@ -9,6 +9,7 @@ namespace Unity.Physics.Authoring
     static partial class PhysicsShapeExtensions
     {
         #region Box
+
         [BurstCompile]
         internal struct BakeBoxJob : IJob
         {
@@ -26,7 +27,8 @@ namespace Unity.Physics.Authoring
                 var bevelRadius = Box[0].BevelRadius;
                 quaternion orientation = Orientation;
 
-                var bakeToShape = Math.GetBakeToShape(LocalToWorld, ShapeToWorld, ref center, ref orientation, BakeUniformScale);
+                var bakeToShape = Math.GetBakeToShape(LocalToWorld, ShapeToWorld, ref center, ref orientation,
+                    BakeUniformScale);
                 bakeToShape = math.mul(bakeToShape, float4x4.Scale(size));
 
                 var scale = bakeToShape.DecomposeScale();
@@ -38,13 +40,15 @@ namespace Unity.Physics.Authoring
                     Center = center,
                     Orientation = orientation,
                     Size = size,
-                    BevelRadius = math.clamp(bevelRadius, 0f, 0.5f * math.cmin(size)),
+                    BevelRadius = math.clamp(bevelRadius, 0f, 0.5f * math.cmin(size))
                 };
             }
         }
+
         #endregion
 
         #region Capsule
+
         [BurstCompile]
         internal struct BakeCapsuleJob : IJob
         {
@@ -61,7 +65,8 @@ namespace Unity.Physics.Authoring
                 var height = Capsule[0].Height;
                 quaternion orientation = Capsule[0].OrientationEuler;
 
-                var bakeToShape = Math.GetBakeToShape(LocalToWorld, ShapeToWorld, ref center, ref orientation, BakeUniformScale, makeZAxisPrimaryBasis: true);
+                var bakeToShape = Math.GetBakeToShape(LocalToWorld, ShapeToWorld, ref center, ref orientation,
+                    BakeUniformScale, true);
                 var scale = bakeToShape.DecomposeScale();
 
                 radius *= math.cmax(scale.xy);
@@ -79,7 +84,39 @@ namespace Unity.Physics.Authoring
 
         #endregion
 
+        #region ShapeInputHash
+
+#if !(UNITY_ANDROID && !UNITY_64) // !Android32
+        // Getting memory alignment errors from HashUtility.Hash128 on Android32
+        [BurstCompile]
+#endif
+        internal struct GetShapeInputsHashJob : IJob
+        {
+            public NativeArray<Hash128> Result;
+
+            public uint ForceUniqueIdentifier;
+            public ConvexHullGenerationParameters GenerationParameters;
+            public Material Material;
+            public CollisionFilter CollisionFilter;
+            public float4x4 BakeFromShape;
+
+            [ReadOnly] public NativeArray<HashableShapeInputs> Inputs;
+            [ReadOnly] public NativeArray<int> AllSkinIndices;
+            [ReadOnly] public NativeArray<float> AllBlendShapeWeights;
+
+            public void Execute()
+            {
+                Result[0] = HashableShapeInputs.GetHash128(
+                    ForceUniqueIdentifier, GenerationParameters, Material, CollisionFilter, BakeFromShape,
+                    Inputs, AllSkinIndices, AllBlendShapeWeights
+                );
+            }
+        }
+
+        #endregion
+
         #region Cylinder
+
         [BurstCompile]
         internal struct BakeCylinderJob : IJob
         {
@@ -98,7 +135,8 @@ namespace Unity.Physics.Authoring
                 var bevelRadius = Cylinder[0].BevelRadius;
                 quaternion orientation = Orientation;
 
-                var bakeToShape = Math.GetBakeToShape(LocalToWorld, ShapeToWorld, ref center, ref orientation, BakeUniformScale, makeZAxisPrimaryBasis: true);
+                var bakeToShape = Math.GetBakeToShape(LocalToWorld, ShapeToWorld, ref center, ref orientation,
+                    BakeUniformScale, true);
                 var scale = bakeToShape.DecomposeScale();
 
                 height *= scale.z;
@@ -117,7 +155,8 @@ namespace Unity.Physics.Authoring
         }
 
         internal static CylinderGeometry BakeToBodySpace(
-            this CylinderGeometry cylinder, float4x4 localToWorld, float4x4 shapeToWorld, EulerAngles orientation, bool bakeUniformScale = true
+            this CylinderGeometry cylinder, float4x4 localToWorld, float4x4 shapeToWorld, EulerAngles orientation,
+            bool bakeUniformScale = true
         )
         {
             using (var geometry = new NativeArray<CylinderGeometry>(1, Allocator.TempJob) { [0] = cylinder })
@@ -139,8 +178,9 @@ namespace Unity.Physics.Authoring
 
 
         #region Sphere
+
         [BurstCompile]
-        struct BakeSphereJob : IJob
+        private struct BakeSphereJob : IJob
         {
             public NativeArray<SphereGeometry> Sphere;
             public NativeArray<EulerAngles> Orientation;
@@ -155,8 +195,11 @@ namespace Unity.Physics.Authoring
                 quaternion orientation = Orientation[0];
 
                 var basisToWorld = Math.GetBasisToWorldMatrix(LocalToWorld, center, orientation, 1f);
-                var basisPriority = basisToWorld.HasShear() ? Math.GetBasisAxisPriority(basisToWorld) : Math.Constants.DefaultAxisPriority;
-                var bakeToShape = Math.GetPrimitiveBakeToShapeMatrix(LocalToWorld, ShapeToWorld, ref center, ref orientation, basisPriority, BakeUniformScale);
+                var basisPriority = basisToWorld.HasShear()
+                    ? Math.GetBasisAxisPriority(basisToWorld)
+                    : Math.Constants.DefaultAxisPriority;
+                var bakeToShape = Math.GetPrimitiveBakeToShapeMatrix(LocalToWorld, ShapeToWorld, ref center,
+                    ref orientation, basisPriority, BakeUniformScale);
 
                 radius *= math.cmax(bakeToShape.DecomposeScale());
 
@@ -170,7 +213,8 @@ namespace Unity.Physics.Authoring
         }
 
         internal static SphereGeometry BakeToBodySpace(
-            this SphereGeometry sphere, float4x4 localToWorld, float4x4 shapeToWorld, ref EulerAngles orientation, bool bakeUniformScale = true
+            this SphereGeometry sphere, float4x4 localToWorld, float4x4 shapeToWorld, ref EulerAngles orientation,
+            bool bakeUniformScale = true
         )
         {
             using (var geometry = new NativeArray<SphereGeometry>(1, Allocator.TempJob) { [0] = sphere })
@@ -195,7 +239,7 @@ namespace Unity.Physics.Authoring
         #region Plane
 
         [BurstCompile]
-        struct BakePlaneJob : IJob
+        private struct BakePlaneJob : IJob
         {
             public NativeArray<float3x4> Vertices;
             public float3 Center;
@@ -245,41 +289,12 @@ namespace Unity.Physics.Authoring
         {
             var sizeYUp = math.float3(size.x, 0, size.y);
 
-            vertex0 = center + math.mul(orientation, sizeYUp * math.float3(-0.5f, 0,  0.5f));
-            vertex1 = center + math.mul(orientation, sizeYUp * math.float3(0.5f, 0,  0.5f));
+            vertex0 = center + math.mul(orientation, sizeYUp * math.float3(-0.5f, 0, 0.5f));
+            vertex1 = center + math.mul(orientation, sizeYUp * math.float3(0.5f, 0, 0.5f));
             vertex2 = center + math.mul(orientation, sizeYUp * math.float3(0.5f, 0, -0.5f));
             vertex3 = center + math.mul(orientation, sizeYUp * math.float3(-0.5f, 0, -0.5f));
         }
 
-        #endregion
-
-        #region ShapeInputHash
-#if !(UNITY_ANDROID && !UNITY_64) // !Android32
-        // Getting memory alignment errors from HashUtility.Hash128 on Android32
-        [BurstCompile]
-#endif
-        internal struct GetShapeInputsHashJob : IJob
-        {
-            public NativeArray<Hash128> Result;
-
-            public uint ForceUniqueIdentifier;
-            public ConvexHullGenerationParameters GenerationParameters;
-            public Material Material;
-            public CollisionFilter CollisionFilter;
-            public float4x4 BakeFromShape;
-
-            [ReadOnly] public NativeArray<HashableShapeInputs> Inputs;
-            [ReadOnly] public NativeArray<int> AllSkinIndices;
-            [ReadOnly] public NativeArray<float> AllBlendShapeWeights;
-
-            public void Execute()
-            {
-                Result[0] = HashableShapeInputs.GetHash128(
-                    ForceUniqueIdentifier, GenerationParameters, Material, CollisionFilter, BakeFromShape,
-                    Inputs, AllSkinIndices, AllBlendShapeWeights
-                );
-            }
-        }
         #endregion
     }
 }

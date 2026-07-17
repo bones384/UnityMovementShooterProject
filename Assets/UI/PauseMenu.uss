@@ -38,6 +38,15 @@
     transition-duration: 0.1s;
 }
 
-.pause-button:hover { background-color: rgb(80, 80, 85); scale: 1.05; }
-.quit-button { background-color: rgb(150, 40, 40); }
-.quit-button:hover { background-color: rgb(200, 50, 50); }
+.pause-button:hover {
+    background-color: rgb(80, 80, 85);
+    scale: 1.05;
+}
+
+.quit-button {
+    background-color: rgb(150, 40, 40);
+}
+
+.quit-button:hover {
+    background-color: rgb(200, 50, 50);
+}

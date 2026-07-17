@@ -6,8 +6,8 @@ namespace Unity.Physics.Authoring
     [Serializable]
     public struct PhysicsCategoryTags : IEquatable<PhysicsCategoryTags>
     {
-        public static PhysicsCategoryTags Everything => new PhysicsCategoryTags { Value = unchecked((uint)~0) };
-        public static PhysicsCategoryTags Nothing => new PhysicsCategoryTags { Value = 0 };
+        public static PhysicsCategoryTags Everything => new() { Value = unchecked((uint)~0) };
+        public static PhysicsCategoryTags Nothing => new() { Value = 0 };
 
         public bool Category00;
         public bool Category01;
@@ -49,16 +49,16 @@ namespace Unity.Physics.Authoring
                 SafetyChecks.CheckInRangeAndThrow(i, new int2(0, 31), nameof(i));
                 switch (i)
                 {
-                    case  0: return Category00;
-                    case  1: return Category01;
-                    case  2: return Category02;
-                    case  3: return Category03;
-                    case  4: return Category04;
-                    case  5: return Category05;
-                    case  6: return Category06;
-                    case  7: return Category07;
-                    case  8: return Category08;
-                    case  9: return Category09;
+                    case 0: return Category00;
+                    case 1: return Category01;
+                    case 2: return Category02;
+                    case 3: return Category03;
+                    case 4: return Category04;
+                    case 5: return Category05;
+                    case 6: return Category06;
+                    case 7: return Category07;
+                    case 8: return Category08;
+                    case 9: return Category09;
                     case 10: return Category10;
                     case 11: return Category11;
                     case 12: return Category12;
@@ -89,16 +89,16 @@ namespace Unity.Physics.Authoring
                 SafetyChecks.CheckInRangeAndThrow(i, new int2(0, 31), nameof(i));
                 switch (i)
                 {
-                    case  0: Category00 = value; break;
-                    case  1: Category01 = value; break;
-                    case  2: Category02 = value; break;
-                    case  3: Category03 = value; break;
-                    case  4: Category04 = value; break;
-                    case  5: Category05 = value; break;
-                    case  6: Category06 = value; break;
-                    case  7: Category07 = value; break;
-                    case  8: Category08 = value; break;
-                    case  9: Category09 = value; break;
+                    case 0: Category00 = value; break;
+                    case 1: Category01 = value; break;
+                    case 2: Category02 = value; break;
+                    case 3: Category03 = value; break;
+                    case 4: Category04 = value; break;
+                    case 5: Category05 = value; break;
+                    case 6: Category06 = value; break;
+                    case 7: Category07 = value; break;
+                    case 8: Category08 = value; break;
+                    case 9: Category09 = value; break;
                     case 10: Category10 = value; break;
                     case 11: Category11 = value; break;
                     case 12: Category12 = value; break;
@@ -201,10 +201,19 @@ namespace Unity.Physics.Authoring
             }
         }
 
-        public bool Equals(PhysicsCategoryTags other) => Value == other.Value;
+        public bool Equals(PhysicsCategoryTags other)
+        {
+            return Value == other.Value;
+        }
 
-        public override bool Equals(object obj) => obj is PhysicsCategoryTags other && Equals(other);
+        public override bool Equals(object obj)
+        {
+            return obj is PhysicsCategoryTags other && Equals(other);
+        }
 
-        public override int GetHashCode() => unchecked((int)Value);
+        public override int GetHashCode()
+        {
+            return unchecked((int)Value);
+        }
     }
 }

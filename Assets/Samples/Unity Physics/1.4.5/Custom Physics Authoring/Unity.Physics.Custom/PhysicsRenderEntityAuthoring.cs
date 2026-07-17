@@ -1,6 +1,6 @@
-using UnityEngine;
 using Unity.Entities;
 using Unity.Physics.GraphicsIntegration;
+using UnityEngine;
 
 namespace Unity.Physics.Authoring
 {
@@ -8,7 +8,8 @@ namespace Unity.Physics.Authoring
     [DisallowMultipleComponent]
     public sealed class PhysicsRenderEntityAuthoring : MonoBehaviour
     {
-        [Tooltip("Specifies an Entity in a different branch of the hierarchy that holds the graphical representation of this PhysicsShape.")]
+        [Tooltip(
+            "Specifies an Entity in a different branch of the hierarchy that holds the graphical representation of this PhysicsShape.")]
         public GameObject RenderEntity;
     }
 
@@ -16,7 +17,8 @@ namespace Unity.Physics.Authoring
     {
         public override void Bake(PhysicsRenderEntityAuthoring authoring)
         {
-            var renderEntity = new PhysicsRenderEntity { Entity = GetEntity(authoring.RenderEntity, TransformUsageFlags.Dynamic) };
+            var renderEntity = new PhysicsRenderEntity
+                { Entity = GetEntity(authoring.RenderEntity, TransformUsageFlags.Dynamic) };
             var entity = GetEntity(TransformUsageFlags.Dynamic);
             AddComponent(entity, renderEntity);
         }

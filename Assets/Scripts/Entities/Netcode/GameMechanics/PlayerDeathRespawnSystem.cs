@@ -18,6 +18,7 @@ namespace Entities.Netcode.GameMechanics
             state.RequireForUpdate<NetworkTime>();
             state.RequireForUpdate<EntitiesReferences>();
         }
+
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
@@ -39,7 +40,6 @@ namespace Entities.Netcode.GameMechanics
                          .Query<RefRW<PlayerStateComponent>, RefRW<LocalTransform>>()
                          .WithAll<Simulate>()
                          .WithEntityAccess())
-            {
                 if (pState.ValueRO.Health <= 0f)
                 {
                     // 1. Detect exact moment of death
@@ -48,9 +48,14 @@ namespace Entities.Netcode.GameMechanics
                         if (networkTime.IsFirstTimeFullyPredictingTick)
                         {
                             var audioReq = ecb.CreateEntity();
-                            ecb.AddComponent(audioReq, new AudioRequest { Effect = SFX.Death, Position = transform.ValueRO.Position, Pitch = 1f, LocalTargetNetworkId = -1 });
+                            ecb.AddComponent(audioReq,
+                                new AudioRequest
+                                {
+                                    Effect = SFX.Death, Position = transform.ValueRO.Position, Pitch = 1f,
+                                    LocalTargetNetworkId = -1
+                                });
                         }
-                        
+
                         pState.ValueRW.IsDead = true;
                         pState.ValueRW.DeathCount++; // <--- TRIGGERS THE UI
                         pState.ValueRW.RespawnTimer = entitiesReferences.RespawnDelay;
@@ -62,10 +67,7 @@ namespace Entities.Netcode.GameMechanics
                     }
 
                     // 2. Tick the timer
-                    if (pState.ValueRO.RespawnTimer > 0)
-                    {
-                        pState.ValueRW.RespawnTimer -= dt;
-                    }
+                    if (pState.ValueRO.RespawnTimer > 0) pState.ValueRW.RespawnTimer -= dt;
 
                     // 3. Execute Respawn
                     if (pState.ValueRO.RespawnTimer <= 0)
@@ -77,17 +79,15 @@ namespace Entities.Netcode.GameMechanics
                         pState.ValueRW.IsWallRunning = false;
                         pState.ValueRW.CurrentAmmo = entitiesReferences.MagazineSize;
                         var validSpawns = new NativeList<float3>(Allocator.Temp);
-                        for (int i = 0; i < spawnPoints.Length; i++)
-                        {
+                        for (var i = 0; i < spawnPoints.Length; i++)
                             if (spawnTeams[i] == pState.ValueRO.TeamIndex)
                                 validSpawns.Add(spawnPoints[i].Position);
-                        }
 
                         if (validSpawns.Length > 0)
                         {
-                            uint seed = (networkTime.ServerTick.TickIndexForValidTick ^ (uint)entity.Index) + 997u;                        
-                            var rand = new Unity.Mathematics.Random(seed);
-                            int randomIndex = rand.NextInt(0, validSpawns.Length);
+                            var seed = (networkTime.ServerTick.TickIndexForValidTick ^ (uint)entity.Index) + 997u;
+                            var rand = new Random(seed);
+                            var randomIndex = rand.NextInt(0, validSpawns.Length);
                             transform.ValueRW.Position = validSpawns[randomIndex];
                         }
                         else
@@ -96,10 +96,9 @@ namespace Entities.Netcode.GameMechanics
                         }
 
                         validSpawns.Dispose();
-                        
                     }
                 }
-            }
+
             ecb.Playback(state.EntityManager);
             ecb.Dispose();
             spawnPoints.Dispose();

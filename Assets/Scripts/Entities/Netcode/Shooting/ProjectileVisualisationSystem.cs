@@ -9,20 +9,23 @@ namespace Entities.Netcode.Shooting
     [UpdateInGroup(typeof(PresentationSystemGroup))]
     public partial class ProjectileVisualisationSystem : SystemBase
     {
+        private readonly List<Entity> _deadProjectiles = new();
+
         // Maps the ECS Entity to the Unity GameObject
-        private Dictionary<Entity, GameObject> _trails = new Dictionary<Entity, GameObject>();
-        private List<Entity> _deadProjectiles = new List<Entity>();
+        private readonly Dictionary<Entity, GameObject> _trails = new();
 
         protected override void OnUpdate()
         {
-            if (ProjectileVisualisationManager.Instance == null || ProjectileVisualisationManager.Instance.rocketTrailPrefab == null) 
+            if (ProjectileVisualisationManager.Instance == null ||
+                ProjectileVisualisationManager.Instance.rocketTrailPrefab == null)
                 return;
 
             // 1. Sync active projectiles
-            foreach (var (projectile, transform, entity) in SystemAPI.Query<RefRO<ProjectileComponent>, RefRO<LocalTransform>>().WithEntityAccess())
+            foreach (var (projectile, transform, entity) in SystemAPI
+                         .Query<RefRO<ProjectileComponent>, RefRO<LocalTransform>>().WithEntityAccess())
             {
                 // If this is a brand new projectile, spawn a trail for it!
-                if (!_trails.TryGetValue(entity, out GameObject trailObj))
+                if (!_trails.TryGetValue(entity, out var trailObj))
                 {
                     trailObj = Object.Instantiate(ProjectileVisualisationManager.Instance.rocketTrailPrefab);
                     _trails[entity] = trailObj;
@@ -45,18 +48,11 @@ namespace Entities.Netcode.Shooting
             // (If the server destroyed the entity before the client predicted a hit)
             _deadProjectiles.Clear();
             foreach (var kvp in _trails)
-            {
                 if (!SystemAPI.Exists(kvp.Key))
-                {
                     DetachAndFade(kvp.Key, kvp.Value);
-                }
-            }
 
             // 3. Remove dead entries from our tracking dictionary
-            foreach (var dead in _deadProjectiles)
-            {
-                _trails.Remove(dead);
-            }
+            foreach (var dead in _deadProjectiles) _trails.Remove(dead);
         }
 
         private void DetachAndFade(Entity entity, GameObject trailObj)
@@ -70,11 +66,11 @@ namespace Entities.Netcode.Shooting
                     var emission = ps.emission;
                     emission.enabled = false;
                 }
-                
+
                 // Destroy the GameObject after 2 seconds to let the existing smoke fade out
                 Object.Destroy(trailObj, 2f);
             }
-            
+
             // Mark for removal from the dictionary
             _deadProjectiles.Add(entity);
         }

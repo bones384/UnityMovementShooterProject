@@ -1,10 +1,8 @@
-using System;
 using Unity.Mathematics;
-using UnityEngine;
 
 namespace Unity.Physics.Editor
 {
-    enum MatrixState
+    internal enum MatrixState
     {
         UniformScale,
         NonUniformScale,
@@ -12,7 +10,7 @@ namespace Unity.Physics.Editor
         NotValidTRS
     }
 
-    static class ManipulatorUtility
+    internal static class ManipulatorUtility
     {
         public static MatrixState GetMatrixState(ref float4x4 localToWorld)
         {

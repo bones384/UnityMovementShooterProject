@@ -7,7 +7,6 @@ using Unity.Transforms;
 
 namespace Entities.Netcode.Shooting
 {
-    
     [UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
     [UpdateBefore(typeof(ProjectileSimulationSystem))]
     public partial struct ProjectileSpawnerSystem : ISystem
@@ -29,7 +28,7 @@ namespace Entities.Netcode.Shooting
                 var projectileEntity = ecb.Instantiate(prefab);
 
                 ecb.SetComponent(projectileEntity, LocalTransform.FromPositionRotation(
-                    request.ValueRO.Origin, 
+                    request.ValueRO.Origin,
                     quaternion.LookRotationSafe(request.ValueRO.Direction, math.up())
                 ));
 

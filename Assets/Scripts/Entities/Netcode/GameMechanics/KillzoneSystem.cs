@@ -1,8 +1,9 @@
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.NetCode;
 using Unity.Physics;
-using Unity.Collections;
+using UnityEngine;
 
 namespace Entities.Netcode.GameMechanics
 {
@@ -15,7 +16,7 @@ namespace Entities.Netcode.GameMechanics
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<SimulationSingleton>();
-            state.RequireForUpdate<KillzoneTag>(); 
+            state.RequireForUpdate<KillzoneTag>();
         }
 
         [BurstCompile]
@@ -25,7 +26,7 @@ namespace Entities.Netcode.GameMechanics
 
             var job = new KillzoneTriggerJob
             {
-                PlayerStateLookup = SystemAPI.GetComponentLookup<PlayerStateComponent>(false),
+                PlayerStateLookup = SystemAPI.GetComponentLookup<PlayerStateComponent>(),
                 KillzoneLookup = SystemAPI.GetComponentLookup<KillzoneTag>(true)
             };
 
@@ -42,45 +43,41 @@ namespace Entities.Netcode.GameMechanics
 
         public void Execute(TriggerEvent triggerEvent)
         {
-            Entity entityA = triggerEvent.EntityA;
-            Entity entityB = triggerEvent.EntityB;
+            var entityA = triggerEvent.EntityA;
+            var entityB = triggerEvent.EntityB;
 
-            bool isAKillzone = KillzoneLookup.HasComponent(entityA);
-            bool isBKillzone = KillzoneLookup.HasComponent(entityB);
-            bool isAPlayer = PlayerStateLookup.HasComponent(entityA);
-            bool isBPlayer = PlayerStateLookup.HasComponent(entityB);
+            var isAKillzone = KillzoneLookup.HasComponent(entityA);
+            var isBKillzone = KillzoneLookup.HasComponent(entityB);
+            var isAPlayer = PlayerStateLookup.HasComponent(entityA);
+            var isBPlayer = PlayerStateLookup.HasComponent(entityB);
 
             // LOG EVERY TRIGGER EVENT THIS JOB SEES
             if (isAKillzone || isBKillzone)
             {
-                UnityEngine.Debug.Log($"[Physics] Killzone trigger overlapped with Entity! (A: {entityA.Index}, B: {entityB.Index})");
-                UnityEngine.Debug.Log($"[Physics] Is A Player? {isAPlayer} | Is B Player? {isBPlayer}");
+                Debug.Log(
+                    $"[Physics] Killzone trigger overlapped with Entity! (A: {entityA.Index}, B: {entityB.Index})");
+                Debug.Log($"[Physics] Is A Player? {isAPlayer} | Is B Player? {isBPlayer}");
             }
 
             if (isAKillzone && isBPlayer)
-            {
                 KillPlayer(entityB);
-            }
-            else if (isBKillzone && isAPlayer)
-            {
-                KillPlayer(entityA);
-            }
+            else if (isBKillzone && isAPlayer) KillPlayer(entityA);
         }
 
         private void KillPlayer(Entity playerEntity)
         {
             var pState = PlayerStateLookup[playerEntity];
-            
+
             if (pState.Health > 0f && !pState.IsDead)
             {
-                UnityEngine.Debug.Log($"[Killzone] Executing Player {playerEntity.Index}!");
+                Debug.Log($"[Killzone] Executing Player {playerEntity.Index}!");
                 pState.Health = 0f;
-                
+
                 // Record Killzone Death
                 pState.LastKillerNetworkId = -1;
                 pState.LastDeathReason = 2; // Killbox
                 pState.LastKillerTeamIndex = -1; // <-- NEW
-                
+
                 PlayerStateLookup[playerEntity] = pState;
             }
         }

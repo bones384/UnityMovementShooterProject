@@ -5,9 +5,12 @@ using UnityEngine;
 namespace Unity.Physics.Editor
 {
     [CustomPropertyDrawer(typeof(EulerAngles))]
-    class EulerAnglesDrawer : BaseDrawer
+    internal class EulerAnglesDrawer : BaseDrawer
     {
-        protected override bool IsCompatible(SerializedProperty property) => true;
+        protected override bool IsCompatible(SerializedProperty property)
+        {
+            return true;
+        }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {

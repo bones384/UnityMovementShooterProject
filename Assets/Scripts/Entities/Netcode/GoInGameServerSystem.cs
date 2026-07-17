@@ -24,13 +24,11 @@ namespace Entities.Netcode
             var entitiesReferences = SystemAPI.GetSingleton<EntitiesReferences>();
 
             // 1. Count players on each team
-            int teamACount = 0;
-            int teamBCount = 0;
+            var teamACount = 0;
+            var teamBCount = 0;
             foreach (var pState in SystemAPI.Query<RefRO<PlayerStateComponent>>())
-            {
                 if (pState.ValueRO.TeamIndex == 0) teamACount++;
                 else teamBCount++;
-            }
 
             // Gather all spawn points into a temporary list
             var spawnPoints = new NativeList<LocalTransform>(Allocator.Temp);
@@ -46,29 +44,23 @@ namespace Entities.Netcode
                          .Query<RefRO<ReceiveRpcCommandRequest>>().WithAll<GoInGameRequestRpc>().WithEntityAccess())
             {
                 buffer.AddComponent<NetworkStreamInGame>(receiveRpcCommandRequest.ValueRO.SourceConnection);
-                
+
                 // 2. Assign team based on lowest count
-                int assignedTeam = (teamACount <= teamBCount) ? 0 : 1;
+                var assignedTeam = teamACount <= teamBCount ? 0 : 1;
                 if (assignedTeam == 0) teamACount++;
                 else teamBCount++;
 
                 // 3. Find a valid spawn point for this team
-                float3 spawnPos = float3.zero;
+                var spawnPos = float3.zero;
                 var validSpawns = new NativeList<float3>(Allocator.Temp);
-                for (int i = 0; i < spawnPoints.Length; i++)
-                {
+                for (var i = 0; i < spawnPoints.Length; i++)
                     if (spawnTeams[i] == assignedTeam)
                         validSpawns.Add(spawnPoints[i].Position);
-                }
 
                 if (validSpawns.Length > 0)
-                {
                     spawnPos = validSpawns[Random.Range(0, validSpawns.Length)];
-                }
                 else
-                {
                     Debug.LogWarning($"[Server] No spawn points found for Team {assignedTeam}! Spawning at 0,0,0.");
-                }
 
                 validSpawns.Dispose();
 
@@ -83,7 +75,8 @@ namespace Entities.Netcode
                 });
 
                 buffer.AddComponent(playerEntity, new GhostOwner { NetworkId = networkId.Value });
-                buffer.AppendToBuffer(receiveRpcCommandRequest.ValueRO.SourceConnection, new LinkedEntityGroup { Value = playerEntity });
+                buffer.AppendToBuffer(receiveRpcCommandRequest.ValueRO.SourceConnection,
+                    new LinkedEntityGroup { Value = playerEntity });
 
                 Debug.Log($"[Server] Player connected. Assigned to Team {assignedTeam}.");
 
