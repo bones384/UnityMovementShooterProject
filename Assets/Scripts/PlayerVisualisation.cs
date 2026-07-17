@@ -67,6 +67,8 @@ public class PlayerVisualisation : MonoBehaviour
         }
     }
 
+    private float time_to_wait = 0.2f;
+    
     private void Update()
     {
         // --- 1. LOCAL TAKE DAMAGE SOUND ---
@@ -74,6 +76,8 @@ public class PlayerVisualisation : MonoBehaviour
         {
             if (PlayerState.Health < _lastHealth && !PlayerState.IsDead) AudioManager.Instance.Play2D(SFX.TakeDamage);
             _lastHealth = PlayerState.Health;
+            time_to_wait -= Time.deltaTime;
+            if (time_to_wait <= 0) time_to_wait = 0.2f;
         }
 
         // --- 2. FOOTSTEPS (For everyone) ---
