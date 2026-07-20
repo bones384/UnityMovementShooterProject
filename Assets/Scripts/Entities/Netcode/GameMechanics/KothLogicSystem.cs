@@ -17,7 +17,6 @@ namespace Entities.Netcode.GameMechanics
             foreach (var (koth, kothTransform) in SystemAPI
                          .Query<RefRW<KothPointComponent>, RefRO<LocalTransform>>())
             {
-                // --- GAME OVER & RESTART LOGIC ---
                 if (koth.ValueRO.IsGameOver)
                 {
                     koth.ValueRW.RestartTimer -= dt;
@@ -30,21 +29,19 @@ namespace Entities.Netcode.GameMechanics
                         koth.ValueRW.CaptureProgress = 0f;
                         koth.ValueRW.TeamATimer = koth.ValueRO.TimeToWin;
                         koth.ValueRW.TeamBTimer = koth.ValueRO.TimeToWin;
-
-                        // Kill all players to trigger the standard respawn pipeline instantly
+                        
                         foreach (var pState in SystemAPI.Query<RefRW<PlayerStateComponent>>())
                         {
                             pState.ValueRW.Health = 0f;
                             pState.ValueRW.IsDead = true;
-                            pState.ValueRW.RespawnTimer = 0f; // <--- Instant respawn override!
-                            pState.ValueRW.LastKillerTeamIndex = -1; // <-- NEW
-                            // SILENT DEATH FOR RESTART
+                            pState.ValueRW.RespawnTimer = 0f;
+                            pState.ValueRW.LastKillerTeamIndex = -1;
                             pState.ValueRW.LastDeathReason = -1;
                             pState.ValueRW.DeathCount++;
                         }
                     }
 
-                    continue; // Skip all capture logic while game is over
+                    continue;
                 }
 
                 var countA = 0;
@@ -140,8 +137,7 @@ namespace Entities.Netcode.GameMechanics
                 var bWins = bTimerZero && bOwns && !aContesting;
 
                 koth.ValueRW.IsOvertime = (aTimerZero && !aWins) || (bTimerZero && !bWins);
-
-                // --- TRIGGER WIN ---
+                
                 if (aWins && !bWins) TriggerWin(koth, 0);
                 else if (bWins && !aWins) TriggerWin(koth, 1);
                 else if (aWins && bWins) TriggerWin(koth, koth.ValueRO.CurrentOwner);

@@ -11,9 +11,7 @@ namespace Entities.Netcode.Shooting
     public struct IgnoreOwnerCollector : ICollector<RaycastHit>
     {
         public Entity IgnoreEntity;
-
-        // We cannot early out because the first hit might be the owner we want to ignore.
-        // We must evaluate everything along the ray.
+        
         public bool EarlyOutOnFirstHit => false;
 
         public float MaxFraction { get; private set; }
@@ -23,19 +21,16 @@ namespace Entities.Netcode.Shooting
         public IgnoreOwnerCollector(Entity ignoreEntity)
         {
             IgnoreEntity = ignoreEntity;
-            MaxFraction = 1f; // 1.0 means the very end of the ray
+            MaxFraction = 1f;
             NumHits = 0;
             ClosestHit = default;
         }
 
         public bool AddHit(RaycastHit hit)
         {
-            // If the hit is the entity we are trying to ignore, discard it.
             if (hit.Entity == IgnoreEntity)
                 return false;
-
-            // If it's a valid entity, save it as our new closest hit
-            // and shrink the MaxFraction so we only evaluate things closer than this.
+            
             MaxFraction = hit.Fraction;
             ClosestHit = hit;
             NumHits = 1;
@@ -134,16 +129,13 @@ namespace Entities.Netcode.Shooting
                         if (!isSameTeam)
                         {
                             pState.Health -= request.ValueRO.Damage;
-                            // Record Killzone Death
                             if (pState.Health <= 0)
                             {
                                 pState.LastKillerNetworkId = ownerState.NetworkId;
                                 pState.LastDeathReason = 0;
-                                pState.LastKillerTeamIndex = ownerState.TeamIndex; // <-- NEW
+                                pState.LastKillerTeamIndex = ownerState.TeamIndex;
                             }
-
-                            // --- NEW: HITMARKER LOGIC ---
-                            // Find the shooter and give them a hitmarker
+                            
                             ownerState.HitMarkerTimer = 0.2f;
                             ownerState.WasLastHitFatal = pState.Health <= 0;
                             SystemAPI.SetComponent(request.ValueRO.Owner, ownerState);

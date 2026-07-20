@@ -15,12 +15,12 @@ namespace Entities.Netcode
         public float dampenSpeed = 25.0f;
         public float maxFallSpeed = 35f;
         public float airControlFactor = 0.2f;
-        public float WallRunMaxTime = 1.0f; // Time before slowdown starts
-        public float WallRunDrag = 15f; // How fast they slow down
-        public float WallRunMinSpeed = 4f; // Drop-off threshold
-        public float WallJumpBoost = 1.2f; // Multiplier when jumping off a wall
+        public float WallRunMaxTime = 1.0f;
+        public float WallRunDrag = 15f;
+        public float WallRunMinSpeed = 4f;
+        public float WallJumpBoost = 1.2f;
         public bool ApplyWallGravity = true;
-        public float WallGravityMultiplier = 0.4f; // 40% of normal gravity
+        public float WallGravityMultiplier = 0.4f;
         public GameObject ProjectilePrefab;
         public float PrimaryCooldown;
         public float SecondaryCooldown;

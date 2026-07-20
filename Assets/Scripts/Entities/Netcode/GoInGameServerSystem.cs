@@ -22,15 +22,13 @@ namespace Entities.Netcode
         {
             var buffer = new EntityCommandBuffer(Allocator.Temp);
             var entitiesReferences = SystemAPI.GetSingleton<EntitiesReferences>();
-
-            // 1. Count players on each team
+            
             var teamACount = 0;
             var teamBCount = 0;
             foreach (var pState in SystemAPI.Query<RefRO<PlayerStateComponent>>())
                 if (pState.ValueRO.TeamIndex == 0) teamACount++;
                 else teamBCount++;
-
-            // Gather all spawn points into a temporary list
+            
             var spawnPoints = new NativeList<LocalTransform>(Allocator.Temp);
             var spawnTeams = new NativeList<int>(Allocator.Temp);
 
@@ -44,13 +42,11 @@ namespace Entities.Netcode
                          .Query<RefRO<ReceiveRpcCommandRequest>>().WithAll<GoInGameRequestRpc>().WithEntityAccess())
             {
                 buffer.AddComponent<NetworkStreamInGame>(receiveRpcCommandRequest.ValueRO.SourceConnection);
-
-                // 2. Assign team based on lowest count
+                
                 var assignedTeam = teamACount <= teamBCount ? 0 : 1;
                 if (assignedTeam == 0) teamACount++;
                 else teamBCount++;
-
-                // 3. Find a valid spawn point for this team
+                
                 var spawnPos = float3.zero;
                 var validSpawns = new NativeList<float3>(Allocator.Temp);
                 for (var i = 0; i < spawnPoints.Length; i++)

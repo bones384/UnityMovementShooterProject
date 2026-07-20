@@ -35,35 +35,28 @@ namespace Entities.Netcode.Shooting
                          .WithEntityAccess())
             {
                 if (pState.ValueRO.IsDead) continue;
-
-                // --- 1. TICK COOLDOWNS & AUTO-RELOAD ---
+                
                 if (pState.ValueRO.PrimaryCooldownTimer > 0)
                 {
                     pState.ValueRW.PrimaryCooldownTimer -= dt;
-
-                    // If the reload timer just finished and we are empty, refill the magazine!
+                    
                     if (pState.ValueRO.PrimaryCooldownTimer <= 0 && pState.ValueRO.CurrentAmmo <= 0)
                         pState.ValueRW.CurrentAmmo = entitiesReferences.MagazineSize;
                 }
-
-// --- NEW: TICK HITMARKER ---
+                
                 if (pState.ValueRO.HitMarkerTimer > 0) pState.ValueRW.HitMarkerTimer -= dt;
                 if (pState.ValueRO.SecondaryCooldownTimer > 0) pState.ValueRW.SecondaryCooldownTimer -= dt;
                 if (pState.ValueRO.FourthCooldownTimer > 0) pState.ValueRW.FourthCooldownTimer -= dt;
-
-                // --- 2. READ INPUTS ---
+                
                 var isPrimaryHeld = input.ValueRO.PrimaryAbilityInput;
                 var isSecondaryPressed = input.ValueRO.SecondaryAbilityInput;
                 var wasSecondaryPressed = pState.ValueRO.PreviousSecondaryInput;
                 var isFourthPressed = input.ValueRO.FourthAbilityInput;
                 var wasFourthPressed = pState.ValueRO.PreviousFourthInput;
-
-                // --- 3. HANDLE EMPTY MAG ON SPAWN ---
-                // If they hold fire, have no cooldown, but the gun is empty, force a reload to start.
+                
                 if (pState.ValueRO.PrimaryCooldownTimer <= 0 && pState.ValueRO.CurrentAmmo <= 0)
                 {
                     pState.ValueRW.CurrentAmmo = entitiesReferences.MagazineSize;
-                    // --- NEW: RELOAD SOUND ---
                     if (networkTime.IsFirstTimeFullyPredictingTick)
                     {
                         var audioReq = ecb.CreateEntity();
@@ -80,17 +73,14 @@ namespace Entities.Netcode.Shooting
                                        pState.ValueRO.CurrentAmmo > 0;
                 var secondaryTriggered = isSecondaryPressed && !wasSecondaryPressed &&
                                          pState.ValueRO.SecondaryCooldownTimer <= 0;
-
-                // --- 4. EXECUTE PRIMARY (SHOOT) ---
+                
                 if (primaryTriggered)
                 {
-                    // A. Update Prediction State EVERY TICK
                     pState.ValueRW.CurrentAmmo--;
 
                     if (pState.ValueRO.CurrentAmmo <= 0)
                     {
-                        pState.ValueRW.PrimaryCooldownTimer = entitiesReferences.ReloadTime; // Start Reload
-                        // --- NEW: RELOAD SOUND ---
+                        pState.ValueRW.PrimaryCooldownTimer = entitiesReferences.ReloadTime;
                         if (networkTime.IsFirstTimeFullyPredictingTick)
                         {
                             var audioReq = ecb.CreateEntity();
@@ -104,10 +94,9 @@ namespace Entities.Netcode.Shooting
                     }
                     else
                     {
-                        pState.ValueRW.PrimaryCooldownTimer = entitiesReferences.FireRate; // Standard Fire Rate
+                        pState.ValueRW.PrimaryCooldownTimer = entitiesReferences.FireRate;
                     }
-
-                    // B. Spawn visual/network requests ONLY on forward ticks
+                    
                     if (networkTime.IsFirstTimeFullyPredictingTick)
                     {
                         var aimRotation = math.mul(quaternion.RotateY(look.ValueRO.Yaw),
@@ -133,11 +122,9 @@ namespace Entities.Netcode.Shooting
                         });
                     }
                 }
-
-                // --- 5. EXECUTE SECONDARY ---
+                
                 if (secondaryTriggered)
                 {
-                    // Update state every tick
                     pState.ValueRW.SecondaryCooldownTimer = entitiesReferences.secondaryCooldown;
 
                     if (networkTime.IsFirstTimeFullyPredictingTick)
@@ -167,8 +154,7 @@ namespace Entities.Netcode.Shooting
                             });
                     }
                 }
-
-                // --- 6. EXECUTE FOURTH (DEBUG SUICIDE) ---
+                
                 if (isFourthPressed && !wasFourthPressed && pState.ValueRO.FourthCooldownTimer <= 0)
                 {
                     pState.ValueRW.FourthCooldownTimer = 15.0f;
@@ -177,8 +163,7 @@ namespace Entities.Netcode.Shooting
                     pState.ValueRW.LastKillerTeamIndex = pState.ValueRO.TeamIndex;
                     pState.ValueRW.LastKillerNetworkId = pState.ValueRO.NetworkId;
                 }
-
-                // --- 7. SAVE INPUTS FOR EDGE DETECTION ---
+                
                 pState.ValueRW.PreviousPrimaryInput = isPrimaryHeld;
                 pState.ValueRW.PreviousSecondaryInput = isSecondaryPressed;
                 pState.ValueRW.PreviousFourthInput = isFourthPressed;

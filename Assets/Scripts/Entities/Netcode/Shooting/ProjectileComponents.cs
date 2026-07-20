@@ -4,7 +4,6 @@ using Unity.NetCode;
 
 namespace Entities.Netcode.Shooting
 {
-    // The active, moving projectile
     [GhostComponent(PrefabType = GhostPrefabType.All)]
     public struct ProjectileComponent : IComponentData
     {
@@ -15,8 +14,7 @@ namespace Entities.Netcode.Shooting
         [GhostField] public bool ApplyGravity;
         [GhostField] public float Radius;
     }
-
-    // The one-frame request to spawn a projectile
+    
     public struct ProjectileSpawnRequest : IComponentData
     {
         public Entity Owner;

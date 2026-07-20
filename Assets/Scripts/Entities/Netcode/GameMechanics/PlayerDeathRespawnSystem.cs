@@ -42,7 +42,6 @@ namespace Entities.Netcode.GameMechanics
                          .WithEntityAccess())
                 if (pState.ValueRO.Health <= 0f)
                 {
-                    // 1. Detect exact moment of death
                     if (!pState.ValueRO.IsDead)
                     {
                         if (networkTime.IsFirstTimeFullyPredictingTick)
@@ -57,19 +56,14 @@ namespace Entities.Netcode.GameMechanics
                         }
 
                         pState.ValueRW.IsDead = true;
-                        pState.ValueRW.DeathCount++; // <--- TRIGGERS THE UI
+                        pState.ValueRW.DeathCount++;
                         pState.ValueRW.RespawnTimer = entitiesReferences.RespawnDelay;
-                        // TELEPORT TRICK: Throw the physical capsule into the abyss
-                        // so it cannot block bullets or players. 
-                        // (The camera stays behind thanks to our MovementSystem tweak!)
                         pState.ValueRW.DeathPosition = transform.ValueRO.Position;
                         transform.ValueRW.Position = new float3(0, -1000, 0);
                     }
-
-                    // 2. Tick the timer
+                    
                     if (pState.ValueRO.RespawnTimer > 0) pState.ValueRW.RespawnTimer -= dt;
-
-                    // 3. Execute Respawn
+                    
                     if (pState.ValueRO.RespawnTimer <= 0)
                     {
                         pState.ValueRW.IsDead = false;

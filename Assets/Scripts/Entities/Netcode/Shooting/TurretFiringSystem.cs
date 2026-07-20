@@ -6,7 +6,6 @@ using Unity.Transforms;
 
 namespace Entities.Netcode.Shooting
 {
-    // Server-Only, and perfectly safe to run in the standard Simulation group
     [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     public partial struct TurretSystem : ISystem
@@ -14,13 +13,11 @@ namespace Entities.Netcode.Shooting
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            // We only need NetworkTime to ensure Netcode is actively running
             state.RequireForUpdate<NetworkTime>();
         }
 
         public void OnUpdate(ref SystemState state)
         {
-            // Because this is Server-Only, DeltaTime is 100% safe from rollbacks!
             var dt = SystemAPI.Time.DeltaTime;
             var ecb = new EntityCommandBuffer(Allocator.Temp);
 
@@ -36,9 +33,7 @@ namespace Entities.Netcode.Shooting
                 }
 
                 turret.ValueRW.Timer -= dt;
-
-                // A while loop instead of an IF statement guarantees mathematical 
-                // consistency, preventing bullets from clumping if the server lags.
+                
                 while (turret.ValueRO.Timer <= 0f)
                 {
                     turret.ValueRW.Timer += turret.ValueRO.FireInterval;

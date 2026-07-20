@@ -137,22 +137,21 @@ namespace Entities.Netcode
 
                 if (pstate.ValueRO.JumpBufferTimer > 0)
                 {
-                    if (pstate.ValueRO.CoyoteTimer > 0) // Ground Jump
+                    if (pstate.ValueRO.CoyoteTimer > 0)
                     {
                         verticalVelocity.y = jumpSpeed;
                         isGrounded = false;
                         pstate.ValueRW.JumpBufferTimer = 0;
                         pstate.ValueRW.CoyoteTimer = 0;
                     }
-                    else if (shouldWallRun || pstate.ValueRO.IsWallRunning) // Wall Jump
+                    else if (shouldWallRun || pstate.ValueRO.IsWallRunning)
                     {
                         verticalVelocity.y = jumpSpeed;
 
                         var currentForward = math.normalizesafe(horizontalVelocity);
 
                         if (math.lengthsq(horizontalVelocity) < 0.1f) currentForward = localTransform.ValueRO.Forward();
-
-                        // This creates a vector pointing forward AND away from the wall
+                        
                         var jumpOffDir = math.normalizesafe(currentForward + currentWallNormal);
 
                         var currentSpeed = math.max(math.length(horizontalVelocity), initialSpeed);
@@ -270,8 +269,7 @@ namespace Entities.Netcode
                         );
                     }
                 }
-
-// --- 1. Freeze physical body in the abyss ---
+                
                 if (pstate.ValueRO.IsDead)
                 {
                     horizontalVelocity = float3.zero;
@@ -344,8 +342,7 @@ namespace Entities.Netcode
             var pos = position;
             var vel = velocity;
             var dest = pos + vel;
-
-            // Stored constraint normals (sliding planes)
+            
             var n1 = float3.zero;
             var n2 = float3.zero;
             var planeCount = 0;
@@ -373,18 +370,14 @@ namespace Entities.Netcode
                 }
 
                 var t = math.clamp(hit.Fraction, 0f, 1f);
-
-                // --- Near point step (stop slightly before impact) ---
+                
                 var travelDist = remainingDist * t;
-                //var shortDist = math.max(travelDist - skinWidth, 0f);
                 var moveDir = math.normalizesafe(vel);
 
                 pos += moveDir * travelDist + hit.SurfaceNormal * skinWidth;
-
-                // --- Touch point normal (collision constraint) ---
+                
                 var planeN = hit.SurfaceNormal;
-
-                // Register constraint plane (max 2 needed for 3 DOF in 3D)
+                
                 if (planeCount == 0)
                 {
                     n1 = planeN;
@@ -397,23 +390,15 @@ namespace Entities.Netcode
                 }
                 else
                 {
-                    // Third constraint => no DOF left
                     planeCount = 3;
                 }
-
-                // --- Recompute velocity under constraints ---
+                
                 if (planeCount == 1)
                 {
-                    // Project onto first plane
-                    // if (isGrounded && !gravityPass)
-                    //   vel = ProjectOnPlaneL(new float3(vel.x, 0, vel.z), new float3(n1.x, 0, n1.z));
-
-                    // else
                     ProjectOnPlaneL(vel, n1, out vel);
                 }
                 else if (planeCount == 2)
                 {
-                    // Crease direction = intersection of two planes
                     var crease = math.cross(n1, n2);
                     var lenSq = math.lengthsq(crease);
 
@@ -432,8 +417,7 @@ namespace Entities.Netcode
                     vel = float3.zero;
                     break;
                 }
-
-                // Recompute destination from corrected state (prevents drift)
+                
                 dest = pos + vel;
 
                 if (math.lengthsq(vel) < skinWidth * skinWidth)
@@ -442,8 +426,7 @@ namespace Entities.Netcode
 
             newPosition = pos;
         }
-
-        // [BurstCompile]
+        
         private static void ProjectOnPlaneL(in float3 v, in float3 n, out float3 res)
         {
             res = v - math.dot(v, n) * n;

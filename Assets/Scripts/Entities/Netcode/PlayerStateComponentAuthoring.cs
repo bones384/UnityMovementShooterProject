@@ -58,16 +58,15 @@ namespace Entities.Netcode
 
         [GhostField] public bool IsDead;
         [GhostField] public float RespawnTimer;
-        [GhostField] public float3 DeathPosition; // <-- NEW
+        [GhostField] public float3 DeathPosition;
 
-        [GhostField] public int DeathCount; // Incremented once per death
-        [GhostField] public int LastKillerNetworkId; // -1 if none/killbox
+        [GhostField] public int DeathCount;
+        [GhostField] public int LastKillerNetworkId;
         [GhostField] public int LastDeathReason;
-        [GhostField] public int LastKillerTeamIndex; // <-- NEW
+        [GhostField] public int LastKillerTeamIndex;
 
         [GhostField] public int CurrentAmmo;
-
-        // --- HIT FEEDBACK ---
+        
         [GhostField] public float HitMarkerTimer;
         [GhostField] public bool WasLastHitFatal;
     }

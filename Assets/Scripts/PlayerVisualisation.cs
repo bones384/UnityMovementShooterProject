@@ -16,16 +16,14 @@ public class PlayerVisualisation : MonoBehaviour
 
     [Header("Overhead UI")] public UIDocument overheadUI;
 
-    public LayerMask environmentLayer; // Set this to your level/environment layer in the Inspector!
+    public LayerMask environmentLayer;
 
     [Header("Speed FX")] public ParticleSystem windParticles;
 
-    public CinemachineCamera virtualCamera; // Link your vcam here!
-
-    [Tooltip("Velocity required to start showing wind and increasing FOV")]
+    public CinemachineCamera virtualCamera;
+    
     public float minSpeedThreshold = 8f;
-
-    [Tooltip("Velocity where FX are at absolute maximum")]
+    
     public float maxSpeedThreshold = 25f;
 
     public float spawnDistanceFront = 15f;
@@ -71,7 +69,6 @@ public class PlayerVisualisation : MonoBehaviour
     
     private void Update()
     {
-        // --- 1. LOCAL TAKE DAMAGE SOUND ---
         if (isLocalPlayer)
         {
             if (PlayerState.Health < _lastHealth && !PlayerState.IsDead) AudioManager.Instance.Play2D(SFX.TakeDamage);
@@ -79,24 +76,22 @@ public class PlayerVisualisation : MonoBehaviour
             time_to_wait -= Time.deltaTime;
             if (time_to_wait <= 0) time_to_wait = 0.2f;
         }
-
-        // --- 2. FOOTSTEPS (For everyone) ---
-        // Only play if they are moving fast enough (ignoring Y falling velocity)
+        
         var horizontalVel = new float2(PlayerState.Velocity.x, PlayerState.Velocity.z);
         var speed = math.length(horizontalVel);
 
         if (speed > 1f && !PlayerState.IsDead && (PlayerState.IsGrounded || PlayerState.IsWallRunning))
         {
-            _footstepTimer -= Time.deltaTime * speed; // Frequency scales with velocity
+            _footstepTimer -= Time.deltaTime * speed;
             if (_footstepTimer <= 0)
             {
                 AudioManager.Instance.Play3D(SFX.Footstep, transform.position, Random.Range(0.9f, 2.1f));
-                _footstepTimer = 3f; // Base distance threshold before next step
+                _footstepTimer = 3f;
             }
         }
         else
         {
-            _footstepTimer = 0f; // Reset when stopped
+            _footstepTimer = 0f;
         }
 
         if (!isLocalPlayer)
@@ -107,7 +102,6 @@ public class PlayerVisualisation : MonoBehaviour
 
         PlayerVisualisationManager.LocalPlayer = PlayerState;
 
-        // Ensure we don't see our own body casting shadows when dead
         var bodyRenderer = body.GetComponent<Renderer>();
         var visorRenderer = visor.GetComponent<Renderer>();
         var ballsRenderer = balls.GetComponent<Renderer>();
@@ -125,44 +119,35 @@ public class PlayerVisualisation : MonoBehaviour
     private void UpdateSpeedEffects()
     {
         if (windParticles == null || virtualCamera == null) return;
-
-        // 1. Calculate 3D Speed (Include Y for falling!)
+        
         var speed = math.length(PlayerState.Velocity);
-
-        // Zero out the effects if dead
+        
         if (PlayerState.IsDead) speed = 0f;
-
-        // 2. Normalize speed between our thresholds (0.0 to 1.0)
+        
         var speedFactor = Mathf.Clamp01((speed - minSpeedThreshold) / (maxSpeedThreshold - minSpeedThreshold));
-
-        // 3. Update Cinemachine FOV
+        
         var targetFOV = Mathf.Lerp(baseFOV, maxFOV, speedFactor);
         virtualCamera.Lens.FieldOfView =
             Mathf.Lerp(virtualCamera.Lens.FieldOfView, targetFOV, Time.deltaTime * fovLerpSpeed);
-
-        // 4. Update Particle Spawner
+        
         var emission = windParticles.emission;
         var main = windParticles.main;
 
         if (speedFactor > 0f)
         {
             emission.enabled = true;
-
-            // Scale emission rate and particle speed based on how fast you are going
+            
             emission.rateOverTime = Mathf.Lerp(0f, 50f, speedFactor);
             main.startSpeed = Mathf.Lerp(20f, 60f, speedFactor);
-
-            // Calculate the exact 3D direction vector
+            
             var moveDirection = new Vector3(PlayerState.Velocity.x, PlayerState.Velocity.y, PlayerState.Velocity.z) /
                                 speed;
 
-            // Place the spawner IN FRONT of the player, and rotate it to shoot BACK at the player
             windParticles.transform.position = transform.position + moveDirection * spawnDistanceFront;
             windParticles.transform.rotation = Quaternion.LookRotation(-moveDirection);
         }
         else
         {
-            // Stop emitting, but let existing particles finish their lifespan
             emission.enabled = false;
         }
     }
@@ -172,7 +157,7 @@ public class PlayerVisualisation : MonoBehaviour
         var bodyRenderer = body.GetComponent<Renderer>();
         var visorRenderer = visor.GetComponent<Renderer>();
         var ballsRenderer = balls.GetComponent<Renderer>();
-// --- 1. INSTANT INVISIBILITY ---
+
         if (PlayerState.IsDead)
         {
             bodyRenderer.enabled = false;
@@ -182,7 +167,7 @@ public class PlayerVisualisation : MonoBehaviour
             return;
         }
 
-        bodyRenderer.enabled = true; // Turn back on when alive
+        bodyRenderer.enabled = true;
         ballsRenderer.enabled = true;
         visorRenderer.enabled = true;
         var isEnemy = PlayerState.TeamIndex != PlayerVisualisationManager.LocalPlayer?.TeamIndex;
@@ -209,7 +194,7 @@ public class PlayerVisualisation : MonoBehaviour
 
         _nameLabel.text = $"ID: {PlayerState.NetworkId}";
         _nameLabel.style.color =
-            isEnemy ? new StyleColor(Color.red) : new StyleColor(new Color(0.2f, 0.6f, 1f)); // Blue for ally
+            isEnemy ? new StyleColor(Color.red) : new StyleColor(new Color(0.2f, 0.6f, 1f));
         _healthFill.style.backgroundColor = isEnemy ? new StyleColor(Color.red) : new StyleColor(Color.white);
 
         var hpPercent = Mathf.Clamp01(PlayerState.Health / 100f) * 100f;

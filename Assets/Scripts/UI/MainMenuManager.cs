@@ -11,9 +11,8 @@ using UnityEngine.UIElements;
 
 public static class MatchmakingState
 {
-    // A simple static class to hold our data between scenes
     public static bool IsHost;
-    public static ISession CurrentSession; // <-- NEW
+    public static ISession CurrentSession;
 }
 
 public class MainMenuManager : MonoBehaviour
@@ -27,8 +26,7 @@ public class MainMenuManager : MonoBehaviour
     private TextField _inputUsername;
     private Label _lblStatus;
     private Label _lblWelcome;
-
-    // UI Elements
+    
     private VisualElement _loginContainer;
 
     private CancellationTokenSource _matchmakingCts;
@@ -39,8 +37,7 @@ public class MainMenuManager : MonoBehaviour
     {
         _doc = GetComponent<UIDocument>();
         var root = _doc.rootVisualElement;
-
-        // Bind Elements
+        
         _loginContainer = root.Q<VisualElement>("login-container");
         _playContainer = root.Q<VisualElement>("play-container");
         _matchmakingOverlay = root.Q<VisualElement>("matchmaking-overlay");
@@ -52,14 +49,12 @@ public class MainMenuManager : MonoBehaviour
         _btnExit = root.Q<Button>("btn-exit");
         _btnCancel = root.Q<Button>("btn-cancel");
         _lblStatus = root.Q<Label>("lbl-status");
-
-        // Button Events
+        
         _btnLogin.clicked += OnLoginClicked;
         _btnPlay.clicked += OnPlayClicked;
         _btnExit.clicked += OnExitClicked;
         _btnCancel.clicked += OnCancelClicked;
-
-        // Force UI state to wait
+        
         _loginContainer.style.display = DisplayStyle.None;
         _playContainer.style.display = DisplayStyle.None;
 
@@ -70,7 +65,6 @@ public class MainMenuManager : MonoBehaviour
     {
         try
         {
-            // Only initialize if we haven't already (crucial for returning from gameplay)
             if (UnityServices.State == ServicesInitializationState.Uninitialized)
             {
                 var options = new InitializationOptions();
@@ -79,8 +73,7 @@ public class MainMenuManager : MonoBehaviour
 #endif
                 await UnityServices.InitializeAsync(options);
             }
-
-            // Check if we are already signed in from a previous visit to this menu
+            
             if (AuthenticationService.Instance.IsSignedIn)
                 ShowPlayScreen(AuthenticationService.Instance.PlayerName);
             else
@@ -106,11 +99,9 @@ public class MainMenuManager : MonoBehaviour
     {
         _loginContainer.style.display = DisplayStyle.None;
         _playContainer.style.display = DisplayStyle.Flex;
-
-        // Use a fallback if name is null for some reason
+        
         var displayName = string.IsNullOrEmpty(playerName) ? "Player" : playerName;
-
-        // Strip the weird # hash that Unity sometimes appends to anonymous names
+        
         var hashIndex = displayName.IndexOf('#');
         if (hashIndex > 0) displayName = displayName.Substring(0, hashIndex);
 
@@ -183,7 +174,7 @@ public class MainMenuManager : MonoBehaviour
             _btnCancel.SetEnabled(false);
 
             MatchmakingState.IsHost = session.IsHost;
-            MatchmakingState.CurrentSession = session; // <-- NEW
+            MatchmakingState.CurrentSession = session;
 
             await Task.Delay(1000);
             SceneManager.LoadScene("MainTestScene");
@@ -195,7 +186,7 @@ public class MainMenuManager : MonoBehaviour
         }
         catch (TaskCanceledException)
         {
-            // Cancelled by user
+
         }
         catch (Exception e)
         {

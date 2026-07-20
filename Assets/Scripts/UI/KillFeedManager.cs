@@ -30,15 +30,13 @@ public class KillfeedManager : MonoBehaviour
     public void AddKillfeedEntry(int killerId, int killerTeam, int victimId, int victimTeam, int reason)
     {
         if (_container == null) return;
-
-        // Get the local player's team
+        
         var myTeam = -1;
         if (PlayerVisualisationManager.LocalPlayer.HasValue)
             myTeam = PlayerVisualisationManager.LocalPlayer.Value.TeamIndex;
 
-        // Define readable colors for the cream background
-        var allyColor = new Color(0.15f, 0.4f, 0.8f); // Blue
-        var enemyColor = new Color(0.7f, 0.15f, 0.15f); // Red
+        var allyColor = new Color(0.15f, 0.4f, 0.8f);
+        var enemyColor = new Color(0.7f, 0.15f, 0.15f);
 
         var row = new VisualElement();
         row.AddToClassList("killfeed-row");
@@ -47,7 +45,6 @@ public class KillfeedManager : MonoBehaviour
         {
             var killerText = new Label($"Player {killerId}");
             killerText.AddToClassList("killfeed-text");
-            // Color Killer
             killerText.style.color = killerTeam == myTeam ? new StyleColor(allyColor) : new StyleColor(enemyColor);
             row.Add(killerText);
         }
@@ -65,7 +62,6 @@ public class KillfeedManager : MonoBehaviour
 
         var victimText = new Label($"Player {victimId}");
         victimText.AddToClassList("killfeed-text");
-        // Color Victim
         victimText.style.color = victimTeam == myTeam ? new StyleColor(allyColor) : new StyleColor(enemyColor);
         row.Add(victimText);
 
