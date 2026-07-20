@@ -31,8 +31,7 @@ namespace Entities.Netcode.Shooting
                     request.ValueRO.Origin,
                     quaternion.LookRotationSafe(request.ValueRO.Direction, math.up())
                 ));
-
-                // Change this from AddComponent to SetComponent
+                
                 ecb.SetComponent(projectileEntity, new ProjectileComponent
                 {
                     Owner = request.ValueRO.Owner,

@@ -26,7 +26,6 @@ public class KothHUDManager : MonoBehaviour
 
     private void Update()
     {
-        // Wait until both the KOTH state and the LocalPlayer are fully loaded
         if (!KothBridge.IsActive || PlayerVisualisationManager.LocalPlayer == null)
         {
             _doc.rootVisualElement.style.display = DisplayStyle.None;
@@ -36,24 +35,20 @@ public class KothHUDManager : MonoBehaviour
         _doc.rootVisualElement.style.display = DisplayStyle.Flex;
         var state = KothBridge.State;
         var myTeam = PlayerVisualisationManager.LocalPlayer.Value.TeamIndex;
-
-        // Route the timers so Left is always Ally, Right is always Enemy
+        
         var myTimer = myTeam == 0 ? state.TeamATimer : state.TeamBTimer;
         var enemyTimer = myTeam == 0 ? state.TeamBTimer : state.TeamATimer;
-
-        // 1. Timers
-        _teamATimer.text = FormatTime(myTimer); // Left Side
-        _teamBTimer.text = FormatTime(enemyTimer); // Right Side
+        
+        _teamATimer.text = FormatTime(myTimer);
+        _teamBTimer.text = FormatTime(enemyTimer);
 
         ToggleClass(_teamATimer, "timer-zero", myTimer <= 0);
         ToggleClass(_teamBTimer, "timer-zero", enemyTimer <= 0);
-
-        // 2. Base Square Color (Current Owner)
+        
         if (state.CurrentOwner == -1) _pointSquare.style.backgroundColor = _colorGray;
         else if (state.CurrentOwner == myTeam) _pointSquare.style.backgroundColor = _colorBlue;
         else _pointSquare.style.backgroundColor = _colorRed;
-
-        // 3. Capture Fill & Direction
+        
         var capPercent = state.TimeToCapture > 0 ? state.CaptureProgress / state.TimeToCapture * 100f : 0f;
         _pointFill.style.width = new Length(capPercent, LengthUnit.Percent);
 
@@ -69,8 +64,7 @@ public class KothHUDManager : MonoBehaviour
             _pointFill.style.right = 0;
             _pointFill.style.left = new StyleLength(StyleKeyword.Auto);
         }
-
-        // 4. Status Text
+        
         if (state.IsContested)
         {
             _pointStatusText.text = "!";
@@ -85,8 +79,7 @@ public class KothHUDManager : MonoBehaviour
         {
             _pointStatusText.text = "";
         }
-
-        // 5. Overtime
+        
         _overtimeLabel.style.display = state.IsOvertime ? DisplayStyle.Flex : DisplayStyle.None;
 
         if (KothBridge.IsGameOver)
@@ -100,7 +93,6 @@ public class KothHUDManager : MonoBehaviour
                 _victoryText.text = "YOU WIN!";
                 ToggleClass(_victoryBox, "victory-red", false);
                 ToggleClass(_victoryBox, "victory-blue", true);
-                // --- NEW: VICTORY SOUND ---
                 if (!_hasPlayedGameOverSound)
                 {
                     if (AudioManager.Instance != null) AudioManager.Instance.Play2D(SFX.Victory);
@@ -112,7 +104,6 @@ public class KothHUDManager : MonoBehaviour
                 _victoryText.text = "YOU LOSE!";
                 ToggleClass(_victoryBox, "victory-blue", false);
                 ToggleClass(_victoryBox, "victory-red", true);
-                // --- NEW: DEFEAT SOUND ---
                 if (!_hasPlayedGameOverSound)
                 {
                     if (AudioManager.Instance != null) AudioManager.Instance.Play2D(SFX.Loss);
@@ -122,7 +113,6 @@ public class KothHUDManager : MonoBehaviour
         }
         else
         {
-            // As soon as the server deletes the GameOverStateComponent (game restarts), this hides automatically
             _victoryOverlay.style.display = DisplayStyle.None;
             _hasPlayedGameOverSound = false;
         }
@@ -143,19 +133,16 @@ public class KothHUDManager : MonoBehaviour
         _victoryBox = root.Q<VisualElement>("victory-box");
         _victoryText = root.Q<Label>("victory-text");
     }
-
-    // --- DEBUG GUI ---
+    
     private void OnGUI()
     {
         return;
         if (!KothBridge.IsActive) return;
 
         var state = KothBridge.State;
-
-        // Draw a debug box starting at X: 10, Y: 200
+        
         GUILayout.BeginArea(new Rect(10, 200, 300, 400));
-
-        // Optional styling to make it readable against the game world
+        
         GUI.contentColor = Color.green;
 
         GUILayout.Label("<b>--- KOTH STATE DEBUG ---</b>");

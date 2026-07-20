@@ -9,7 +9,6 @@
     position: absolute;
 }
 
-/* --- CROSSHAIR --- */
 #crosshair {
     position: absolute;
     left: 50%;
@@ -21,7 +20,6 @@
     border-radius: 3px;
 }
 
-/* --- ABILITIES --- */
 #abilities-container {
     position: absolute;
     bottom: 30px;
@@ -41,7 +39,6 @@
     border-width: 2px;
     border-color: rgb(40, 40, 40);
     overflow: hidden;
-    /* Add background-image: url("path_to_icon.png") here later */
 }
 
 .ability-overlay {
@@ -53,7 +50,7 @@
     background-color: rgba(0, 0, 0, 0.75);
     justify-content: center;
     align-items: center;
-    display: none; /* Hidden by default when not on cooldown */
+    display: none;
 }
 
 .ability-timer {
@@ -64,7 +61,6 @@
     text-shadow: 1px 1px 0 rgb(0, 0, 0);
 }
 
-/* --- HEALTH BAR --- */
 #health-container {
     position: absolute;
     bottom: 30px;
@@ -99,7 +95,6 @@
     transition-timing-function: ease-out;
 }
 
-/* --- DEATH SCREEN --- */
 .death-screen {
     position: absolute;
     width: 100%;
@@ -107,7 +102,7 @@
     background-color: rgba(100, 0, 0, 0.4);
     justify-content: center;
     align-items: center;
-    display: none; /* Hidden by default */
+    display: none;
 }
 
 .death-title {
@@ -138,11 +133,10 @@
 .killfeed-row {
     flex-direction: row;
     align-items: center;
-    /* TF2-style translucent cream background */
     background-color: rgba(235, 226, 202, 0.85);
     border-radius: 4px;
     border-width: 2px;
-    border-color: rgba(0, 0, 0, 0.5); /* Subtle dark border to frame it */
+    border-color: rgba(0, 0, 0, 0.5);
     padding: 4px 12px;
     margin-bottom: 4px;
     transition-property: opacity;
@@ -150,14 +144,12 @@
 }
 
 .killfeed-text {
-    /* Dark gray text for readability on cream */
     color: rgb(40, 40, 40);
     font-size: 18px;
     -unity-font-style: bold;
 }
 
 .killfeed-icon {
-    /* Increased by ~33% */
     width: 32px;
     height: 32px;
     margin-left: 8px;
@@ -168,19 +160,17 @@
 .primary-ability-wrapper {
     flex-direction: column;
     align-items: center;
-    justify-content: flex-end; /* Keeps the button aligned with the others at the bottom */
+    justify-content: flex-end;
 }
 
 .ammo-label {
-    /* No more absolute positioning! */
     color: white;
     font-size: 20px;
     -unity-font-style: bold;
     text-shadow: 1px 1px 0 rgb(0, 0, 0);
-    margin-bottom: 4px; /* Gives a little breathing room above the button */
+    margin-bottom: 4px;
 }
 
-/* --- HITMARKER --- */
 .hitmarker {
     position: absolute;
     width: 100%;
@@ -195,12 +185,10 @@
     background-color: white;
     width: 3px;
     height: 14px;
-    /* The dark border guarantees visibility against the bright skybox! */
     border-width: 1px;
     border-color: rgba(0, 0, 0, 0.85);
 }
 
-/* Push them mathematically out from the center */
 .hitmarker-tl {
     translate: -12px -12px;
     rotate: -45deg;
@@ -221,7 +209,6 @@
     rotate: -45deg;
 }
 
-/* The bold/red state for Fatal kills */
 .hitmarker-fatal .hitmarker-line {
     background-color: rgb(255, 50, 50);
     width: 5px;

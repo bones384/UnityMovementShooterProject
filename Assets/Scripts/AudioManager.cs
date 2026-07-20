@@ -2,7 +2,6 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-// --- 1. THE ECS EVENT REQUEST ---
 public enum SFX
 {
     FireHitscan,
@@ -25,10 +24,9 @@ public struct AudioRequest : IComponentData
     public SFX Effect;
     public float3 Position;
     public float Pitch;
-    public int LocalTargetNetworkId; // -1 = play for everyone, else only plays for this specific player
+    public int LocalTargetNetworkId;
 }
 
-// --- 2. THE UNITY MANAGER ---
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance;
@@ -44,11 +42,11 @@ public class AudioManager : MonoBehaviour
     public AudioClip hitGround;
     public AudioClip hitConfirm;
     public AudioClip parry;
-    public AudioClip reload; // <-- NEW
+    public AudioClip reload;
 
-    [Header("Game Over")] public AudioClip victory; // <-- NEW
+    [Header("Game Over")] public AudioClip victory;
 
-    public AudioClip defeat; // <-- NEW
+    public AudioClip defeat;
 
     [Header("Objective")] public AudioClip kothCapStart;
 
@@ -70,7 +68,7 @@ public class AudioManager : MonoBehaviour
         var source = go.AddComponent<AudioSource>();
         source.clip = clip;
         source.pitch = pitch;
-        source.spatialBlend = 1f; // 3D Sound
+        source.spatialBlend = 1f;
         source.Play();
         Destroy(go, clip.length + 0.1f);
     }
@@ -80,12 +78,11 @@ public class AudioManager : MonoBehaviour
         var clip = GetClip(sfx);
         if (clip != null)
         {
-            // Simple 2D playback for hitmarkers and local damage
             var go = new GameObject($"SFX_2D_{sfx}");
             var source = go.AddComponent<AudioSource>();
             source.clip = clip;
             source.pitch = pitch;
-            source.spatialBlend = 0f; // 2D Sound
+            source.spatialBlend = 0f;
             source.Play();
             Destroy(go, clip.length + 0.1f);
         }

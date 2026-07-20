@@ -32,10 +32,8 @@ namespace Entities.Netcode
                     quaternion.RotateX(-input.ValueRO.Pitch));
 
                 if (!pState.ValueRO.IsDead)
-                    // Alive: Follow the actively moving body
                     camera.transform.position = localToWorld.ValueRO.Position + input.ValueRO.CameraOffset;
                 else
-                    // Dead: Lock the camera rigidly to the death coordinates
                     camera.transform.position = pState.ValueRO.DeathPosition + input.ValueRO.CameraOffset;
             }
         }

@@ -13,7 +13,6 @@ namespace Entities.Netcode
     [UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
     public partial class PlayerVisualisationSystem : SystemBase
     {
-        // public GameObject PlayerViewPrefab;
 
         protected override void OnCreate()
         {

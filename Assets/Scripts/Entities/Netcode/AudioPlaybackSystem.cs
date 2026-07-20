@@ -28,8 +28,7 @@ namespace Entities.Netcode
                         AudioManager.Instance.Play3D(request.ValueRO.Effect, request.ValueRO.Position,
                             request.ValueRO.Pitch);
                 }
-
-                // Destroy immediately so it only plays once
+                
                 ecb.DestroyEntity(entity);
             }
 

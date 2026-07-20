@@ -18,7 +18,6 @@ public class PauseMenuManager : MonoBehaviour
 
     private void Update()
     {
-        // Toggle Pause Menu with Escape
         if (Keyboard.current.escapeKey.wasPressedThisFrame && !toggled)
         {
             toggled = true;
@@ -42,8 +41,7 @@ public class PauseMenuManager : MonoBehaviour
 
         _btnResume.clicked += ResumeGame;
         _btnQuit.clicked += QuitToMainMenu;
-
-        // Ensure it starts hidden
+        
         _pauseOverlay.style.display = DisplayStyle.None;
     }
 
@@ -51,8 +49,7 @@ public class PauseMenuManager : MonoBehaviour
     {
         _isPaused = true;
         _pauseOverlay.style.display = DisplayStyle.Flex;
-
-        // Optional: Unlock and show the mouse cursor so they can click the buttons!
+        
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
@@ -61,8 +58,7 @@ public class PauseMenuManager : MonoBehaviour
     {
         _isPaused = false;
         _pauseOverlay.style.display = DisplayStyle.None;
-
-        // Re-lock the cursor for gameplay
+        
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -70,18 +66,14 @@ public class PauseMenuManager : MonoBehaviour
     private async void QuitToMainMenu()
     {
         Debug.Log("Quitting Session...");
-
-        // Prevent the player from spam-clicking quit while the cloud is processing
+        
         _btnQuit.SetEnabled(false);
         _btnResume.SetEnabled(false);
-
-        // 1. Tell Unity Cloud we are leaving!
+        
         if (MatchmakingState.CurrentSession != null)
         {
             try
             {
-                // If the Host leaves, deleting the session instantly removes it from the matchmaking pool 
-                // so no other players get trapped trying to join a dead game.
                 if (MatchmakingState.IsHost)
                     await MatchmakingState.CurrentSession.AsHost().DeleteAsync();
                 else
@@ -94,8 +86,7 @@ public class PauseMenuManager : MonoBehaviour
 
             MatchmakingState.CurrentSession = null;
         }
-
-        // 2. Destroy the ECS Worlds
+        
         if (ClientServerBootstrap.ClientWorld != null) ClientServerBootstrap.ClientWorld.Dispose();
 
         if (ClientServerBootstrap.ServerWorld != null) ClientServerBootstrap.ServerWorld.Dispose();

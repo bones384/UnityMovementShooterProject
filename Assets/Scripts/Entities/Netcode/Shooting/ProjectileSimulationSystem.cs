@@ -88,8 +88,7 @@ namespace Entities.Netcode.Shooting
                         var ownerState = SystemAPI.GetComponent<PlayerStateComponent>(projectile.ValueRO.Owner);
                         isSameTeam = pState.ValueRO.TeamIndex == ownerState.TeamIndex;
                     }
-
-                    // Use the safe boolean here!
+                    
                     if (!pState.ValueRO.IsParrying || pEntity == projectile.ValueRO.Owner || isSameTeam)
                         continue;
 
@@ -184,7 +183,6 @@ namespace Entities.Netcode.Shooting
                             projectile.ValueRW.Damage *= parryDamageMult;
                             projectile.ValueRW.Owner = hitResult.Entity;
                             projectile.ValueRW.Lifespan += 10;
-                            // Visual update only: keep the exact same position, just rotate the mesh
                             transform.ValueRW.Rotation =
                                 quaternion.LookRotationSafe(projectile.ValueRO.Velocity, math.up());
                             destroyProjectile = false;
@@ -205,8 +203,7 @@ namespace Entities.Netcode.Shooting
                         else
                         {
                             if (shouldLog) Debug.Log($"[{role}] Projectile HIT Player!");
-                            // --- NEW SAFE DAMAGE CHECK ---
-                            var isEnemy = true; // Default to true so orphaned projectiles still deal damage
+                            var isEnemy = true;
                             if (projectile.ValueRO.Owner != Entity.Null &&
                                 SystemAPI.HasComponent<PlayerStateComponent>(projectile.ValueRO.Owner))
                             {
@@ -217,10 +214,9 @@ namespace Entities.Netcode.Shooting
                             if (isEnemy)
                             {
                                 targetState.Health -= projectile.ValueRO.Damage;
-                                // Record Projectile Death
                                 if (targetState.Health <= 0)
                                 {
-                                    targetState.LastDeathReason = 1; // Projectile
+                                    targetState.LastDeathReason = 1;
 
                                     if (projectile.ValueRO.Owner != Entity.Null &&
                                         SystemAPI.HasComponent<PlayerStateComponent>(projectile.ValueRO.Owner))
@@ -232,12 +228,11 @@ namespace Entities.Netcode.Shooting
                                     }
                                     else
                                     {
-                                        targetState.LastKillerNetworkId = -1; // Orphaned projectile
+                                        targetState.LastKillerNetworkId = -1;
                                         targetState.LastKillerTeamIndex = -1;
                                     }
-                                } // --- NEW: HITMARKER LOGIC ---
-
-                                // Find the shooter and give them a hitmarker
+                                }
+                                
                                 if (projectile.ValueRO.Owner != Entity.Null &&
                                     SystemAPI.HasComponent<PlayerStateComponent>(projectile.ValueRO.Owner))
                                 {
@@ -255,7 +250,6 @@ namespace Entities.Netcode.Shooting
                                     var shooterId = SystemAPI
                                         .GetComponent<PlayerStateComponent>(projectile.ValueRO.Owner).NetworkId;
                                     var audioReq = ecb.CreateEntity();
-                                    // Hit Confirm is Local Only!
                                     ecb.AddComponent(audioReq,
                                         new AudioRequest
                                             { Effect = SFX.HitConfirm, Pitch = 1f, LocalTargetNetworkId = shooterId });

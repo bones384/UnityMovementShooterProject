@@ -27,15 +27,13 @@ namespace Entities.Netcode.Abilities
                          .WithAll<Simulate>()
                          .WithEntityAccess())
             {
-                if (pState.ValueRO.IsDead) continue; // <--- Blocks all shooting and abilities
-                // 1. Tick down cooldown
+                if (pState.ValueRO.IsDead) continue;
                 if (pState.ValueRO.ThirdCooldownTimer > 0)
                     pState.ValueRW.ThirdCooldownTimer -= dt;
 
                 var isPressed = input.ValueRO.ThirdAbilityInput;
                 var wasPressed = pState.ValueRO.PreviousThirdInput;
-
-                // 2. Gate trigger by cooldown
+                
                 var triggered = isPressed && !wasPressed && pState.ValueRO.ThirdCooldownTimer <= 0;
 
                 var shouldLog = isServer || networkTime.IsFirstTimeFullyPredictingTick;
@@ -55,8 +53,7 @@ namespace Entities.Netcode.Abilities
                 {
                     pState.ValueRW.IsParrying = true;
                     pState.ValueRW.ParryTimer = 0.5f;
-
-                    // 3. Reset Cooldown Timer
+                    
                     pState.ValueRW.ThirdCooldownTimer = entitiesReferences.thirdCooldown;
 
                     if (shouldLog)

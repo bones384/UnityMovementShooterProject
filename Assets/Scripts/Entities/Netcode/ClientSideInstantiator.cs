@@ -21,8 +21,7 @@ public class ClientSideInstantiator : MonoBehaviour
             Instance = this;
         }
     }
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    
     private void Start()
     {
         if (Application.isBatchMode)
@@ -34,10 +33,8 @@ public class ClientSideInstantiator : MonoBehaviour
 
         Debug.Log("Not server");
         mainCamera = Camera.main;
-        // this.gameObject.AddComponent<PlayerBridge>();
     }
-
-    // Update is called once per frame
+    
     private void Update()
     {
     }

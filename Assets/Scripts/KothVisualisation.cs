@@ -5,7 +5,7 @@ using UnityEngine;
 public class KothVisualisation : MonoBehaviour
 {
     public Renderer pointRenderer;
-    public Material neutralMaterial; // Create a gray material and assign it here!
+    public Material neutralMaterial;
     private float _lastCaptureProgress;
     private int _lastOwner = -1;
 
@@ -15,14 +15,12 @@ public class KothVisualisation : MonoBehaviour
             PlayerVisualisationManager.Instance == null)
             return;
         var state = KothBridge.State;
-// 1. Capture Start (Went from 0 to something)
 
         if (_lastCaptureProgress == 0 && KothBridge.State.CaptureProgress > 0)
             AudioManager.Instance.Play3D(SFX.KothStart, transform.position);
-
-        // 2. Captured (Owner changed)
+        
         if (_lastOwner != state.CurrentOwner && state.CurrentOwner != -1)
-            AudioManager.Instance.Play2D(SFX.KothCap); // Play globally
+            AudioManager.Instance.Play2D(SFX.KothCap);
         _lastCaptureProgress = state.CaptureProgress;
         _lastOwner = state.CurrentOwner;
 

@@ -16,16 +16,14 @@ public static class DebugVector
             return;
 
         var dir = math.normalize(vector);
-
-        // find a stable "up" vector not parallel to dir
+        
         var up = math.abs(dir.y) < 0.99f ? new float3(0, 1, 0) : new float3(1, 0, 0);
 
         var right = math.normalize(math.cross(dir, up));
         var correctedUp = math.cross(right, dir);
 
         var rad = math.radians(headAngle);
-
-        // rotate back from direction to form arrow head lines
+        
         var headDir1 = math.normalize(
             math.rotate(quaternion.AxisAngle(correctedUp, rad), -dir)
         );

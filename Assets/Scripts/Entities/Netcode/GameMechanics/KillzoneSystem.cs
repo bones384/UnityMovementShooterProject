@@ -7,7 +7,6 @@ using UnityEngine;
 
 namespace Entities.Netcode.GameMechanics
 {
-// --- 2. TRIGGER SYSTEM ---
     [UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
     [UpdateBefore(typeof(PlayerDeathRespawnSystem))]
     public partial struct KillzoneSystem : ISystem
@@ -33,9 +32,7 @@ namespace Entities.Netcode.GameMechanics
             state.Dependency = job.Schedule(simulation, state.Dependency);
         }
     }
-
-    // --- 3. THE TRIGGER JOB (Burst Disabled for Logging) ---
-    // Removed [BurstCompile] here so we can safely use string formatting in the console
+    
     public struct KillzoneTriggerJob : ITriggerEventsJob
     {
         public ComponentLookup<PlayerStateComponent> PlayerStateLookup;
@@ -50,8 +47,7 @@ namespace Entities.Netcode.GameMechanics
             var isBKillzone = KillzoneLookup.HasComponent(entityB);
             var isAPlayer = PlayerStateLookup.HasComponent(entityA);
             var isBPlayer = PlayerStateLookup.HasComponent(entityB);
-
-            // LOG EVERY TRIGGER EVENT THIS JOB SEES
+            
             if (isAKillzone || isBKillzone)
             {
                 Debug.Log(
@@ -72,11 +68,10 @@ namespace Entities.Netcode.GameMechanics
             {
                 Debug.Log($"[Killzone] Executing Player {playerEntity.Index}!");
                 pState.Health = 0f;
-
-                // Record Killzone Death
+                
                 pState.LastKillerNetworkId = -1;
-                pState.LastDeathReason = 2; // Killbox
-                pState.LastKillerTeamIndex = -1; // <-- NEW
+                pState.LastDeathReason = 2;
+                pState.LastKillerTeamIndex = -1;
 
                 PlayerStateLookup[playerEntity] = pState;
             }

@@ -8,7 +8,7 @@ namespace Entities.Netcode.Authoring
     {
         public float Radius = 5f;
         public float Height = 4f;
-        public float TimeToWin = 180f; // 3 minutes
+        public float TimeToWin = 180f;
         public float TimeToCapture = 10f;
 
         private class Baker : Baker<KothPointAuthoring>

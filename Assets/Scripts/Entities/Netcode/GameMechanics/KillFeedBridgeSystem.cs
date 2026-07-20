@@ -15,25 +15,22 @@ namespace Entities.Netcode.GameMechanics
 
             foreach (var (pState, entity) in SystemAPI.Query<RefRO<PlayerStateComponent>>().WithEntityAccess())
             {
-                // First time seeing this entity, just record its current count
                 if (!_localDeathCounts.TryGetValue(entity, out var lastSeenCount))
                 {
                     _localDeathCounts[entity] = pState.ValueRO.DeathCount;
                     continue;
                 }
-
-                // If the server's count is higher than our local count, a death happened!
+                
                 if (pState.ValueRO.DeathCount > lastSeenCount)
                 {
                     _localDeathCounts[entity] = pState.ValueRO.DeathCount;
-
-                    // -1 means game restart, so we silently skip it
+                    
                     if (pState.ValueRO.LastDeathReason != -1)
                         KillfeedManager.Instance.AddKillfeedEntry(
                             pState.ValueRO.LastKillerNetworkId,
-                            pState.ValueRO.LastKillerTeamIndex, // <-- Killer Team
+                            pState.ValueRO.LastKillerTeamIndex,
                             pState.ValueRO.NetworkId,
-                            pState.ValueRO.TeamIndex, // <-- Victim Team
+                            pState.ValueRO.TeamIndex,
                             pState.ValueRO.LastDeathReason
                         );
                 }

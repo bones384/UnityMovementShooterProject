@@ -6,7 +6,7 @@ namespace Entities.Netcode
 {
     public struct HitscanBulletRequest : IComponentData
     {
-        public Entity Owner; // Changed to Entity for easier component lookups
+        public Entity Owner;
         public float Damage;
         public float Range;
         public float3 Origin;

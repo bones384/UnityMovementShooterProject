@@ -13,7 +13,6 @@ namespace Entities.Movement
     [BurstCompile]
     [UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
     [UpdateBefore(typeof(PlayerMovementSystem))]
-    //[UpdateAfter(typeof(PhysicsSystemGroup))]
     public partial struct MovementRaycastSensorSystem : ISystem
     {
         [BurstCompile]
@@ -82,8 +81,8 @@ namespace Entities.Movement
                 End = origin + direction * distance,
                 Filter =
                 {
-                    BelongsTo = 1u << 7, // Raycast as player
-                    CollidesWith = 1u << 6, // Raycast against level
+                    BelongsTo = 1u << 7,
+                    CollidesWith = 1u << 6,
                     GroupIndex = 0
                 }
             };
